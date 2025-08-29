@@ -4,17 +4,19 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1
+# Set environment variables for better network handling
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_FONT_GOOGLE_MUTED_WARNINGS=1
+ENV NODE_OPTIONS="--dns-result-order=ipv4first"
 
 # Install dependencies first (better layer caching)
 COPY package*.json ./
-RUN npm ci --no-audit --no-fund
+RUN npm ci --no-audit --no-fund --timeout=60000
 
 # Copy rest of the app
 COPY . .
 
-# Build Next.js (standalone output)
+# Build Next.js (standalone output) with extended timeout
 RUN npm run build
 
 # Runtime stage

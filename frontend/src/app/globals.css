@@ -3,6 +3,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Define modern system font stacks */
+:root {
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
 :root {
   /* Updated color tokens to match charity foundation orange branding */
   --background: oklch(1 0 0);
@@ -119,7 +125,17 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
+  html {
+    font-family: var(--font-sans);
+  }
+  
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
   }
 }
