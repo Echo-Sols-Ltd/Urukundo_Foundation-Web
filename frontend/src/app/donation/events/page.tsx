@@ -2,9 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Header from '../../../components/donation/Header';
 import Sidebar from '../../../components/donation/Sidebar';
 import { Search } from 'lucide-react';
+
+interface BackendEvent {
+  id: number;
+  eventName: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  imageUrl?: string;
+  maxAttendees?: number;
+  capacity?: number;
+}
 
 interface Event {
   id: string;
@@ -17,7 +30,7 @@ interface Event {
   maxAttendees?: number;
 }
 
-const mapBackendEventToUi = (be: any): Event => {
+const mapBackendEventToUi = (be: BackendEvent): Event => {
   const start = be.startDate ? new Date(be.startDate) : new Date();
   return {
     id: String(be.id ?? Math.random()),
