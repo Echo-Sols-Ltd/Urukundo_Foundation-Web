@@ -1,17 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import {
-  Home,
-  Heart,
-  Calendar,
-  Video,
-  Bell,
   Play,
   Download,
   X,
@@ -86,15 +80,6 @@ function DashboardPage() {
 
   // Calculate stats from donations
   const totalAmount = donations.reduce((sum, donation) => sum + (Number(donation.amount) || 0), 0);
-  const totalDonations = donations.length;
-
-  const sidebarItems = [
-    { icon: Home, label: 'Home', href: '/dashboard', active: true },
-    { icon: Heart, label: 'Donate', href: '/events' },
-    { icon: Calendar, label: 'Events', href: '/events' },
-    { icon: Video, label: 'Videos', href: '#' },
-    { icon: Bell, label: 'Notifications', href: '#' },
-  ];
 
   const upcomingEvents = [
     {

@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import Image from "next/image"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -82,8 +83,8 @@ export default function DonatePage() {
       } else {
         alert('Failed to submit donation. Please try again.')
       }
-    } catch (err ) {
-      alert('Failed to submit donation. Please try again later.' + err)
+    } catch {
+      alert('Failed to submit donation. Please try again later.')
     } finally {
       setIsSubmitting(false)
       setIsConfirmOpen(false)
@@ -118,7 +119,7 @@ export default function DonatePage() {
                 <div className="text-lg font-semibold text-orange-500">45,000 Rwf</div>
               </div>
               <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                <img src="/diverse-group-profile.png" alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                <Image src="/diverse-group-profile.png" alt="Profile" width={40} height={40} className="w-10 h-10 rounded-full object-cover" />
               </div>
             </div>
           </div>
