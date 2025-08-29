@@ -1,0 +1,77 @@
+export function HeroSection() {
+  return (
+    <section className="relative min-h-[600px] bg-gradient-to-br from-gray-900/95 to-gray-800/95 text-white overflow-hidden">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('/image/heart.jpg')`,
+        }}
+      />
+
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50" />
+
+      <div className="relative container mx-auto px-4 py-20 flex flex-col justify-center min-h-[600px]">
+        <div className="max-w-2xl space-y-8">
+          <h1 className="font-sans text-5xl lg:text-7xl font-bold leading-tight">
+            Share Love,
+            <br />
+            Save Lives
+          </h1>
+
+          <p className="font-serif text-lg lg:text-xl max-w-lg leading-relaxed opacity-90">
+            &quot;At Urukundo Foundation, we believe that technology and
+            compassion together can bridge the gap between those who want to
+            give and those in need — one donation, one life, one story at a
+            time.&quot;
+          </p>
+
+          <div className="flex items-center gap-12">
+            <div>
+              <div className="text-orange-500 font-sans text-3xl lg:text-4xl font-bold">
+                $1,284,528
+              </div>
+              <div className="font-serif text-sm text-white/80">Donation</div>
+            </div>
+            <div>
+              <div className="text-orange-500 font-sans text-3xl lg:text-4xl font-bold">
+                12,960
+              </div>
+              <div className="font-serif text-sm text-white/80">
+                People Helped
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6 text-sm text-white/70">
+            <span className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                <span className="text-xs">📧</span>
+              </div>
+              logoipsum
+            </span>
+            <span className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                <span className="text-xs">🏢</span>
+              </div>
+              logoipsum
+            </span>
+            <span className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                <span className="text-xs">⚡</span>
+              </div>
+              logoipsum
+            </span>
+            <span className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                <span className="text-xs">🎯</span>
+              </div>
+              logoipsum
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
