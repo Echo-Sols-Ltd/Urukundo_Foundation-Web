@@ -1,18 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/donation/Header';
 import Sidebar from '@/components/donation/Sidebar';
 import { User, Bell, Shield, CreditCard, Globe, Save } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { withAuth } from '@/components/auth/withAuth';
 
-export default function SettingsPage() {
+function SettingsPage() {
+  const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: 'Alex',
-    lastName: 'Johnson',
-    email: 'alex.johnson@example.com',
-    phone: '+250 788 123 456',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
     language: 'English',
     timezone: 'Africa/Kigali',
     emailNotifications: true,
@@ -24,15 +29,78 @@ export default function SettingsPage() {
     confirmPassword: '',
   });
 
+  // Helper function to get auth headers
+  const getHeaders = (): Record<string, string> => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+  };
+
+  // Load user data on component mount
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!user) return;
+      
+      try {
+        setIsLoading(true);
+        
+        // Update form data with user information
+        setFormData(prev => ({
+          ...prev,
+          firstName: user.firstName || '',
+          lastName: user.lastName || '',
+          email: user.email || '',
+          phone: '', // Phone number will be loaded from user preferences API
+        }));
+        
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, [user]);
+
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = () => {
-    // Here you would typically save to backend
-    console.log('Saving settings:', formData);
-    // Show success message
-    alert('Settings saved successfully!');
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      
+      // Prepare data for backend update
+      const updateData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        // Add other fields as supported by your backend
+      };
+
+      // Update user profile
+      const response = await fetch('/api/users/profile', {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify(updateData),
+      });
+
+      if (response.ok) {
+        // Success message
+        alert('Settings saved successfully!');
+      } else {
+        throw new Error('Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      alert('Failed to save settings. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const tabs = [
@@ -350,6 +418,7 @@ export default function SettingsPage() {
                         onChange={(e) =>
                           handleInputChange('language', e.target.value)
                         }
+                        title="Select your preferred language"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       >
                         <option value="English">English</option>
@@ -367,6 +436,7 @@ export default function SettingsPage() {
                         onChange={(e) =>
                           handleInputChange('timezone', e.target.value)
                         }
+                        title="Select your timezone"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       >
                         <option value="Africa/Kigali">

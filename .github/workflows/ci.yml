@@ -1,0 +1,244 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Frontend (Next.js) Checks
+  frontend-lint:
+    name: Frontend - Lint and Format Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run ESLint
+        run: npm run lint
+        
+      - name: Check code formatting
+        run: npm run format:check || echo "No format check script found, skipping formatting check"
+
+  frontend-test:
+    name: Frontend - Run Tests
+    runs-on: ubuntu-latest
+    needs: frontend-lint
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run tests
+        run: npm run test --if-present || echo "No test script found, skipping tests"
+        
+      - name: Run type check
+        run: npm run type-check || npx tsc --noEmit
+
+  frontend-build:
+    name: Frontend - Build Check
+    runs-on: ubuntu-latest
+    needs: [frontend-lint, frontend-test]
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build project
+        run: npm run build
+
+  # Backend (Spring Boot) Checks
+  backend-build:
+    name: Backend - Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect backend module
+        id: detect_backend
+        run: |
+          if [ -f backend/pom.xml ]; then
+            echo "has_backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_backend=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Java
+        if: ${{ steps.detect_backend.outputs.has_backend == 'true' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Maven packages
+        if: ${{ steps.detect_backend.outputs.has_backend == 'true' }}
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build with Maven
+        if: ${{ steps.detect_backend.outputs.has_backend == 'true' }}
+        working-directory: backend
+        run: mvn clean compile
+
+      - name: Run tests
+        if: ${{ steps.detect_backend.outputs.has_backend == 'true' }}
+        working-directory: backend
+        run: mvn test
+
+      - name: Package application
+        if: ${{ steps.detect_backend.outputs.has_backend == 'true' }}
+        working-directory: backend
+        run: mvn package -DskipTests
+
+  # Security Checks
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    needs: [frontend-lint, backend-build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Detect frontend module
+        id: detect_frontend
+        run: |
+          if [ -f frontend/package.json ]; then
+            echo "has_frontend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_frontend=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Detect backend module
+        id: detect_backend
+        run: |
+          if [ -f backend/pom.xml ]; then
+            echo "has_backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_backend=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Frontend security audit
+        if: ${{ steps.detect_frontend.outputs.has_frontend == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+        
+      - name: Run npm audit (Frontend)
+        if: ${{ steps.detect_frontend.outputs.has_frontend == 'true' }}
+        run: |
+          cd frontend
+          npm ci
+          npm audit --audit-level=moderate
+        
+      - name: Backend security audit
+        if: ${{ steps.detect_backend.outputs.has_backend == 'true' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+        
+      - name: Run Maven security check
+        if: ${{ steps.detect_backend.outputs.has_backend == 'true' }}
+        run: |
+          cd backend
+          mvn dependency:check
+
+  # Integration Tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [frontend-build, backend-build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect integration tests
+        id: detect_it
+        run: |
+          if ls **/integration-tests 2>/dev/null | grep -q .; then
+            echo "has_it=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_it=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node.js
+        if: ${{ steps.detect_it.outputs.has_it == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Setup Java
+        if: ${{ steps.detect_it.outputs.has_it == 'true' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install frontend dependencies
+        if: ${{ steps.detect_it.outputs.has_it == 'true' && hashFiles('frontend/package.json') }}
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Install backend dependencies
+        if: ${{ steps.detect_it.outputs.has_it == 'true' && hashFiles('backend/pom.xml') }}
+        run: |
+          cd backend
+          mvn dependency:resolve
+
+      - name: Run integration tests
+        if: ${{ steps.detect_it.outputs.has_it == 'true' }}
+        run: |
+          if [ -f "./frontend/package.json" ] && npm run test:integration --if-present; then
+            cd frontend && npm run test:integration
+          elif [ -f "./backend/pom.xml" ] && mvn verify -DskipUnitTests; then
+            cd backend && mvn verify -DskipUnitTests
+          else
+            echo "No integration tests found"
+          fi

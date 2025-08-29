@@ -1,0 +1,62 @@
+# Global repository owners
+# These users will be requested for review on any pull request
+* @your-username
+
+# Frontend (Next.js) specific
+frontend/ @frontend-team
+*.js @frontend-team
+*.jsx @frontend-team
+*.ts @frontend-team
+*.tsx @frontend-team
+*.css @frontend-team
+*.scss @frontend-team
+*.html @frontend-team
+*.json @frontend-team
+next.config.js @frontend-team
+tailwind.config.js @frontend-team
+postcss.config.js @frontend-team
+
+# Backend (Spring Boot) specific
+backend/ @backend-team
+*.java @backend-team
+*.xml @backend-team
+*.properties @backend-team
+*.yml @backend-team
+*.yaml @backend-team
+pom.xml @backend-team
+build.gradle @backend-team
+
+# Configuration and DevOps
+*.env* @devops-team
+.github/ @devops-team
+docker-compose.yml @devops-team
+Dockerfile @devops-team
+.dockerignore @devops-team
+
+# Documentation
+*.md @documentation-team
+docs/ @documentation-team
+README.md @documentation-team
+
+# Database and migrations
+*.sql @database-team
+migrations/ @database-team
+backend/src/main/resources/db/ @database-team
+
+# Tests
+**/test/ @qa-team
+**/tests/ @qa-team
+**/__tests__/ @qa-team
+*.test.js @qa-team
+*.test.ts @qa-team
+*.test.tsx @qa-team
+*.spec.js @qa-team
+*.spec.ts @qa-team
+*.spec.tsx @qa-team
+
+# Dependencies
+package.json @frontend-team
+package-lock.json @frontend-team
+yarn.lock @frontend-team
+pom.xml @backend-team
+build.gradle @backend-team
