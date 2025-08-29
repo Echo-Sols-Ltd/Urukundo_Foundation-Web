@@ -14,6 +14,22 @@ import {
   Eye,
 } from 'lucide-react';
 
+interface BackendDonation {
+  id: number;
+  amount: number;
+  donationText: string;
+  methodOfPayment: string;
+  status: 'COMPLETED' | 'PENDING' | 'FAILED';
+  donationTime: string;
+  donationCause: string;
+  donor: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}
+
 interface Donation {
   id: string;
   amount: number;
@@ -26,7 +42,7 @@ interface Donation {
   receiptNumber: string;
 }
 
-const mapBackendDonationToUi = (d: any): Donation => {
+const mapBackendDonationToUi = (d: BackendDonation): Donation => {
   // Backend Donation fields: id, amount (Double), donationText, methodOfPayment, status (enum), donationTime, donationCause, donor
   const statusMap: Record<string, Donation['status']> = {
     COMPLETED: 'completed',
@@ -75,7 +91,7 @@ export default function MyDonationsPage() {
     'all' | 'completed' | 'pending' | 'failed'
   >('all');
 
-  const getHeaders = () => {
+  const getHeaders = (): Record<string, string> => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
@@ -269,7 +285,7 @@ export default function MyDonationsPage() {
 
                           {donation.message && (
                             <p className="text-sm text-gray-600 italic">
-                              "{donation.message}"
+                              &ldquo;{donation.message}&rdquo;
                             </p>
                           )}
                         </div>

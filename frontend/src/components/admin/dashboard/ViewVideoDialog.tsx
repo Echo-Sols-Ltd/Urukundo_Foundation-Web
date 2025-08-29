@@ -40,11 +40,11 @@ export default function ViewVideoDialog({
         <div className="p-6 space-y-6">
           {/* Video Preview */}
           <div className="relative">
-            {video.url ? (
+            {video.videoUrl ? (
               <div className="relative">
                 <video
                   className="w-full h-64 bg-black rounded-xl"
-                  src={video.url}
+                  src={video.videoUrl}
                   controls
                   onLoadedMetadata={(e) => {
                     const label = document.getElementById('video-duration-badge');

@@ -146,7 +146,7 @@ export default function NotificationsPage() {
           {newNotifications.length === 0 && readNotifications.length === 0 && (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No notifications</h3>
-              <p className="text-gray-500">You'll see notifications here when they arrive</p>
+              <p className="text-gray-500">You&apos;ll see notifications here when they arrive</p>
             </div>
           )}
         </main>

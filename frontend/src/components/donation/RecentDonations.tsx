@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Heart, Clock, User } from 'lucide-react';
+import { Heart, Clock } from 'lucide-react';
 
 interface Donation {
   id: string;
@@ -103,7 +103,7 @@ export default function RecentDonations() {
 
               {donation.message && (
                 <p className="text-sm text-gray-600 mt-2 italic">
-                  "{donation.message}"
+                  &quot;{donation.message}&quot;
                 </p>
               )}
             </div>

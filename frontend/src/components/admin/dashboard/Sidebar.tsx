@@ -32,11 +32,6 @@ const sidebarItems: SidebarItem[] = [
   { icon: DollarSign, label: 'Donations', href: '/admin/donations' },
 ];
 
-const bottomItems: SidebarItem[] = [
-  { icon: Settings, label: 'Settings', href: '/settings' },
-  { icon: LogOut, label: 'Logout', href: '/logout' },
-];
-
 export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -51,7 +46,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
       });
-    } catch (_err) {
+    } catch {
       // ignore
     } finally {
       if (typeof window !== 'undefined') {

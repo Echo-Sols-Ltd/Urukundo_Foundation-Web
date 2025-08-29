@@ -11,7 +11,6 @@ import {
   Bell,
   Heart,
   X,
-  DollarSign,
   Settings,
   LogOut,
 } from 'lucide-react';

@@ -3,16 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/donation/Header';
 import Sidebar from '@/components/donation/Sidebar';
-import { User, Bell, Shield, CreditCard, Globe, Save } from 'lucide-react';
+import { User, Bell, Shield, Globe, Save } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { withAuth } from '@/components/auth/withAuth';
 
 function SettingsPage() {
   const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -44,7 +41,6 @@ function SettingsPage() {
       if (!user) return;
       
       try {
-        setIsLoading(true);
         
         // Update form data with user information
         setFormData(prev => ({
@@ -57,8 +53,6 @@ function SettingsPage() {
         
       } catch (error) {
         console.error('Failed to load user data:', error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -71,7 +65,6 @@ function SettingsPage() {
 
   const handleSave = async () => {
     try {
-      setIsSaving(true);
       
       // Prepare data for backend update
       const updateData = {
@@ -98,8 +91,6 @@ function SettingsPage() {
     } catch (error) {
       console.error('Failed to save settings:', error);
       alert('Failed to save settings. Please try again.');
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -469,3 +460,5 @@ function SettingsPage() {
     </div>
   );
 }
+
+export default SettingsPage;

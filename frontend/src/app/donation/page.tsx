@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Header from '../../components/donation/Header';
 import Sidebar from '../../components/donation/Sidebar';
-import { Play, Eye } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { withAnyAuth } from '../../components/auth/withAuth';
 
 function DonationDashboard() {
@@ -53,9 +54,11 @@ function DonationDashboard() {
               <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/3">
-                    <img
+                    <Image
                       src="https://picsum.photos/400/300?random=1"
                       alt="Earthquake relief efforts"
+                      width={400}
+                      height={300}
                       className="w-full h-48 md:h-full object-cover"
                     />
                   </div>
@@ -96,9 +99,11 @@ function DonationDashboard() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                  <img
+                  <Image
                     src="https://picsum.photos/400/225?random=2"
                     alt="Community Outreach"
+                    width={400}
+                    height={225}
                     className="w-full h-48 object-cover"
                   />
                   <div className="p-4">
@@ -120,9 +125,11 @@ function DonationDashboard() {
                 </div>
 
                 <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                  <img
+                  <Image
                     src="https://picsum.photos/400/225?random=3"
                     alt="Fundraising Gala"
+                    width={400}
+                    height={225}
                     className="w-full h-48 object-cover"
                   />
                   <div className="p-4">

@@ -1,4 +1,4 @@
-import { SearchIcon, Menu, Bell, User } from 'lucide-react';
+import { SearchIcon, Menu, Bell } from 'lucide-react';
 
 interface HeaderProps {
   title: string;

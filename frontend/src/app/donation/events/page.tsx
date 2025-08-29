@@ -67,7 +67,7 @@ export default function EventsPage() {
         const data = await res.json();
         const now = Date.now();
         const upcoming = (Array.isArray(data) ? data : [])
-          .filter((e: any) => new Date(e.startDate ?? Date.now()).getTime() > now)
+          .filter((e: BackendEvent) => new Date(e.startDate ?? Date.now()).getTime() > now)
           .map(mapBackendEventToUi);
         
         // Check registration status for each event
@@ -97,7 +97,7 @@ export default function EventsPage() {
       }
     };
     load();
-  }, []);
+  }, [router]);
 
   const handleRegister = async (eventId: string) => {
     setLoadingStates(prev => ({ ...prev, [eventId]: true }));
@@ -123,7 +123,7 @@ export default function EventsPage() {
         const errorData = await res.json().catch(() => ({}));
         alert(errorData.message || 'Failed to register for event');
       }
-    } catch (error) {
+    } catch {
       alert('Failed to register for event');
     } finally {
       setLoadingStates(prev => ({ ...prev, [eventId]: false }));
@@ -153,7 +153,7 @@ export default function EventsPage() {
       } else {
         alert('Failed to cancel registration');
       }
-    } catch (error) {
+    } catch {
       alert('Failed to cancel registration');
     } finally {
       setLoadingStates(prev => ({ ...prev, [eventId]: false }));
@@ -215,9 +215,11 @@ export default function EventsPage() {
                   >
                     <div className="flex flex-col sm:flex-row">
                       <div className="sm:w-80 h-48 sm:h-auto">
-                        <img
+                        <Image
                           src={event.image || '/placeholder.svg'}
                           alt={event.title}
+                          width={320}
+                          height={192}
                           className="w-full h-full object-cover"
                         />
                       </div>

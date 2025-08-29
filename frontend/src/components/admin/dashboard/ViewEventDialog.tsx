@@ -11,18 +11,6 @@ import {
 } from 'lucide-react';
 import { ViewEventDialogProps } from '../../../types/admin';
 
-interface Attendee {
-  id: number;
-  user: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-  status: string;
-  registrationDate: string;
-}
-
 export default function ViewEventDialog({
   isOpen,
   onClose,
