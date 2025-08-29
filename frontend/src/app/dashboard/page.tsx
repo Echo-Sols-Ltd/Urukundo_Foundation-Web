@@ -81,41 +81,11 @@ function DashboardPage() {
   // Calculate stats from donations
   const totalAmount = donations.reduce((sum, donation) => sum + (Number(donation.amount) || 0), 0);
 
-  const upcomingEvents = [
-    {
-      title: 'Community Outreach',
-      date: '24 March 2025',
-      description: 'An evening of elegance and giving to support our causes.',
-      image: '/image/outreach.png',
-    },
-    {
-      title: 'Fundraising Gala',
-      date: '24 March 2025',
-      description: 'An evening of elegance and giving to support our causes.',
-      image: '/image/fund.png',
-    },
-  ];
+  // TODO: Replace with API call to fetch events
+  const upcomingEvents: { title: string; date: string; description: string; image: string; }[] = [];
 
-  const recentVideos: Video[] = [
-    {
-      id: '1',
-      title: 'Impact Story: Meet Sarah',
-      description: 'An evening of elegance and giving to support our causes.',
-      views: '1024 views',
-      thumbnail: '/image/reporter.png',
-      videoUrl: '/videos/impact.mp4',
-      duration: '3:45',
-    },
-    {
-      id: '2',
-      title: 'Volunteer Spotlight',
-      description: 'An evening of elegance and giving to support our causes.',
-      views: '1024 views',
-      thumbnail: '/image/planting.png',
-      videoUrl: '/videos/volunteer-spotlight.mp4',
-      duration: '2:30',
-    },
-  ];
+  // TODO: Replace with API call to fetch videos
+  const recentVideos: Video[] = [];
 
   // Update handleVideoClick to use Video type
   const handleVideoClick = (video: Video) => {
@@ -194,32 +164,8 @@ function DashboardPage() {
     }
   };
 
-  const donationHistory = [
-    {
-      date: '2025-08-01',
-      amount: '50 000 rwf',
-      cause: 'Nyamasheke Earthquake',
-      status: 'Completed',
-    },
-    {
-      date: '2025-08-01',
-      amount: '50 000 rwf',
-      cause: 'Nyamasheke Earthquake',
-      status: 'Completed',
-    },
-    {
-      date: '2025-08-01',
-      amount: '50 000 rwf',
-      cause: 'Nyamasheke Earthquake',
-      status: 'Completed',
-    },
-    {
-      date: '2025-08-01',
-      amount: '50 000 rwf',
-      cause: 'Nyamasheke Earthquake',
-      status: 'Completed',
-    },
-  ];
+  // TODO: Replace with API call to fetch donation history
+  const donationHistory: { date: string; amount: string; cause: string; status: string; }[] = [];
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -317,36 +263,43 @@ function DashboardPage() {
               Upcoming Events
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {upcomingEvents.map((event, index) => (
-                <Card key={index} className="overflow-hidden p-0">
-                  <div className="h-48 relative w-full">
-                    <Image
-                      src={event.image}
-                      alt={event.title}
-                      fill
-                      className="object-cover object-center"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  </div>
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-lg font-bold text-gray-900">
-                        {event.title}
-                      </h3>
-                      <span className="text-sm text-gray-500">
-                        {event.date}
-                      </span>
+              {upcomingEvents.length > 0 ? (
+                upcomingEvents.map((event, index) => (
+                  <Card key={index} className="overflow-hidden p-0">
+                    <div className="h-48 relative w-full">
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        fill
+                        className="object-cover object-center"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
                     </div>
-                    <p className="text-gray-600 mb-4">{event.description}</p>
-                    <Button
-                      variant="outline"
-                      className="w-full border-orange-500 text-orange-500 hover:bg-orange-50 bg-transparent"
-                    >
-                      LEARN MORE
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="text-lg font-bold text-gray-900">
+                          {event.title}
+                        </h3>
+                        <span className="text-sm text-gray-500">
+                          {event.date}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 mb-4">{event.description}</p>
+                      <Button
+                        variant="outline"
+                        className="w-full border-orange-500 text-orange-500 hover:bg-orange-50 bg-transparent"
+                      >
+                        LEARN MORE
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12 text-gray-500">
+                  <p className="text-lg">No upcoming events at the moment.</p>
+                  <p className="text-sm">Check back later for new events and activities.</p>
+                </div>
+              )}
             </div>
           </section>
 
@@ -356,52 +309,59 @@ function DashboardPage() {
               Recent Videos
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {recentVideos.map((video) => (
-                <Card
-                  key={video.id}
-                  className="overflow-hidden p-0 cursor-pointer group"
-                  onClick={() => handleVideoClick(video)}
-                >
-                  <div className="h-48 relative w-full">
-                    <Image
-                      src={video.thumbnail}
-                      alt={video.title}
-                      fill
-                      className="object-cover object-center"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
+              {recentVideos.length > 0 ? (
+                recentVideos.map((video) => (
+                  <Card
+                    key={video.id}
+                    className="overflow-hidden p-0 cursor-pointer group"
+                    onClick={() => handleVideoClick(video)}
+                  >
+                    <div className="h-48 relative w-full">
+                      <Image
+                        src={video.thumbnail}
+                        alt={video.title}
+                        fill
+                        className="object-cover object-center"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
 
-                    {/* Play Button Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center group-hover:bg-black group-hover:bg-opacity-20 transition-all">
-                      <div className="w-20 h-20 bg-white bg-opacity-90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg group-hover:shadow-xl">
-                        <Play className="w-10 h-10 text-orange-500 ml-1 group-hover:ml-2 transition-all" />
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center group-hover:bg-black group-hover:bg-opacity-20 transition-all">
+                        <div className="w-20 h-20 bg-white bg-opacity-90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg group-hover:shadow-xl">
+                          <Play className="w-10 h-10 text-orange-500 ml-1 group-hover:ml-2 transition-all" />
+                        </div>
+                      </div>
+
+                      {/* Duration Badge */}
+                      <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded font-medium">
+                        {video.duration}
                       </div>
                     </div>
-
-                    {/* Duration Badge */}
-                    <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded font-medium">
-                      {video.duration}
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">
-                      {video.title}
-                    </h3>
-                    <p className="text-gray-600 mb-3">{video.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">
-                        {video.views}
-                      </span>
-                      <Button
-                        variant="outline"
-                        className="border-orange-500 text-orange-500 hover:bg-orange-50 bg-transparent"
-                      >
-                        WATCH NOW
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                        {video.title}
+                      </h3>
+                      <p className="text-gray-600 mb-3">{video.description}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-500">
+                          {video.views}
+                        </span>
+                        <Button
+                          variant="outline"
+                          className="border-orange-500 text-orange-500 hover:bg-orange-50 bg-transparent"
+                        >
+                          WATCH NOW
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12 text-gray-500">
+                  <p className="text-lg">No videos available at the moment.</p>
+                  <p className="text-sm">Videos showcasing our impact will appear here.</p>
+                </div>
+              )}
             </div>
           </section>
 
@@ -433,33 +393,42 @@ function DashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {donationHistory.map((donation, index) => (
-                      <tr key={index} className="border-b last:border-b-0">
-                        <td className="p-4 text-gray-600">{donation.date}</td>
-                        <td className="p-4 text-gray-900 font-medium">
-                          {donation.amount}
-                        </td>
-                        <td className="p-4 text-gray-600">{donation.cause}</td>
-                        <td className="p-4">
-                          <Badge
-                            variant="secondary"
-                            className="bg-green-100 text-green-800"
-                          >
-                            {donation.status}
-                          </Badge>
-                        </td>
-                        <td className="p-4">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-orange-500 hover:text-orange-600"
-                          >
-                            <Download className="w-4 h-4 mr-2" />
-                            View
-                          </Button>
+                    {donationHistory.length > 0 ? (
+                      donationHistory.map((donation, index) => (
+                        <tr key={index} className="border-b last:border-b-0">
+                          <td className="p-4 text-gray-600">{donation.date}</td>
+                          <td className="p-4 text-gray-900 font-medium">
+                            {donation.amount}
+                          </td>
+                          <td className="p-4 text-gray-600">{donation.cause}</td>
+                          <td className="p-4">
+                            <Badge
+                              variant="secondary"
+                              className="bg-green-100 text-green-800"
+                            >
+                              {donation.status}
+                            </Badge>
+                          </td>
+                          <td className="p-4">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-orange-500 hover:text-orange-600"
+                            >
+                              <Download className="w-4 h-4 mr-2" />
+                              View
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="p-12 text-center text-gray-500">
+                          <p className="text-lg">No donation history found.</p>
+                          <p className="text-sm">Your donation history will appear here once you make a donation.</p>
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
