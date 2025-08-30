@@ -49,25 +49,25 @@ export function HeroSection() {
               <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
                 <span className="text-xs">📧</span>
               </div>
-              logoipsum
+              Email Verified
             </span>
             <span className="flex items-center gap-2">
               <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
                 <span className="text-xs">🏢</span>
               </div>
-              logoipsum
+              Registered NGO
             </span>
             <span className="flex items-center gap-2">
               <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
                 <span className="text-xs">⚡</span>
               </div>
-              logoipsum
+              Quick Impact
             </span>
             <span className="flex items-center gap-2">
               <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
                 <span className="text-xs">🎯</span>
               </div>
-              logoipsum
+              Transparent Goals
             </span>
           </div>
         </div>

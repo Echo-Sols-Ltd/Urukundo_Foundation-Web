@@ -5,22 +5,22 @@ export function CausesSection() {
     {
       icon: BookOpen,
       title: 'Education',
-      description: 'Fermentum nisl accumsan nisl sapien in vitae',
+      description: 'Empowering communities through quality education and learning opportunities',
     },
     {
       icon: Droplets,
       title: 'Clean Water',
-      description: 'Ultricies lacus turpis proin tempor faucibus',
+      description: 'Providing access to clean, safe drinking water for underserved communities',
     },
     {
       icon: Heart,
       title: 'Health Care',
-      description: 'Adipiscing in vitae neposque eget fringilla a morbi',
+      description: 'Delivering essential healthcare services and medical support to those in need',
     },
     {
       icon: Users,
       title: 'Local communities',
-      description: 'Nunc tristique quis leo duis gravida volutpat vitae',
+      description: 'Building stronger, more resilient communities through local development programs',
     },
   ];
 

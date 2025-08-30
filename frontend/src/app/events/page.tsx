@@ -39,22 +39,22 @@ const causesData = [
   {
     icon: Book,
     title: 'Education',
-    description: 'Fermentum nisl accumsan nisl sapien in vitae',
+    description: 'Empowering communities through quality education and learning opportunities',
   },
   {
     icon: Droplet,
     title: 'Clean Water',
-    description: 'Ultricies lacus turpis proin tempor faucibus',
+    description: 'Providing access to clean, safe drinking water for underserved communities',
   },
   {
     icon: HeartPulse,
     title: 'Health Care',
-    description: 'Adipiscing in vitae neposuae eget fringilla a morbi',
+    description: 'Delivering essential healthcare services and medical support to those in need',
   },
   {
     icon: Users,
     title: 'Local communities',
-    description: 'Nunc tristique quis leo duis gravida volutpat vitae',
+    description: 'Building stronger, more resilient communities through local development programs',
   },
 ];
 
@@ -94,9 +94,9 @@ export default function EventsPage() {
           Donate Today: Save a Life
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-          Libero dictum ut purus ut vel sit egestas. Ut ac mattis senectus ac
-          suspendisse vitae vel nulla eleifend. Est eros facilisi aenean nisl a.
-          Vitae et fusce purus consectetur.
+          Join us in our upcoming events and initiatives that create lasting change. 
+          From community outreach programs to educational workshops, every event is an 
+          opportunity to bring hope and support to those who need it most.
         </p>
       </section>
 

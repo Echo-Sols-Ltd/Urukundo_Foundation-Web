@@ -36,7 +36,7 @@ export default function ContactsPage() {
     {
       question: 'What charities can I give to?',
       answer:
-        'Nunc sed a nisl purus. Nibh dis faucibus proin lacus tristique. Sit congue non vitae odio sit erat in. Felis eu ultrices a sed massa. Commodo fringilla sed tempor risus laoreet ultricies ipsum. Habitant...',
+        'Through our platform, you can support various charitable causes including education, healthcare, clean water initiatives, disaster relief, and community development programs. We partner with verified organizations to ensure your donations make a real impact.',
     },
     {
       question: 'Is there a minimum/maximum amount I can donate?',
@@ -46,7 +46,7 @@ export default function ContactsPage() {
     {
       question: 'Can I give to more than one charity?',
       answer:
-        "You can support multiple causes and charities through our platform. Simply select the different campaigns you'd like to support and allocate your donation amounts accordingly.",
+        "You can support multiple causes and charities through our platform. Simply select the different campaigns you&apos;d like to support and allocate your donation amounts accordingly.",
     },
     {
       question: 'When will my charity receive my donation?',
@@ -92,9 +92,9 @@ export default function ContactsPage() {
           Every Act of Kindness Counts
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-          Libero dictum ut purus ut vel sit egestas. Ut ac mattis senectus ac
-          suspendisse vitae vel nulla eleifend. Est eros facilisi aenean nisl a.
-          Vitae et fusce purus consectetur.
+          Have questions about our mission, need help with donations, or want to get involved? 
+          We&apos;re here to help you make a meaningful impact in the lives of those who need it most. 
+          Reach out to us and let&apos;s work together to create positive change.
         </p>
       </section>
 
@@ -108,8 +108,7 @@ export default function ContactsPage() {
               donate hope.
             </h2>
             <p className="text-gray-300 mb-8 text-sm">
-              Ut ac mattis senectus ac suspendisse vitae vel nulla eleifend. Est
-              eros facilisi aenean nisl a.
+              Connect with us to learn more about our ongoing projects and how you can make a difference.
             </p>
 
             <div className="space-y-6">
