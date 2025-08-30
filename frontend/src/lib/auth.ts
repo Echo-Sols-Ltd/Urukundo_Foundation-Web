@@ -119,52 +119,79 @@ export function getUserFromToken(token: string): User | null {
 
 // Login function
 export async function login(credentials: LoginRequest): Promise<User> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials),
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
 
-  if (!response.ok) {
-    throw new Error('Login failed');
-  }
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.message || errorData.error || 'Invalid email or password';
+      throw new Error(errorMessage);
+    }
 
-  const data: AuthResponse = await response.json();
-  storeTokens(data.access_token, data.refresh_token);
-  
-  const user = getUserFromToken(data.access_token);
-  if (!user) {
-    throw new Error('Invalid token received');
+    const data: AuthResponse = await response.json();
+    storeTokens(data.access_token, data.refresh_token);
+    
+    const user = getUserFromToken(data.access_token);
+    if (!user) {
+      throw new Error('Invalid token received');
+    }
+    
+    return user;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Network error. Please check your connection and try again.');
   }
-  
-  return user;
 }
 
 // Register function
 export async function register(userData: RegisterRequest): Promise<User> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData),
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
 
-  if (!response.ok) {
-    throw new Error('Registration failed');
-  }
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      let errorMessage = 'Registration failed';
+      
+      if (response.status === 409) {
+        errorMessage = 'Email already exists. Please use a different email address.';
+      } else if (errorData.message) {
+        errorMessage = errorData.message;
+      } else if (errorData.error) {
+        errorMessage = errorData.error;
+      }
+      
+      throw new Error(errorMessage);
+    }
 
-  const data: AuthResponse = await response.json();
-  storeTokens(data.access_token, data.refresh_token);
-  
-  const user = getUserFromToken(data.access_token);
-  if (!user) {
-    throw new Error('Invalid token received');
+    const data: AuthResponse = await response.json();
+    storeTokens(data.access_token, data.refresh_token);
+    
+    const user = getUserFromToken(data.access_token);
+    if (!user) {
+      throw new Error('Invalid token received');
+    }
+    
+    return user;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Network error. Please check your connection and try again.');
   }
-  
-  return user;
 }
 
 // Logout function
