@@ -73,7 +73,7 @@ function DonationDashboard() {
                     <div className="mb-4">
                       <div className="flex justify-between text-sm text-gray-600 mb-2">
                         <span>Raised: $45,000</span>
-                        <span>Goal: $100,000</span>
+                        <span>Goal: $0</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div

@@ -13,7 +13,6 @@ import {
   isAuthenticated as checkIsAuthenticated,
   refreshAccessToken
 } from '../lib/auth';
-import { useToast } from '../components/ui/toast';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
@@ -38,7 +37,6 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const router = useRouter();
-  const { showToast } = useToast();
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     isAuthenticated: false,
@@ -91,14 +89,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading: false,
       });
       
-      // Show success message
-      showToast({
-        type: 'success',
-        title: 'Welcome back!',
-        message: `Successfully logged in as ${user.firstName} ${user.lastName}`,
-        duration: 3000
-      });
-      
       // Redirect based on user role
       if (user.role === 'ADMIN') {
         router.push('/admin');
@@ -125,14 +115,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading: false,
       });
       
-      // Show success message
-      showToast({
-        type: 'success',
-        title: 'Account created successfully!',
-        message: `Welcome to Urukundo Foundation, ${user.firstName}!`,
-        duration: 4000
-      });
-      
       // Redirect to dashboard after successful registration
       router.push('/dashboard');
     } catch (error) {
@@ -148,12 +130,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async (): Promise<void> => {
     try {
       await authLogout();
-      showToast({
-        type: 'info',
-        title: 'Logged out successfully',
-        message: 'You have been safely logged out.',
-        duration: 3000
-      });
     } catch (error) {
       console.error('Logout error:', error);
     } finally {

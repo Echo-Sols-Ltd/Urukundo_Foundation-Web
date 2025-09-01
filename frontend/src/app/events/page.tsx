@@ -29,8 +29,8 @@ const mapBackendEventToCard = (be: {
   id: generateStableId(be, 'event'),
   title: be.eventName ?? be.title ?? 'Event',
   description: be.description ?? '',
-    image: '/image/plant.jpg',
-  goal: 10000,
+  image: '/image/plant.jpg',
+  goal: 0,
   raised: 0,
   supporters: 0,
 });

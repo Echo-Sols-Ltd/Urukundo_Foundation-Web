@@ -42,6 +42,8 @@ function DashboardPage() {
   const { user } = useAuth();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [upcomingEvents, setUpcomingEvents] = useState<{ title: string; date: string; description: string; image: string; }[]>([]);
+  const [recentVideos, setRecentVideos] = useState<Video[]>([]);
   
   // Update useState to use Video | null
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
@@ -56,36 +58,87 @@ function DashboardPage() {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  // Fetch donations using existing pattern
+  // Fetch donations and other data
   useEffect(() => {
-    const fetchDonations = async () => {
+    const fetchDashboardData = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch('/api/donation', { headers: getHeaders() });
-        if (!res.ok) return;
-        const data = await res.json();
-        const donationsArray = Array.isArray(data) ? data : [];
-        setDonations(donationsArray);
+        
+        // Fetch donations
+        const donationsRes = await fetch('/api/donation', { headers: getHeaders() });
+        if (donationsRes.ok) {
+          const donationsData = await donationsRes.json();
+          setDonations(Array.isArray(donationsData) ? donationsData : []);
+        }
+
+        // Fetch events
+        try {
+          const eventsRes = await fetch('/api/events', { headers: getHeaders() });
+          if (eventsRes.ok) {
+            const eventsData = await eventsRes.json();
+            const transformedEvents = Array.isArray(eventsData) 
+              ? eventsData
+                  .filter(event => event.status === 'UPCOMING' || event.status === 'ONGOING')
+                  .map(event => ({
+                    title: event.eventName || 'Event',
+                    date: new Date(event.startDate).toLocaleDateString(),
+                    description: event.description || '',
+                    image: event.imageUrl || '/image/plant.jpg'
+                  }))
+                  .slice(0, 4)
+              : [];
+            setUpcomingEvents(transformedEvents);
+          }
+        } catch {
+          setUpcomingEvents([]);
+        }
+
+        // Fetch videos
+        try {
+          const videosRes = await fetch('/api/videos', { headers: getHeaders() });
+          if (videosRes.ok) {
+            const videosData = await videosRes.json();
+            const transformedVideos = Array.isArray(videosData) 
+              ? videosData.slice(0, 4).map(video => ({
+                  id: video.id || Math.random().toString(),
+                  title: video.title || 'Video',
+                  description: video.description || '',
+                  views: video.views || '0 views',
+                  thumbnail: video.thumbnail || '/image/video-thumbnail.jpg',
+                  videoUrl: video.videoUrl || '',
+                  duration: video.duration || '0:00'
+                }))
+              : [];
+            setRecentVideos(transformedVideos);
+          }
+        } catch {
+          setRecentVideos([]);
+        }
       } catch (error) {
-        console.error('Failed to fetch donations:', error);
+        console.error('Error fetching dashboard data:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
     if (user) {
-      fetchDonations();
+      fetchDashboardData();
     }
   }, [user]);
 
   // Calculate stats from donations
   const totalAmount = donations.reduce((sum, donation) => sum + (Number(donation.amount) || 0), 0);
 
-  // TODO: Replace with API call to fetch events
-  const upcomingEvents: { title: string; date: string; description: string; image: string; }[] = [];
-
-  // TODO: Replace with API call to fetch videos
-  const recentVideos: Video[] = [];
+  // Transform donations for donation history
+  const donationHistory = donations
+    .sort((a, b) => new Date(b.donationTime).getTime() - new Date(a.donationTime).getTime())
+    .slice(0, 10)
+    .map(donation => ({
+      date: new Date(donation.donationTime).toLocaleDateString(),
+      amount: `${Number(donation.amount).toLocaleString()} Rwf`,
+      cause: donation.donationText || 'General Fund',
+      status: donation.status || 'COMPLETED'
+    }));
 
   // Update handleVideoClick to use Video type
   const handleVideoClick = (video: Video) => {
@@ -164,9 +217,6 @@ function DashboardPage() {
     }
   };
 
-  // TODO: Replace with API call to fetch donation history
-  const donationHistory: { date: string; amount: string; cause: string; status: string; }[] = [];
-
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
     
@@ -241,7 +291,7 @@ function DashboardPage() {
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-600">Raised: $45,000</span>
-                      <span className="text-gray-600">Goal: $100,000</span>
+                      <span className="text-gray-600">Goal: $0</span>
                     </div>
                     <Progress
                       value={45}

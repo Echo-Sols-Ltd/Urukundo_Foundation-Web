@@ -1,4 +1,32 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { analyticsApi } from '@/lib/api';
+
 export function HeroSection() {
+  const [stats, setStats] = useState({
+    totalAmount: 0,
+    totalDonors: 0,
+    isLoading: true,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const donationStats = await analyticsApi.getDonationStats();
+        setStats({
+          totalAmount: donationStats.totalAmount,
+          totalDonors: donationStats.totalDonors,
+          isLoading: false,
+        });
+      } catch (error) {
+        console.error('Error fetching hero stats:', error);
+        setStats(prev => ({ ...prev, isLoading: false }));
+      }
+    };
+
+    fetchStats();
+  }, []);
   return (
     <section className="relative min-h-[600px] bg-gradient-to-br from-gray-900/95 to-gray-800/95 text-white overflow-hidden">
       {/* Background Image */}
@@ -30,13 +58,13 @@ export function HeroSection() {
           <div className="flex items-center gap-12">
             <div>
               <div className="text-orange-500 font-sans text-3xl lg:text-4xl font-bold">
-                $1,284,528
+                {stats.isLoading ? '...' : `RWF ${stats.totalAmount.toLocaleString()}`}
               </div>
-              <div className="font-serif text-sm text-white/80">Donation</div>
+              <div className="font-serif text-sm text-white/80">Total Donations</div>
             </div>
             <div>
               <div className="text-orange-500 font-sans text-3xl lg:text-4xl font-bold">
-                12,960
+                {stats.isLoading ? '...' : stats.totalDonors.toLocaleString()}
               </div>
               <div className="font-serif text-sm text-white/80">
                 People Helped

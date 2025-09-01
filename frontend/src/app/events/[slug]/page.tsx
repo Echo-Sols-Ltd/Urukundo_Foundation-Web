@@ -21,42 +21,8 @@ interface EventData {
   category: string;
 }
 
-// Mock data for events with explicit keys
-const eventsData: Record<
-  'clean-water-for-all' | 'improve-education' | 'end-hunger',
-  EventData
-> = {
-  'clean-water-for-all': {
-    title: 'Clean Water for All',
-    image: '/image/water.jpg',
-    goal: 12000,
-    raised: 8000,
-    donations: 14,
-    description:
-      'Providing clean, safe water to communities in need across rural areas.',
-    category: 'Clean Water',
-  },
-  'improve-education': {
-    title: 'Improve Education',
-    image: '/image/student.jpg',
-    goal: 15000,
-    raised: 3000,
-    donations: 25,
-    description:
-      'Building schools and providing educational resources for children.',
-    category: 'Education',
-  },
-  'end-hunger': {
-    title: 'End Hunger',
-    image: '/image/rice.jpg',
-    goal: 200000,
-    raised: 50000,
-    donations: 6,
-    description:
-      'Providing nutritious meals and food security to families in need.',
-    category: 'Ending Hunger',
-  },
-};
+// Remove hardcoded dummy data - this should come from API
+const eventsData: Record<string, EventData> = {};
 
 const categories = [
   { name: 'Clean Water', count: 3 },
