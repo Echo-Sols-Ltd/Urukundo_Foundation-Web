@@ -23,6 +23,7 @@ import {
   MoreHorizontal,
 } from 'lucide-react';
 import { Event } from '@/types/admin';
+import { donationsApi } from '@/lib/api';
 
 interface BackendEvent {
   id?: number;
@@ -152,6 +153,16 @@ export default function EventsPage() {
   }>>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [donationsDialogOpen, setDonationsDialogOpen] = useState(false);
+  const [selectedEventDonations, setSelectedEventDonations] = useState<Array<{
+    id: number;
+    amount: number;
+    donationTime?: string;
+    donor?: { firstName?: string; lastName?: string; email?: string };
+    donationCause?: string;
+    methodOfPayment?: string;
+    status?: string;
+  }>>([]);
 
   // Map backend Event -> frontend Event shape
   const mapBackendEventToUi = (be: BackendEvent): Event => {
@@ -190,6 +201,19 @@ export default function EventsPage() {
       }
     } catch {
       console.error('Failed to load attendees');
+    }
+  };
+
+  // Load donations for an event (admin view)
+  const loadEventDonations = async (eventId: string) => {
+    try {
+      const list = await donationsApi.getByEvent(Number(eventId));
+      setSelectedEventDonations(list as unknown as Array<{ id: number; amount: number; donationTime?: string; donor?: { firstName?: string; lastName?: string; email?: string }; donationCause?: string; methodOfPayment?: string; status?: string; }>
+      );
+      setDonationsDialogOpen(true);
+    } catch {
+      setSelectedEventDonations([]);
+      setDonationsDialogOpen(true);
     }
   };
 
@@ -637,6 +661,13 @@ export default function EventsPage() {
                               >
                                 <MoreHorizontal className="w-4 h-4" />
                               </button>
+                              <button
+                                className="ml-2 text-orange-600 hover:text-white hover:bg-orange-500 border border-orange-500 px-3 py-1 rounded-lg transition-all duration-150"
+                                title="View Donations"
+                                onClick={() => loadEventDonations(event.id)}
+                              >
+                                Donations
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -718,6 +749,49 @@ export default function EventsPage() {
         onCancel={() => { setConfirmOpen(false); setPendingDeleteId(null); }}
         onConfirm={executeDeleteEvent}
       />
+
+      {/* Event Donations Dialog */}
+      {donationsDialogOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white w-full max-w-3xl mx-auto rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Event Donations</h3>
+              <button onClick={() => setDonationsDialogOpen(false)} className="px-3 py-1 border rounded-lg">Close</button>
+            </div>
+            <div className="p-6 overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50/50">
+                  <tr>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">ID</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Donor</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Amount</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Status</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Method</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {selectedEventDonations.map((d, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50/50">
+                      <td className="py-3 px-4 text-sm font-medium text-gray-900">{d.id}</td>
+                      <td className="py-3 px-4 text-sm text-gray-800">{d.donor ? `${d.donor.firstName ?? ''} ${d.donor.lastName ?? ''}`.trim() || 'Anonymous' : 'Anonymous'}</td>
+                      <td className="py-3 px-4 text-sm font-semibold text-gray-900">{Number(d.amount || 0).toLocaleString()} RWF</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{d.status || 'PENDING'}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{d.methodOfPayment || 'ONLINE'}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{d.donationTime ? String(d.donationTime).slice(0,10) : ''}</td>
+                    </tr>
+                  ))}
+                  {selectedEventDonations.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="py-6 text-center text-gray-500 text-sm">No donations yet for this event.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
-// Comprehensive API service for backend integration
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 // Types for API responses
 export interface Event {
@@ -11,6 +12,7 @@ export interface Event {
   status: 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
   organizer: string;
   capacity: number;
+  cost?: number;
   startDate: string;
   endDate: string;
   organization: string;
@@ -37,6 +39,15 @@ export interface Donation {
   donationCause?: string;
 }
 
+// Payload for creating donations (includes fields backend accepts)
+export interface DonationCreate {
+  amount?: number;
+  donationText?: string;
+  methodOfPayment?: string;
+  status?: 'PENDING' | 'COMPLETED' | 'FAILED';
+  donationCause?: string;
+}
+
 export interface Video {
   id: string;
   title: string;
@@ -46,6 +57,14 @@ export interface Video {
   duration: string;
   views: string;
   uploadTime: string;
+}
+
+export interface NotificationItem {
+  id: string | number;
+  title: string;
+  message?: string;
+  isRead?: boolean;
+  timestamp: string;
 }
 
 export interface DonationStats {
@@ -152,7 +171,7 @@ export const donationsApi = {
   },
 
   // Create donation
-  create: async (donation: Partial<Donation>): Promise<Donation | null> => {
+  create: async (donation: DonationCreate): Promise<Donation | null> => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/donation`, {
         method: 'POST',
@@ -164,6 +183,36 @@ export const donationsApi = {
     } catch (error) {
       console.error('Error creating donation:', error);
       return null;
+    }
+  },
+
+  // Create donation for a specific event
+  createForEvent: async (eventId: number, donation: DonationCreate): Promise<Donation | null> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/donation/event/${eventId}`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(donation),
+      });
+      if (!response.ok) throw new Error('Failed to create event donation');
+      return await response.json();
+    } catch (error) {
+      console.error('Error creating event donation:', error);
+      return null;
+    }
+  },
+
+  // List donations for a specific event (admin or public depending on backend rules)
+  getByEvent: async (eventId: number): Promise<Donation[]> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/donation/event/${eventId}`, {
+        headers: getAuthHeaders(),
+      });
+      if (!response.ok) throw new Error('Failed to fetch event donations');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching event donations:', error);
+      return [];
     }
   },
 };
@@ -179,6 +228,22 @@ export const videosApi = {
       return await response.json();
     } catch (error) {
       console.error('Error fetching videos:', error);
+      return [];
+    }
+  },
+};
+
+// Notifications API (optional backend support)
+export const notificationsApi = {
+  getAll: async (): Promise<NotificationItem[]> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/notifications`, {
+        headers: getAuthHeaders(),
+      });
+      if (!response.ok) return [];
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
       return [];
     }
   },
@@ -298,16 +363,22 @@ export const dataTransformers = {
     title: event.eventName,
     slug: `event-${event.id}`,
     description: event.description,
-    goal: '0', // Will need to be calculated from donations or set separately
+    goal: (Number(event.cost || 0)).toLocaleString(),
     raised: event.donations ? 
       event.donations.reduce((sum, d) => sum + Number(d.amount), 0).toLocaleString() : '0',
     supporters: event.donations ? event.donations.length.toString() : '0',
-    progress: 0, // Will need goal amount to calculate
+    progress: (() => {
+      const goal = Number(event.cost || 0);
+      const raised = event.donations ? event.donations.reduce((s, d) => s + Number(d.amount), 0) : 0;
+      return goal > 0 ? Math.min(Math.round((raised / goal) * 100), 100) : 0;
+    })(),
     image: event.imageUrl || '/image/plant.jpg',
     date: new Date(event.startDate).toLocaleDateString(),
     location: event.location,
     organizer: event.organizer,
     status: event.status,
+    startDate: event.startDate,
+    endDate: event.endDate,
   }),
 
   // Transform backend donation to UI format

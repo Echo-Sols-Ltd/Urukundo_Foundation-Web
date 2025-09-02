@@ -93,7 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (user.role === 'ADMIN') {
         router.push('/admin');
       } else {
-        router.push('/dashboard');
+        router.push('/donation');
       }
     } catch (error) {
       setAuthState({
@@ -115,8 +115,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading: false,
       });
       
-      // Redirect to dashboard after successful registration
-      router.push('/dashboard');
+      // Redirect to donation dashboard after successful registration
+      router.push('/donation');
     } catch (error) {
       setAuthState({
         user: null,

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { donationsApi } from '@/lib/api';
 import Header from '../../../components/donation/Header';
 import Sidebar from '../../../components/donation/Sidebar';
 import { Search } from 'lucide-react';
@@ -25,6 +26,7 @@ interface Event {
   description: string;
   date: string;
   image: string;
+  location: string;
   isRegistered?: boolean;
   registrationCount?: number;
   maxAttendees?: number;
@@ -38,6 +40,7 @@ const mapBackendEventToUi = (be: BackendEvent): Event => {
     description: be.description ?? '',
     date: start.toDateString(),
     image: be.imageUrl ?? 'https://picsum.photos/400/300?random=9',
+    location: be.location ?? 'TBD',
     maxAttendees: Number(be.capacity ?? 0),
   };
 };
@@ -48,6 +51,10 @@ export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [events, setEvents] = useState<Event[]>([]);
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+  const [detailsEvent, setDetailsEvent] = useState<Event | null>(null);
+  const [donateForEventId, setDonateForEventId] = useState<string | null>(null);
+  const [donationAmount, setDonationAmount] = useState('');
+  const [donationMessage, setDonationMessage] = useState('');
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
@@ -130,6 +137,27 @@ export default function EventsPage() {
     }
   };
 
+  const handleDonateClick = (eventId: string) => {
+    setDonateForEventId(eventId);
+    setDonationAmount('');
+    setDonationMessage('');
+  };
+
+  const submitDonation = async () => {
+    if (!donateForEventId) return;
+    const amt = Number(donationAmount);
+    if (!amt || amt <= 0) return;
+    await donationsApi.createForEvent(Number(donateForEventId), {
+      amount: amt,
+      methodOfPayment: 'ONLINE',
+      status: 'PENDING',
+      donationText: donationMessage,
+      donationCause: 'Event',
+    });
+    setDonateForEventId(null);
+    alert('Thank you for your donation!');
+  };
+
   const handleCancelRegistration = async (eventId: string) => {
     setLoadingStates(prev => ({ ...prev, [eventId]: true }));
     try {
@@ -198,6 +226,9 @@ export default function EventsPage() {
             </div>
 
             <div className="space-y-6">
+              {events.length === 0 && (
+                <div className="text-center text-gray-500 py-12">No upcoming events yet. Please check back later.</div>
+              )}
               {events
                 .filter(
                   (event) =>
@@ -262,7 +293,10 @@ export default function EventsPage() {
                               }
                             </button>
                           )}
-                          <button className="px-8 py-3 border border-orange-500 text-orange-500 font-medium rounded-lg hover:bg-orange-50 transition-colors">
+                          <button onClick={() => handleDonateClick(event.id)} className="px-8 py-3 border border-green-500 text-green-600 font-medium rounded-lg hover:bg-green-50 transition-colors">
+                            DONATE
+                          </button>
+                          <button onClick={() => setDetailsEvent(event)} className="px-8 py-3 border border-orange-500 text-orange-500 font-medium rounded-lg hover:bg-orange-50 transition-colors">
                             LEARN MORE
                           </button>
                         </div>
@@ -297,6 +331,55 @@ export default function EventsPage() {
               )}
           </div>
         </main>
+        {detailsEvent && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="bg-white w-full max-w-2xl mx-auto rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+              <div className="p-6 space-y-3">
+                <h3 className="text-xl font-semibold text-gray-900">{detailsEvent.title}</h3>
+                <p className="text-gray-700">{detailsEvent.description}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-600">
+                  <div><span className="font-medium">Date:</span> {detailsEvent.date}</div>
+                  <div><span className="font-medium">Location:</span> {detailsEvent.location}</div>
+                </div>
+                <div className="flex justify-end gap-2 pt-2">
+                  <button onClick={() => setDetailsEvent(null)} className="px-4 py-2 border rounded-lg">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {donateForEventId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="bg-white w-full max-w-md mx-auto rounded-xl shadow-xl border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Donate to Event</h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Amount (RWF)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={donationAmount}
+                    onChange={(e) => setDonationAmount(e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Message (optional)</label>
+                  <textarea
+                    rows={3}
+                    value={donationMessage}
+                    onChange={(e) => setDonationMessage(e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2"
+                  />
+                </div>
+              </div>
+              <div className="mt-5 flex justify-end gap-2">
+                <button onClick={() => setDonateForEventId(null)} className="px-4 py-2 border rounded-lg">Cancel</button>
+                <button onClick={submitDonation} className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600">Confirm Donation</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

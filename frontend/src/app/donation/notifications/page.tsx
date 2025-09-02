@@ -1,65 +1,21 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Header from "../../../components/donation/Header"
 import Sidebar from "../../../components/donation/Sidebar"
-
-interface Notification {
-  id: string
-  title: string
-  message: string
-  isRead: boolean
-  timestamp: string
-}
-
-const notifications: Notification[] = [
-  {
-    id: "NOT-001",
-    title: "Your donation to Earthquake Relief has been processed",
-    message: "",
-    isRead: false,
-    timestamp: "24 March 2025",
-  },
-  {
-    id: "NOT-002",
-    title: "Reminder: Community Outreach Program tomorrow",
-    message: "",
-    isRead: false,
-    timestamp: "1 day ago",
-  },
-  {
-    id: "NOT-003",
-    title: "New impact story video available",
-    message: "",
-    isRead: false,
-    timestamp: "24 March 2025",
-  },
-  {
-    id: "NOT-004",
-    title: "Your donation to Earthquake Relief has been processed",
-    message: "",
-    isRead: true,
-    timestamp: "24 March 2025",
-  },
-  {
-    id: "NOT-005",
-    title: "Reminder: Community Outreach Program tomorrow",
-    message: "",
-    isRead: true,
-    timestamp: "1 day ago",
-  },
-  {
-    id: "NOT-006",
-    title: "New impact story video available",
-    message: "",
-    isRead: true,
-    timestamp: "24 March 2025",
-  },
-]
+import { notificationsApi, type NotificationItem } from "@/lib/api"
 
 export default function NotificationsPage() {
-  const [notificationsList, setNotificationsList] = useState<Notification[]>(notifications)
+  const [notificationsList, setNotificationsList] = useState<NotificationItem[]>([])
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  useEffect(() => {
+    const load = async () => {
+      const items = await notificationsApi.getAll()
+      setNotificationsList(items)
+    }
+    load()
+  }, [])
 
   const markAllAsRead = () => {
     setNotificationsList((prev) => prev.map((notif) => ({ ...notif, isRead: true })))

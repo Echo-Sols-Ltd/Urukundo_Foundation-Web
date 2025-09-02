@@ -264,49 +264,6 @@ function DashboardPage() {
             </div>
           </div>
 
-          {/* Featured Causes */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Featured Causes
-            </h2>
-            <Card className="p-6">
-              <div className="flex gap-6">
-                <div className="w-64 h-48 rounded-lg overflow-hidden flex-shrink-0">
-                  <Image
-                    src="/image/support.png"
-                    alt="Earthquake Relief"
-                    width={256}
-                    height={192}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    Support Families Affected by the Nyamasheke Earthquake
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    Your donation will provide essential supplies and support to
-                    families impacted by the earthquake.
-                  </p>
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Raised: $45,000</span>
-                      <span className="text-gray-600">Goal: $0</span>
-                    </div>
-                    <Progress
-                      value={45}
-                      className="h-2 [&>div]:bg-orange-500"
-                    />
-                    <p className="text-sm text-gray-500 mt-2">1250 donors</p>
-                  </div>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600">
-                    DONATE NOW
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </section>
-
           {/* Upcoming Events */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">

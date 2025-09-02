@@ -40,8 +40,9 @@ export interface JWTPayload {
   // Add other claims that might be in the JWT
 }
 
-// Base API URL - adjust this to match your backend
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+//const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 // Decode JWT payload (real implementation)
 export function decodeToken(token: string): JWTPayload | null {
