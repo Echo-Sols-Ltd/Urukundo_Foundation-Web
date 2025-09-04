@@ -43,7 +43,7 @@ export interface JWTPayload {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   'https://urukundo-fromntend-urukundo-back-1.onrender.com';
-//const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+// ...existing code...
 
 // Decode JWT payload (real implementation)
 export function decodeToken(token: string): JWTPayload | null {

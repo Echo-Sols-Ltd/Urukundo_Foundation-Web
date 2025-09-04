@@ -2,7 +2,7 @@
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   'https://urukundo-fromntend-urukundo-back-1.onrender.com';
-//const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+// ...existing code...
 
 export interface Donation {
   id: number;
@@ -22,6 +22,15 @@ export interface DonationStats {
   totalAmount: number;
   totalDonations: number;
   recentDonations: Donation[];
+}
+
+// Payload for creating a donation (backend request shape)
+export interface DonationCreateRequest {
+  amount: number;
+  donationText: string;
+  methodOfPayment: string;
+  donationCause: string;
+  status: 'PENDING' | 'COMPLETED' | 'FAILED';
 }
 
 // Get authorization header
@@ -90,7 +99,7 @@ export async function getUserDonationStats(): Promise<DonationStats> {
 
 // Create a new donation
 export async function createDonation(
-  donationData: Partial<Donation>,
+  donationData: DonationCreateRequest,
 ): Promise<Donation> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/donation`, {

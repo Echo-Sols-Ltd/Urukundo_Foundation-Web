@@ -1,7 +1,7 @@
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   'https://urukundo-fromntend-urukundo-back-1.onrender.com';
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+// ...existing code...
 
 // Types for API responses
 export interface Event {

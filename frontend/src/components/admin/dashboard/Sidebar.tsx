@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
   Home,
   Calendar,
@@ -34,30 +35,10 @@ const sidebarItems: SidebarItem[] = [
 
 export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
-    try {
-      const accessToken =
-        typeof window !== 'undefined'
-          ? localStorage.getItem('accessToken')
-          : null;
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
-      });
-    } catch {
-      // ignore
-    } finally {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-      }
-      router.push('/login');
-    }
+    await logout();
   };
 
   return (
@@ -75,7 +56,15 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center">
-              <span className="text-white text-xs font-bold">🌍</span>
+              <span className="text-white text-xs font-bold">
+                <Image
+                  src="/image/charity.svg"
+                  alt="Logo"
+                  width={16}
+                  height={16}
+                  className="object-contain"
+                />
+              </span>
             </div>
             <div>
               <h1 className="font-bold text-gray-900 text-sm">

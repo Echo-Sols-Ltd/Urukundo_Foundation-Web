@@ -3,10 +3,15 @@
 import type React from 'react';
 import Image from 'next/image';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/donation/Sidebar';
 import { ChevronDown } from 'lucide-react';
+import {
+  getUserDonationStats,
+  createDonation,
+  type DonationCreateRequest,
+} from '@/lib/donations';
 
 interface DonationForm {
   cause: string;
@@ -35,21 +40,28 @@ export default function DonatePage() {
   });
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [statsLoading, setStatsLoading] = useState(true);
 
   const handleInputChange = (field: keyof DonationForm, value: string) => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const getHeaders = () => {
-    const token =
-      typeof window !== 'undefined'
-        ? localStorage.getItem('accessToken')
-        : null;
-    return {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setStatsLoading(true);
+        const stats = await getUserDonationStats();
+        if (mounted) setTotalAmount(stats.totalAmount || 0);
+      } finally {
+        if (mounted) setStatsLoading(false);
+      }
+    })();
+    return () => {
+      mounted = false;
     };
-  };
+  }, []);
 
   const mapCauseToEnum = (label: string) => {
     const normalized = label.toLowerCase();
@@ -68,22 +80,21 @@ export default function DonatePage() {
     try {
       setIsSubmitting(true);
       const amountNumber = Number(formData.amount);
-      const payload = {
+      const payload: DonationCreateRequest = {
         amount: isNaN(amountNumber) ? 0 : amountNumber,
         donationText: formData.message || '',
         methodOfPayment: 'ONLINE',
         donationCause: mapCauseToEnum(formData.cause),
         status: 'PENDING',
       };
-      const res = await fetch('/api/donation', {
-        method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
+      const created = await createDonation(payload);
+      if (created) {
         alert(
           `Thank you for your ${formData.donationType} donation of RWF ${formData.amount}!`,
         );
+        // refresh stats after donation
+        const stats = await getUserDonationStats();
+        setTotalAmount(stats.totalAmount || 0);
         router.push('/donation/my-donations');
       } else {
         alert('Failed to submit donation. Please try again.');
@@ -139,12 +150,14 @@ export default function DonatePage() {
               <div className="text-right">
                 <div className="text-sm text-gray-600">Total Donations</div>
                 <div className="text-lg font-semibold text-orange-500">
-                  45,000 Rwf
+                  {statsLoading
+                    ? '—'
+                    : `RWF ${new Intl.NumberFormat().format(totalAmount)}`}
                 </div>
               </div>
-              <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
                 <Image
-                  src="/diverse-group-profile.png"
+                  src="/image/profile.png"
                   alt="Profile"
                   width={40}
                   height={40}
