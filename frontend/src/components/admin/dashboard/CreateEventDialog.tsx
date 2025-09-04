@@ -400,7 +400,9 @@ export default function CreateEventDialog({
                 className="block w-full text-sm text-gray-900 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
               />
               {formData.imageFile && (
-                <p className="mt-2 text-xs text-gray-500">Selected: {formData.imageFile.name}</p>
+                <p className="mt-2 text-xs text-gray-500">
+                  Selected: {formData.imageFile.name}
+                </p>
               )}
             </div>
 

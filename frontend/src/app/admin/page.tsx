@@ -44,7 +44,10 @@ function AdminDashboard() {
 
   // Helper function to get auth headers
   const getHeaders = (): Record<string, string> => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
@@ -53,16 +56,26 @@ function AdminDashboard() {
     const fetchAnalytics = async () => {
       try {
         // Fetch donations
-        const donationsRes = await fetch('/api/donation', { headers: getHeaders() });
-        const donations: Donation[] = donationsRes.ok ? await donationsRes.json() : [];
+        const donationsRes = await fetch('/api/donation', {
+          headers: getHeaders(),
+        });
+        const donations: Donation[] = donationsRes.ok
+          ? await donationsRes.json()
+          : [];
 
         // Fetch events
         const eventsRes = await fetch('/api/events', { headers: getHeaders() });
         const events: Event[] = eventsRes.ok ? await eventsRes.json() : [];
 
         // Calculate analytics
-        const totalDonationAmount = donations.reduce((sum: number, donation: Donation) => sum + (Number(donation.amount) || 0), 0);
-        const uniqueDonors = new Set(donations.map((d: Donation) => d.donor?.id).filter(Boolean)).size;
+        const totalDonationAmount = donations.reduce(
+          (sum: number, donation: Donation) =>
+            sum + (Number(donation.amount) || 0),
+          0,
+        );
+        const uniqueDonors = new Set(
+          donations.map((d: Donation) => d.donor?.id).filter(Boolean),
+        ).size;
 
         setAnalytics({
           totalDonations: donations.length,
@@ -75,7 +88,7 @@ function AdminDashboard() {
         });
       } catch (error) {
         console.error('Failed to fetch analytics:', error);
-        setAnalytics(prev => ({ ...prev, isLoading: false }));
+        setAnalytics((prev) => ({ ...prev, isLoading: false }));
       }
     };
 
@@ -85,21 +98,27 @@ function AdminDashboard() {
   const metrics = [
     {
       title: 'Total Donations',
-      value: analytics.isLoading ? 'Loading...' : `${analytics.totalDonationAmount.toLocaleString()} Rwf`,
+      value: analytics.isLoading
+        ? 'Loading...'
+        : `${analytics.totalDonationAmount.toLocaleString()} Rwf`,
       change: `${analytics.totalDonations} donations`,
       icon: DollarSign,
       color: 'bg-orange-100 text-orange-600',
     },
     {
       title: 'Active Donors',
-      value: analytics.isLoading ? 'Loading...' : analytics.totalDonors.toString(),
+      value: analytics.isLoading
+        ? 'Loading...'
+        : analytics.totalDonors.toString(),
       change: '+8%',
       icon: Heart,
       color: 'bg-orange-100 text-orange-600',
     },
     {
       title: 'Total Events',
-      value: analytics.isLoading ? 'Loading...' : analytics.totalEvents.toString(),
+      value: analytics.isLoading
+        ? 'Loading...'
+        : analytics.totalEvents.toString(),
       change: 'All time',
       icon: Calendar,
       color: 'bg-orange-100 text-orange-600',
@@ -151,7 +170,10 @@ function AdminDashboard() {
 
             {/* Recent Activity */}
             <div className="grid grid-cols-1">
-              <RecentActivity donations={analytics.donations} events={analytics.events} />
+              <RecentActivity
+                donations={analytics.donations}
+                events={analytics.events}
+              />
             </div>
           </div>
         </main>

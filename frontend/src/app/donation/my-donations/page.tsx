@@ -48,7 +48,7 @@ const mapBackendDonationToUi = (d: BackendDonation): Donation => {
     COMPLETED: 'completed',
     PENDING: 'pending',
     FAILED: 'failed',
-  }
+  };
   return {
     id: String(d.id ?? ''),
     amount: Number(d.amount ?? 0),
@@ -58,9 +58,11 @@ const mapBackendDonationToUi = (d: BackendDonation): Donation => {
     method: d.methodOfPayment ?? 'ONLINE',
     campaign: d.donationCause ?? 'General Fund',
     message: d.donationText ?? undefined,
-    receiptNumber: `RCP-${String(d.id ?? '000').toString().padStart(3, '0')}`,
-  }
-}
+    receiptNumber: `RCP-${String(d.id ?? '000')
+      .toString()
+      .padStart(3, '0')}`,
+  };
+};
 
 const getStatusIcon = (status: Donation['status']) => {
   switch (status) {
@@ -92,7 +94,10 @@ export default function MyDonationsPage() {
   >('all');
 
   const getHeaders = (): Record<string, string> => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
@@ -102,7 +107,9 @@ export default function MyDonationsPage() {
         const res = await fetch('/api/donation', { headers: getHeaders() });
         if (!res.ok) return;
         const data = await res.json();
-        const mapped: Donation[] = Array.isArray(data) ? data.map(mapBackendDonationToUi) : [];
+        const mapped: Donation[] = Array.isArray(data)
+          ? data.map(mapBackendDonationToUi)
+          : [];
         setDonations(mapped);
       } catch {}
     };

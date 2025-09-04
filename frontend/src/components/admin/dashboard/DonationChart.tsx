@@ -24,23 +24,41 @@ export default function DonationChart({ donations = [] }: DonationChartProps) {
     }
 
     // Group donations by month
-    const monthlyData = donations.reduce((acc, donation) => {
-      const date = new Date(donation.donationTime);
-      const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
-      
-      if (!acc[monthKey]) {
-        acc[monthKey] = 0;
-      }
-      acc[monthKey] += Number(donation.amount) || 0;
-      return acc;
-    }, {} as Record<string, number>);
+    const monthlyData = donations.reduce(
+      (acc, donation) => {
+        const date = new Date(donation.donationTime);
+        const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
+
+        if (!acc[monthKey]) {
+          acc[monthKey] = 0;
+        }
+        acc[monthKey] += Number(donation.amount) || 0;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     // Convert to array format for chart
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months.map(month => ({
-      period: month,
-      amount: monthlyData[month] || 0,
-    })).slice(0, 6); // Show last 6 months
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return months
+      .map((month) => ({
+        period: month,
+        amount: monthlyData[month] || 0,
+      }))
+      .slice(0, 6); // Show last 6 months
   }, [donations]);
 
   const maxAmount = Math.max(...processedData.map((d) => d.amount), 1);
@@ -81,7 +99,9 @@ export default function DonationChart({ donations = [] }: DonationChartProps) {
           <span>{maxAmount.toLocaleString()}</span>
         </div>
 
-        <div className="text-center text-xs text-gray-400 mt-2">Amount (Rwf)</div>
+        <div className="text-center text-xs text-gray-400 mt-2">
+          Amount (Rwf)
+        </div>
       </div>
     </div>
   );

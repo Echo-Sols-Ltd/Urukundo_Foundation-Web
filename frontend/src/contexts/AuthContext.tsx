@@ -1,17 +1,23 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  AuthState, 
-  LoginRequest, 
+import {
+  AuthState,
+  LoginRequest,
   RegisterRequest,
   login as authLogin,
   register as authRegister,
   logout as authLogout,
   getCurrentUser,
   isAuthenticated as checkIsAuthenticated,
-  refreshAccessToken
+  refreshAccessToken,
 } from '../lib/auth';
 
 interface AuthContextType extends AuthState {
@@ -81,14 +87,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (credentials: LoginRequest): Promise<void> => {
     try {
-      setAuthState(prev => ({ ...prev, isLoading: true }));
+      setAuthState((prev) => ({ ...prev, isLoading: true }));
       const user = await authLogin(credentials);
       setAuthState({
         user,
         isAuthenticated: true,
         isLoading: false,
       });
-      
+
       // Redirect based on user role
       if (user.role === 'ADMIN') {
         router.push('/admin');
@@ -107,14 +113,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (userData: RegisterRequest): Promise<void> => {
     try {
-      setAuthState(prev => ({ ...prev, isLoading: true }));
+      setAuthState((prev) => ({ ...prev, isLoading: true }));
       const user = await authRegister(userData);
       setAuthState({
         user,
         isAuthenticated: true,
         isLoading: false,
       });
-      
+
       // Redirect to donation dashboard after successful registration
       router.push('/donation');
     } catch (error) {
@@ -157,7 +163,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return;
         }
       }
-      
+
       // If refresh failed, clear auth state
       setAuthState({
         user: null,
@@ -182,9 +188,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     refreshAuth,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -41,7 +41,7 @@ const mapBackendDonationToUi = (d: BackendDonation): Donation => {
     PENDING: 'pending',
     FAILED: 'failed',
   };
-  
+
   const methodMap: Record<string, Donation['method']> = {
     ONLINE: 'card',
     CARD: 'card',
@@ -49,10 +49,13 @@ const mapBackendDonationToUi = (d: BackendDonation): Donation => {
     MOBILE: 'mobile',
     CASH: 'cash',
   };
-  
+
   return {
     id: String(d.id ?? ''),
-    donorName: d.donor ? `${d.donor.firstName ?? ''} ${d.donor.lastName ?? ''}`.trim() || 'Anonymous Donor' : 'Anonymous Donor',
+    donorName: d.donor
+      ? `${d.donor.firstName ?? ''} ${d.donor.lastName ?? ''}`.trim() ||
+        'Anonymous Donor'
+      : 'Anonymous Donor',
     email: d.donor?.email ?? 'hidden@example.com',
     amount: Number(d.amount ?? 0),
     currency: 'RWF',
@@ -62,7 +65,9 @@ const mapBackendDonationToUi = (d: BackendDonation): Donation => {
     campaign: d.donationCause ?? 'General Fund',
     message: d.donationText ?? '',
     isAnonymous: !d.donor,
-    receiptNumber: `RCP-${String(d.id ?? '000').toString().padStart(3, '0')}`,
+    receiptNumber: `RCP-${String(d.id ?? '000')
+      .toString()
+      .padStart(3, '0')}`,
   };
 };
 
@@ -79,8 +84,13 @@ export default function DonationsPage() {
   const [pendingDelete, setPendingDelete] = useState<Donation | null>(null);
 
   const getHeaders = (): Record<string, string> => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-    return token ? { Authorization: `Bearer ${token}` } : { 'Content-Type': 'application/json' };
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
+    return token
+      ? { Authorization: `Bearer ${token}` }
+      : { 'Content-Type': 'application/json' };
   };
 
   useEffect(() => {
@@ -89,7 +99,9 @@ export default function DonationsPage() {
         const res = await fetch('/api/donation', { headers: getHeaders() });
         if (!res.ok) return;
         const data = await res.json();
-        const mapped: Donation[] = Array.isArray(data) ? data.map(mapBackendDonationToUi) : [];
+        const mapped: Donation[] = Array.isArray(data)
+          ? data.map(mapBackendDonationToUi)
+          : [];
         setDonations(mapped);
       } catch {}
     };
@@ -121,7 +133,8 @@ export default function DonationsPage() {
       });
       if (res.ok || res.status === 204) {
         setDonations((prev) => prev.filter((d) => d.id !== pendingDelete.id));
-        if (selectedDonation?.id === pendingDelete.id) setSelectedDonation(null);
+        if (selectedDonation?.id === pendingDelete.id)
+          setSelectedDonation(null);
         setPendingDelete(null);
       }
     } catch {}
@@ -142,33 +155,54 @@ export default function DonationsPage() {
     const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
     // Total raised from all donations
-    const totalRaised = donations.reduce((sum, donation) => sum + donation.amount, 0);
-    
+    const totalRaised = donations.reduce(
+      (sum, donation) => sum + donation.amount,
+      0,
+    );
+
     // Active donors (unique donors)
-    const uniqueDonors = new Set(donations.map(d => d.email)).size;
-    
+    const uniqueDonors = new Set(donations.map((d) => d.email)).size;
+
     // This month donations
-    const thisMonthDonations = donations.filter(donation => {
+    const thisMonthDonations = donations.filter((donation) => {
       const donationDate = new Date(donation.date);
-      return donationDate.getMonth() === currentMonth && donationDate.getFullYear() === currentYear;
+      return (
+        donationDate.getMonth() === currentMonth &&
+        donationDate.getFullYear() === currentYear
+      );
     });
-    const thisMonthTotal = thisMonthDonations.reduce((sum, donation) => sum + donation.amount, 0);
-    
+    const thisMonthTotal = thisMonthDonations.reduce(
+      (sum, donation) => sum + donation.amount,
+      0,
+    );
+
     // Last month donations for comparison
-    const lastMonthDonations = donations.filter(donation => {
+    const lastMonthDonations = donations.filter((donation) => {
       const donationDate = new Date(donation.date);
-      return donationDate.getMonth() === lastMonth && donationDate.getFullYear() === lastMonthYear;
+      return (
+        donationDate.getMonth() === lastMonth &&
+        donationDate.getFullYear() === lastMonthYear
+      );
     });
-    const lastMonthTotal = lastMonthDonations.reduce((sum, donation) => sum + donation.amount, 0);
-    
+    const lastMonthTotal = lastMonthDonations.reduce(
+      (sum, donation) => sum + donation.amount,
+      0,
+    );
+
     // Calculate percentage change
-    const monthlyChange = lastMonthTotal > 0 
-      ? ((thisMonthTotal - lastMonthTotal) / lastMonthTotal * 100).toFixed(1)
-      : thisMonthTotal > 0 ? '100' : '0';
-    
-    const changeText = parseFloat(monthlyChange) >= 0 
-      ? `+${monthlyChange}% from last month`
-      : `${monthlyChange}% from last month`;
+    const monthlyChange =
+      lastMonthTotal > 0
+        ? (((thisMonthTotal - lastMonthTotal) / lastMonthTotal) * 100).toFixed(
+            1,
+          )
+        : thisMonthTotal > 0
+          ? '100'
+          : '0';
+
+    const changeText =
+      parseFloat(monthlyChange) >= 0
+        ? `+${monthlyChange}% from last month`
+        : `${monthlyChange}% from last month`;
 
     return [
       {

@@ -50,14 +50,19 @@ export default function EventsPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [events, setEvents] = useState<Event[]>([]);
-  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>(
+    {},
+  );
   const [detailsEvent, setDetailsEvent] = useState<Event | null>(null);
   const [donateForEventId, setDonateForEventId] = useState<string | null>(null);
   const [donationAmount, setDonationAmount] = useState('');
   const [donationMessage, setDonationMessage] = useState('');
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
     if (!token) {
       router.push('/login');
       return;
@@ -74,30 +79,40 @@ export default function EventsPage() {
         const data = await res.json();
         const now = Date.now();
         const upcoming = (Array.isArray(data) ? data : [])
-          .filter((e: BackendEvent) => new Date(e.startDate ?? Date.now()).getTime() > now)
+          .filter(
+            (e: BackendEvent) =>
+              new Date(e.startDate ?? Date.now()).getTime() > now,
+          )
           .map(mapBackendEventToUi);
-        
+
         // Check registration status for each event
         const eventsWithRegistrationStatus = await Promise.all(
           upcoming.map(async (event) => {
             try {
-              const statusRes = await fetch(`/api/event-registrations/check/${event.id}`, {
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
+              const statusRes = await fetch(
+                `/api/event-registrations/check/${event.id}`,
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
                 },
-              });
+              );
               if (statusRes.ok) {
                 const statusData = await statusRes.json();
-                return { ...event, isRegistered: statusData.isRegistered, registrationCount: statusData.registrationCount };
+                return {
+                  ...event,
+                  isRegistered: statusData.isRegistered,
+                  registrationCount: statusData.registrationCount,
+                };
               }
             } catch {
               // ignore errors
             }
             return event;
-          })
+          }),
         );
-        
+
         setEvents(eventsWithRegistrationStatus);
       } catch {
         setEvents([]);
@@ -107,9 +122,12 @@ export default function EventsPage() {
   }, [router]);
 
   const handleRegister = async (eventId: string) => {
-    setLoadingStates(prev => ({ ...prev, [eventId]: true }));
+    setLoadingStates((prev) => ({ ...prev, [eventId]: true }));
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+      const token =
+        typeof window !== 'undefined'
+          ? localStorage.getItem('accessToken')
+          : null;
       const res = await fetch(`/api/event-registrations/register/${eventId}`, {
         method: 'POST',
         headers: {
@@ -117,14 +135,20 @@ export default function EventsPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       if (res.ok) {
         // Update the event's registration status
-        setEvents(prev => prev.map(event => 
-          event.id === eventId 
-            ? { ...event, isRegistered: true, registrationCount: (event.registrationCount || 0) + 1 }
-            : event
-        ));
+        setEvents((prev) =>
+          prev.map((event) =>
+            event.id === eventId
+              ? {
+                  ...event,
+                  isRegistered: true,
+                  registrationCount: (event.registrationCount || 0) + 1,
+                }
+              : event,
+          ),
+        );
         alert('Successfully registered for the event!');
       } else {
         const errorData = await res.json().catch(() => ({}));
@@ -133,7 +157,7 @@ export default function EventsPage() {
     } catch {
       alert('Failed to register for event');
     } finally {
-      setLoadingStates(prev => ({ ...prev, [eventId]: false }));
+      setLoadingStates((prev) => ({ ...prev, [eventId]: false }));
     }
   };
 
@@ -159,9 +183,12 @@ export default function EventsPage() {
   };
 
   const handleCancelRegistration = async (eventId: string) => {
-    setLoadingStates(prev => ({ ...prev, [eventId]: true }));
+    setLoadingStates((prev) => ({ ...prev, [eventId]: true }));
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+      const token =
+        typeof window !== 'undefined'
+          ? localStorage.getItem('accessToken')
+          : null;
       const res = await fetch(`/api/event-registrations/cancel/${eventId}`, {
         method: 'DELETE',
         headers: {
@@ -169,14 +196,23 @@ export default function EventsPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       if (res.ok) {
         // Update the event's registration status
-        setEvents(prev => prev.map(event => 
-          event.id === eventId 
-            ? { ...event, isRegistered: false, registrationCount: Math.max(0, (event.registrationCount || 1) - 1) }
-            : event
-        ));
+        setEvents((prev) =>
+          prev.map((event) =>
+            event.id === eventId
+              ? {
+                  ...event,
+                  isRegistered: false,
+                  registrationCount: Math.max(
+                    0,
+                    (event.registrationCount || 1) - 1,
+                  ),
+                }
+              : event,
+          ),
+        );
         alert('Registration cancelled successfully!');
       } else {
         alert('Failed to cancel registration');
@@ -184,7 +220,7 @@ export default function EventsPage() {
     } catch {
       alert('Failed to cancel registration');
     } finally {
-      setLoadingStates(prev => ({ ...prev, [eventId]: false }));
+      setLoadingStates((prev) => ({ ...prev, [eventId]: false }));
     }
   };
 
@@ -227,7 +263,9 @@ export default function EventsPage() {
 
             <div className="space-y-6">
               {events.length === 0 && (
-                <div className="text-center text-gray-500 py-12">No upcoming events yet. Please check back later.</div>
+                <div className="text-center text-gray-500 py-12">
+                  No upcoming events yet. Please check back later.
+                </div>
               )}
               {events
                 .filter(
@@ -268,35 +306,54 @@ export default function EventsPage() {
 
                         <div className="flex flex-col sm:flex-row gap-3">
                           {event.isRegistered ? (
-                            <button 
+                            <button
                               onClick={() => handleCancelRegistration(event.id)}
                               disabled={loadingStates[event.id]}
                               className="px-8 py-3 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
                             >
-                              {loadingStates[event.id] ? 'CANCELLING...' : 'CANCEL REGISTRATION'}
+                              {loadingStates[event.id]
+                                ? 'CANCELLING...'
+                                : 'CANCEL REGISTRATION'}
                             </button>
                           ) : (
-                            <button 
+                            <button
                               onClick={() => handleRegister(event.id)}
-                              disabled={loadingStates[event.id] || !!(event.maxAttendees && event.registrationCount && event.registrationCount >= event.maxAttendees)}
+                              disabled={
+                                loadingStates[event.id] ||
+                                !!(
+                                  event.maxAttendees &&
+                                  event.registrationCount &&
+                                  event.registrationCount >= event.maxAttendees
+                                )
+                              }
                               className={`px-8 py-3 font-medium rounded-lg transition-colors disabled:opacity-50 ${
-                                event.maxAttendees && event.registrationCount && event.registrationCount >= event.maxAttendees
+                                event.maxAttendees &&
+                                event.registrationCount &&
+                                event.registrationCount >= event.maxAttendees
                                   ? 'bg-gray-400 text-white cursor-not-allowed'
                                   : 'bg-orange-500 text-white hover:bg-orange-600'
                               }`}
                             >
-                              {loadingStates[event.id] 
-                                ? 'REGISTERING...' 
-                                : (event.maxAttendees && event.registrationCount && event.registrationCount >= event.maxAttendees)
+                              {loadingStates[event.id]
+                                ? 'REGISTERING...'
+                                : event.maxAttendees &&
+                                    event.registrationCount &&
+                                    event.registrationCount >=
+                                      event.maxAttendees
                                   ? 'EVENT FULL'
-                                  : 'REGISTER'
-                              }
+                                  : 'REGISTER'}
                             </button>
                           )}
-                          <button onClick={() => handleDonateClick(event.id)} className="px-8 py-3 border border-green-500 text-green-600 font-medium rounded-lg hover:bg-green-50 transition-colors">
+                          <button
+                            onClick={() => handleDonateClick(event.id)}
+                            className="px-8 py-3 border border-green-500 text-green-600 font-medium rounded-lg hover:bg-green-50 transition-colors"
+                          >
                             DONATE
                           </button>
-                          <button onClick={() => setDetailsEvent(event)} className="px-8 py-3 border border-orange-500 text-orange-500 font-medium rounded-lg hover:bg-orange-50 transition-colors">
+                          <button
+                            onClick={() => setDetailsEvent(event)}
+                            className="px-8 py-3 border border-orange-500 text-orange-500 font-medium rounded-lg hover:bg-orange-50 transition-colors"
+                          >
                             LEARN MORE
                           </button>
                         </div>
@@ -335,14 +392,27 @@ export default function EventsPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div className="bg-white w-full max-w-2xl mx-auto rounded-xl shadow-xl border border-gray-200 overflow-hidden">
               <div className="p-6 space-y-3">
-                <h3 className="text-xl font-semibold text-gray-900">{detailsEvent.title}</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {detailsEvent.title}
+                </h3>
                 <p className="text-gray-700">{detailsEvent.description}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-600">
-                  <div><span className="font-medium">Date:</span> {detailsEvent.date}</div>
-                  <div><span className="font-medium">Location:</span> {detailsEvent.location}</div>
+                  <div>
+                    <span className="font-medium">Date:</span>{' '}
+                    {detailsEvent.date}
+                  </div>
+                  <div>
+                    <span className="font-medium">Location:</span>{' '}
+                    {detailsEvent.location}
+                  </div>
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
-                  <button onClick={() => setDetailsEvent(null)} className="px-4 py-2 border rounded-lg">Close</button>
+                  <button
+                    onClick={() => setDetailsEvent(null)}
+                    className="px-4 py-2 border rounded-lg"
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
             </div>
@@ -351,10 +421,14 @@ export default function EventsPage() {
         {donateForEventId && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div className="bg-white w-full max-w-md mx-auto rounded-xl shadow-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Donate to Event</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Donate to Event
+              </h3>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Amount (RWF)</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Amount (RWF)
+                  </label>
                   <input
                     type="number"
                     min="1"
@@ -364,7 +438,9 @@ export default function EventsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Message (optional)</label>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Message (optional)
+                  </label>
                   <textarea
                     rows={3}
                     value={donationMessage}
@@ -374,8 +450,18 @@ export default function EventsPage() {
                 </div>
               </div>
               <div className="mt-5 flex justify-end gap-2">
-                <button onClick={() => setDonateForEventId(null)} className="px-4 py-2 border rounded-lg">Cancel</button>
-                <button onClick={submitDonation} className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600">Confirm Donation</button>
+                <button
+                  onClick={() => setDonateForEventId(null)}
+                  className="px-4 py-2 border rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={submitDonation}
+                  className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600"
+                >
+                  Confirm Donation
+                </button>
               </div>
             </div>
           </div>

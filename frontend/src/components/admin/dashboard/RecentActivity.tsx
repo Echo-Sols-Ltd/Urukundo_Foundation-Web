@@ -29,34 +29,47 @@ interface RecentActivityProps {
   }>;
 }
 
-export default function RecentActivity({ donations = [], events = [] }: RecentActivityProps) {
+export default function RecentActivity({
+  donations = [],
+  events = [],
+}: RecentActivityProps) {
   const activities: ActivityItem[] = React.useMemo(() => {
     // Add recent donations (last 10)
     const recentDonations = [...donations]
-      .sort((a, b) => new Date(b.donationDate || '').getTime() - new Date(a.donationDate || '').getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.donationDate || '').getTime() -
+          new Date(a.donationDate || '').getTime(),
+      )
       .slice(0, 5)
-      .map(donation => ({
+      .map((donation) => ({
         type: 'donation' as const,
         description: 'New donation received',
-        user: donation.user 
-          ? `${donation.user.firstName || ''} ${donation.user.lastName || ''}`.trim() || donation.user.username || 'Anonymous'
+        user: donation.user
+          ? `${donation.user.firstName || ''} ${donation.user.lastName || ''}`.trim() ||
+            donation.user.username ||
+            'Anonymous'
           : 'Anonymous',
         time: getTimeAgo(donation.donationDate),
         amount: donation.amount,
-        id: donation.id
+        id: donation.id,
       }));
 
     // Add recent events (last 5)
     const recentEvents = [...events]
-      .sort((a, b) => new Date(b.eventDate || '').getTime() - new Date(a.eventDate || '').getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.eventDate || '').getTime() -
+          new Date(a.eventDate || '').getTime(),
+      )
       .slice(0, 3)
-      .map(event => ({
+      .map((event) => ({
         type: 'event' as const,
         description: 'Event created',
         user: 'Admin',
         time: getTimeAgo(event.eventDate),
         title: event.eventTitle,
-        id: event.id
+        id: event.id,
       }));
 
     // Combine and sort by most recent
@@ -72,7 +85,7 @@ export default function RecentActivity({ donations = [], events = [] }: RecentAc
   // Helper function to convert date to "time ago" format
   function getTimeAgo(dateString?: string): string {
     if (!dateString) return 'Recently';
-    
+
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -94,16 +107,16 @@ export default function RecentActivity({ donations = [], events = [] }: RecentAc
   // Helper function to convert "time ago" back to timestamp for sorting
   function getTimestamp(timeAgo: string): number {
     const now = Date.now();
-    
+
     if (timeAgo.includes('minute')) {
       const minutes = parseInt(timeAgo.match(/\d+/)?.[0] || '0');
-      return now - (minutes * 60 * 1000);
+      return now - minutes * 60 * 1000;
     } else if (timeAgo.includes('hour')) {
       const hours = parseInt(timeAgo.match(/\d+/)?.[0] || '0');
-      return now - (hours * 60 * 60 * 1000);
+      return now - hours * 60 * 60 * 1000;
     } else if (timeAgo.includes('day')) {
       const days = parseInt(timeAgo.match(/\d+/)?.[0] || '0');
-      return now - (days * 24 * 60 * 60 * 1000);
+      return now - days * 24 * 60 * 60 * 1000;
     } else {
       return now; // For "Just now" and "Recently"
     }
@@ -112,12 +125,14 @@ export default function RecentActivity({ donations = [], events = [] }: RecentAc
   const getActivityDetails = (activity: ActivityItem) => {
     switch (activity.type) {
       case 'donation':
-        return { 
-          detail: activity.amount ? `${activity.amount.toLocaleString()} Rwf` : 'Amount not specified'
+        return {
+          detail: activity.amount
+            ? `${activity.amount.toLocaleString()} Rwf`
+            : 'Amount not specified',
         };
       case 'event':
-        return { 
-          detail: activity.title || 'Event details'
+        return {
+          detail: activity.title || 'Event details',
         };
       default:
         return { detail: '' };

@@ -19,7 +19,7 @@ export default function DonationChart() {
       try {
         setIsLoading(true);
         const stats = await analyticsApi.getDonationStats();
-        
+
         // Transform monthly trends for chart
         const monthlyTrends = stats.monthlyTrends.slice(0, 6); // Last 6 months
         setChartData(monthlyTrends);
@@ -36,7 +36,8 @@ export default function DonationChart() {
     fetchDonationData();
   }, []);
 
-  const maxAmount = chartData.length > 0 ? Math.max(...chartData.map((d) => d.amount)) : 1;
+  const maxAmount =
+    chartData.length > 0 ? Math.max(...chartData.map((d) => d.amount)) : 1;
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -89,7 +90,9 @@ export default function DonationChart() {
           <div className="text-center py-8 text-gray-500">
             <TrendingUp className="w-12 h-12 mx-auto mb-4 text-gray-300" />
             <p className="text-lg font-medium">No donation data</p>
-            <p className="text-sm">Donation trends will appear here once data is available</p>
+            <p className="text-sm">
+              Donation trends will appear here once data is available
+            </p>
           </div>
         )}
       </div>

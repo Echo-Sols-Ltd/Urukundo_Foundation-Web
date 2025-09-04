@@ -142,27 +142,32 @@ export default function EventsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>(initialUpcoming);
+  const [upcomingEvents, setUpcomingEvents] =
+    useState<Event[]>(initialUpcoming);
   const [pastEvents, setPastEvents] = useState<Event[]>(initialPast);
   const [attendeesDialogOpen, setAttendeesDialogOpen] = useState(false);
-  const [selectedEventAttendees, setSelectedEventAttendees] = useState<Array<{
-    id: number;
-    userName?: string;
-    userEmail?: string;
-    registrationDate?: string;
-  }>>([]);
+  const [selectedEventAttendees, setSelectedEventAttendees] = useState<
+    Array<{
+      id: number;
+      userName?: string;
+      userEmail?: string;
+      registrationDate?: string;
+    }>
+  >([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [donationsDialogOpen, setDonationsDialogOpen] = useState(false);
-  const [selectedEventDonations, setSelectedEventDonations] = useState<Array<{
-    id: number;
-    amount: number;
-    donationTime?: string;
-    donor?: { firstName?: string; lastName?: string; email?: string };
-    donationCause?: string;
-    methodOfPayment?: string;
-    status?: string;
-  }>>([]);
+  const [selectedEventDonations, setSelectedEventDonations] = useState<
+    Array<{
+      id: number;
+      amount: number;
+      donationTime?: string;
+      donor?: { firstName?: string; lastName?: string; email?: string };
+      donationCause?: string;
+      methodOfPayment?: string;
+      status?: string;
+    }>
+  >([]);
 
   // Map backend Event -> frontend Event shape
   const mapBackendEventToUi = (be: BackendEvent): Event => {
@@ -184,16 +189,23 @@ export default function EventsPage() {
       organizer: be.organizer ?? 'Staff',
       cost: Number(be.cost ?? 0),
       isPublic: true,
-      tags: (be.tags ? String(be.tags).split(',').map((t: string) => t.trim()) : []) as string[],
+      tags: (be.tags
+        ? String(be.tags)
+            .split(',')
+            .map((t: string) => t.trim())
+        : []) as string[],
     };
   };
 
   // Load attendees for an event
   const loadEventAttendees = async (eventId: string) => {
     try {
-      const res = await fetch(`/api/event-registrations/event/${eventId}/registrations`, {
-        headers: getHeaders()
-      });
+      const res = await fetch(
+        `/api/event-registrations/event/${eventId}/registrations`,
+        {
+          headers: getHeaders(),
+        },
+      );
       if (res.ok) {
         const data = await res.json();
         setSelectedEventAttendees(data);
@@ -208,7 +220,16 @@ export default function EventsPage() {
   const loadEventDonations = async (eventId: string) => {
     try {
       const list = await donationsApi.getByEvent(Number(eventId));
-      setSelectedEventDonations(list as unknown as Array<{ id: number; amount: number; donationTime?: string; donor?: { firstName?: string; lastName?: string; email?: string }; donationCause?: string; methodOfPayment?: string; status?: string; }>
+      setSelectedEventDonations(
+        list as unknown as Array<{
+          id: number;
+          amount: number;
+          donationTime?: string;
+          donor?: { firstName?: string; lastName?: string; email?: string };
+          donationCause?: string;
+          methodOfPayment?: string;
+          status?: string;
+        }>,
       );
       setDonationsDialogOpen(true);
     } catch {
@@ -219,17 +240,23 @@ export default function EventsPage() {
 
   // Get headers with auth
   const getHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
     return {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   };
 
   // Load events from backend
   useEffect(() => {
     // Require login
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
     if (!token) {
       router.push('/login');
       return;
@@ -239,28 +266,43 @@ export default function EventsPage() {
         const res = await fetch('/api/events', { headers: getHeaders() });
         if (!res.ok) return; // silently keep mocked data if unauthorized
         const data = await res.json();
-        const mapped: Event[] = Array.isArray(data) ? data.map(mapBackendEventToUi) : [];
-        
+        const mapped: Event[] = Array.isArray(data)
+          ? data.map(mapBackendEventToUi)
+          : [];
+
         // Load attendee counts for each event
         const eventsWithAttendeeCounts = await Promise.all(
           mapped.map(async (event) => {
             try {
-              const countRes = await fetch(`/api/event-registrations/check/${event.id}`, {
-                headers: getHeaders()
-              });
+              const countRes = await fetch(
+                `/api/event-registrations/check/${event.id}`,
+                {
+                  headers: getHeaders(),
+                },
+              );
               if (countRes.ok) {
                 const countData = await countRes.json();
-                return { ...event, currentAttendees: countData.registrationCount || 0 };
+                return {
+                  ...event,
+                  currentAttendees: countData.registrationCount || 0,
+                };
               }
             } catch {
-              console.error('Failed to load attendee count for event:', event.id);
+              console.error(
+                'Failed to load attendee count for event:',
+                event.id,
+              );
             }
             return event;
-          })
+          }),
         );
-        
-        const upcoming = eventsWithAttendeeCounts.filter((e) => e.status !== 'completed');
-        const past = eventsWithAttendeeCounts.filter((e) => e.status === 'completed');
+
+        const upcoming = eventsWithAttendeeCounts.filter(
+          (e) => e.status !== 'completed',
+        );
+        const past = eventsWithAttendeeCounts.filter(
+          (e) => e.status === 'completed',
+        );
         setUpcomingEvents(upcoming);
         setPastEvents(past);
       } catch {
@@ -282,11 +324,19 @@ export default function EventsPage() {
   };
 
   const executeDeleteEvent = async () => {
-    if (!pendingDeleteId) { setConfirmOpen(false); return; }
+    if (!pendingDeleteId) {
+      setConfirmOpen(false);
+      return;
+    }
     try {
-      const res = await fetch(`/api/events/${pendingDeleteId}`, { method: 'DELETE', headers: getHeaders() });
+      const res = await fetch(`/api/events/${pendingDeleteId}`, {
+        method: 'DELETE',
+        headers: getHeaders(),
+      });
       if (res.ok || res.status === 204) {
-        setUpcomingEvents((prev) => prev.filter((e) => e.id !== pendingDeleteId));
+        setUpcomingEvents((prev) =>
+          prev.filter((e) => e.id !== pendingDeleteId),
+        );
         setPastEvents((prev) => prev.filter((e) => e.id !== pendingDeleteId));
       }
     } catch {}
@@ -295,7 +345,9 @@ export default function EventsPage() {
     setPendingDeleteId(null);
   };
 
-  const handleCreateEvent = async (data: CreateEventForm | CreateEventFormWithFile) => {
+  const handleCreateEvent = async (
+    data: CreateEventForm | CreateEventFormWithFile,
+  ) => {
     // POST to backend; fall back to local add on failure
     const payload = {
       eventName: data.title ?? 'New Event',
@@ -304,20 +356,36 @@ export default function EventsPage() {
       type: data.category ?? 'General',
       organizer: data.organizer ?? 'Staff',
       capacity: Number(data.maxAttendees ?? 0),
-      startDate: (data.date ?? new Date().toISOString().slice(0, 10)) + 'T' + (data.time ?? '09:00') + ':00',
-      endDate: (data.date ?? new Date().toISOString().slice(0, 10)) + 'T' + (data.time ?? '09:00') + ':00',
+      startDate:
+        (data.date ?? new Date().toISOString().slice(0, 10)) +
+        'T' +
+        (data.time ?? '09:00') +
+        ':00',
+      endDate:
+        (data.date ?? new Date().toISOString().slice(0, 10)) +
+        'T' +
+        (data.time ?? '09:00') +
+        ':00',
       tags: (data.tags ?? []).join(','),
     };
     try {
-      const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+      const accessToken =
+        typeof window !== 'undefined'
+          ? localStorage.getItem('accessToken')
+          : null;
       const dataWithFile = data as CreateEventFormWithFile;
       if (dataWithFile?.imageFile) {
         const fd = new FormData();
-        fd.append('event', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+        fd.append(
+          'event',
+          new Blob([JSON.stringify(payload)], { type: 'application/json' }),
+        );
         fd.append('image', dataWithFile.imageFile);
         const res = await fetch('/api/events/upload', {
           method: 'POST',
-          headers: { ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}) },
+          headers: {
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+          },
           body: fd,
         });
         if (res.ok) {
@@ -375,39 +443,60 @@ export default function EventsPage() {
     const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
     // Upcoming events in next 30 days
-    const upcomingNext30 = upcomingEvents.filter(event => {
+    const upcomingNext30 = upcomingEvents.filter((event) => {
       const eventDate = new Date(event.date);
       return eventDate >= today && eventDate <= next30Days;
     });
 
     // Total attendees from all events
     const totalAttendees = [...upcomingEvents, ...pastEvents].reduce(
-      (sum, event) => sum + event.currentAttendees, 0
+      (sum, event) => sum + event.currentAttendees,
+      0,
     );
 
     // This month's events (both upcoming and past)
-    const thisMonthEvents = [...upcomingEvents, ...pastEvents].filter(event => {
-      const eventDate = new Date(event.date);
-      return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
-    });
+    const thisMonthEvents = [...upcomingEvents, ...pastEvents].filter(
+      (event) => {
+        const eventDate = new Date(event.date);
+        return (
+          eventDate.getMonth() === currentMonth &&
+          eventDate.getFullYear() === currentYear
+        );
+      },
+    );
 
     // Last month's events for comparison
-    const lastMonthEvents = [...upcomingEvents, ...pastEvents].filter(event => {
-      const eventDate = new Date(event.date);
-      return eventDate.getMonth() === lastMonth && eventDate.getFullYear() === lastMonthYear;
-    });
+    const lastMonthEvents = [...upcomingEvents, ...pastEvents].filter(
+      (event) => {
+        const eventDate = new Date(event.date);
+        return (
+          eventDate.getMonth() === lastMonth &&
+          eventDate.getFullYear() === lastMonthYear
+        );
+      },
+    );
 
     // Calculate percentage change
-    const monthlyChange = lastMonthEvents.length > 0 
-      ? ((thisMonthEvents.length - lastMonthEvents.length) / lastMonthEvents.length * 100).toFixed(0)
-      : thisMonthEvents.length > 0 ? '100' : '0';
-    
-    const changeText = parseFloat(monthlyChange) >= 0 
-      ? `+${monthlyChange}% vs last month`
-      : `${monthlyChange}% vs last month`;
+    const monthlyChange =
+      lastMonthEvents.length > 0
+        ? (
+            ((thisMonthEvents.length - lastMonthEvents.length) /
+              lastMonthEvents.length) *
+            100
+          ).toFixed(0)
+        : thisMonthEvents.length > 0
+          ? '100'
+          : '0';
+
+    const changeText =
+      parseFloat(monthlyChange) >= 0
+        ? `+${monthlyChange}% vs last month`
+        : `${monthlyChange}% vs last month`;
 
     // Unique locations
-    const uniqueLocations = new Set([...upcomingEvents, ...pastEvents].map(e => e.location)).size;
+    const uniqueLocations = new Set(
+      [...upcomingEvents, ...pastEvents].map((e) => e.location),
+    ).size;
 
     return [
       {
@@ -727,16 +816,17 @@ export default function EventsPage() {
       <AttendeesDialog
         isOpen={attendeesDialogOpen}
         onClose={() => setAttendeesDialogOpen(false)}
-        attendees={selectedEventAttendees.map(attendee => ({
+        attendees={selectedEventAttendees.map((attendee) => ({
           id: attendee.id,
           user: {
             id: attendee.id,
             firstName: attendee.userName?.split(' ')[0] || 'Unknown',
             lastName: attendee.userName?.split(' ')[1] || '',
-            email: attendee.userEmail || 'No email'
+            email: attendee.userEmail || 'No email',
           },
           status: 'registered',
-          registrationDate: attendee.registrationDate || new Date().toISOString()
+          registrationDate:
+            attendee.registrationDate || new Date().toISOString(),
         }))}
         eventTitle={selectedEvent?.title}
       />
@@ -746,7 +836,10 @@ export default function EventsPage() {
         title="Delete this event?"
         description="This action will permanently remove the event."
         confirmText="Delete Event"
-        onCancel={() => { setConfirmOpen(false); setPendingDeleteId(null); }}
+        onCancel={() => {
+          setConfirmOpen(false);
+          setPendingDeleteId(null);
+        }}
         onConfirm={executeDeleteEvent}
       />
 
@@ -755,35 +848,76 @@ export default function EventsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white w-full max-w-3xl mx-auto rounded-xl shadow-xl border border-gray-200 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Event Donations</h3>
-              <button onClick={() => setDonationsDialogOpen(false)} className="px-3 py-1 border rounded-lg">Close</button>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Event Donations
+              </h3>
+              <button
+                onClick={() => setDonationsDialogOpen(false)}
+                className="px-3 py-1 border rounded-lg"
+              >
+                Close
+              </button>
             </div>
             <div className="p-6 overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50/50">
                   <tr>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">ID</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Donor</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Amount</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Status</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Method</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Date</th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                      ID
+                    </th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                      Donor
+                    </th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                      Amount
+                    </th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                      Method
+                    </th>
+                    <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                      Date
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">
                   {selectedEventDonations.map((d, idx) => (
                     <tr key={idx} className="hover:bg-gray-50/50">
-                      <td className="py-3 px-4 text-sm font-medium text-gray-900">{d.id}</td>
-                      <td className="py-3 px-4 text-sm text-gray-800">{d.donor ? `${d.donor.firstName ?? ''} ${d.donor.lastName ?? ''}`.trim() || 'Anonymous' : 'Anonymous'}</td>
-                      <td className="py-3 px-4 text-sm font-semibold text-gray-900">{Number(d.amount || 0).toLocaleString()} RWF</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{d.status || 'PENDING'}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{d.methodOfPayment || 'ONLINE'}</td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{d.donationTime ? String(d.donationTime).slice(0,10) : ''}</td>
+                      <td className="py-3 px-4 text-sm font-medium text-gray-900">
+                        {d.id}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-800">
+                        {d.donor
+                          ? `${d.donor.firstName ?? ''} ${d.donor.lastName ?? ''}`.trim() ||
+                            'Anonymous'
+                          : 'Anonymous'}
+                      </td>
+                      <td className="py-3 px-4 text-sm font-semibold text-gray-900">
+                        {Number(d.amount || 0).toLocaleString()} RWF
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-700">
+                        {d.status || 'PENDING'}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-700">
+                        {d.methodOfPayment || 'ONLINE'}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-700">
+                        {d.donationTime
+                          ? String(d.donationTime).slice(0, 10)
+                          : ''}
+                      </td>
                     </tr>
                   ))}
                   {selectedEventDonations.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="py-6 text-center text-gray-500 text-sm">No donations yet for this event.</td>
+                      <td
+                        colSpan={6}
+                        className="py-6 text-center text-gray-500 text-sm"
+                      >
+                        No donations yet for this event.
+                      </td>
                     </tr>
                   )}
                 </tbody>

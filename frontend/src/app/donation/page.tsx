@@ -8,7 +8,7 @@ import { withAnyAuth } from '../../components/auth/withAuth';
 import { getCurrentUser } from '@/lib/auth';
 import { donationsApi, eventsApi, videosApi } from '@/lib/api';
 import type { Donation, Event, Video } from '@/lib/api';
-import { useEffect, } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 function DonationDashboard() {
@@ -37,9 +37,14 @@ function DonationDashboard() {
     // Events (featured one + next two upcoming)
     const loadEvents = async () => {
       const all = await eventsApi.getAll();
-      const sorted = [...all].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+      const sorted = [...all].sort(
+        (a, b) =>
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      );
       setFeatured(sorted.length ? sorted[0] : null);
-      setUpcoming(sorted.filter(e => new Date(e.startDate) > new Date()).slice(0, 2));
+      setUpcoming(
+        sorted.filter((e) => new Date(e.startDate) > new Date()).slice(0, 2),
+      );
     };
 
     // Videos (top two)
@@ -96,7 +101,9 @@ function DonationDashboard() {
               </h2>
               <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                 {!featured ? (
-                  <div className="p-6 text-center text-gray-500">No featured event yet. Please check back later.</div>
+                  <div className="p-6 text-center text-gray-500">
+                    No featured event yet. Please check back later.
+                  </div>
                 ) : (
                   <div className="flex flex-col md:flex-row">
                     <div className="md:w-1/3">
@@ -109,9 +116,16 @@ function DonationDashboard() {
                       />
                     </div>
                     <div className="md:w-2/3 p-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{featured.eventName}</h3>
-                      <p className="text-gray-600 mb-4">{featured.description || 'No description'}</p>
-                      <button onClick={() => router.push('/donation/events')} className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        {featured.eventName}
+                      </h3>
+                      <p className="text-gray-600 mb-4">
+                        {featured.description || 'No description'}
+                      </p>
+                      <button
+                        onClick={() => router.push('/donation/events')}
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+                      >
                         DONATE NOW
                       </button>
                     </div>
@@ -131,15 +145,35 @@ function DonationDashboard() {
                   </div>
                 )}
                 {upcoming.map((e, idx) => (
-                  <div key={idx} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <Image src={e.imageUrl || '/image/plant.jpg'} alt={e.eventName} width={400} height={225} className="w-full h-48 object-cover" />
+                  <div
+                    key={idx}
+                    className="bg-white rounded-lg border border-gray-200 overflow-hidden"
+                  >
+                    <Image
+                      src={e.imageUrl || '/image/plant.jpg'}
+                      alt={e.eventName}
+                      width={400}
+                      height={225}
+                      className="w-full h-48 object-cover"
+                    />
                     <div className="p-4">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-gray-900">{e.eventName}</h3>
-                        <span className="text-sm text-gray-500">{new Date(e.startDate).toLocaleDateString()}</span>
+                        <h3 className="font-semibold text-gray-900">
+                          {e.eventName}
+                        </h3>
+                        <span className="text-sm text-gray-500">
+                          {new Date(e.startDate).toLocaleDateString()}
+                        </span>
                       </div>
-                      <p className="text-gray-600 text-sm mb-4">{e.description || 'No description'}</p>
-                      <button onClick={() => router.push('/donation/events')} className="w-full border border-orange-500 text-orange-500 hover:bg-orange-50 font-medium py-2 px-4 rounded-lg transition-colors">LEARN MORE</button>
+                      <p className="text-gray-600 text-sm mb-4">
+                        {e.description || 'No description'}
+                      </p>
+                      <button
+                        onClick={() => router.push('/donation/events')}
+                        className="w-full border border-orange-500 text-orange-500 hover:bg-orange-50 font-medium py-2 px-4 rounded-lg transition-colors"
+                      >
+                        LEARN MORE
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -152,16 +186,32 @@ function DonationDashboard() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {topVideos.length === 0 && (
-                  <div className="col-span-full text-center text-gray-500 py-8">No videos yet. Please check back later.</div>
+                  <div className="col-span-full text-center text-gray-500 py-8">
+                    No videos yet. Please check back later.
+                  </div>
                 )}
                 {topVideos.map((v, idx) => (
-                  <div key={idx} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                  <div
+                    key={idx}
+                    className="bg-white rounded-lg border border-gray-200 overflow-hidden"
+                  >
                     <div className="relative">
-                      <iframe src={v.videoUrl} title={v.title} className="w-full h-48" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                      <iframe
+                        src={v.videoUrl}
+                        title={v.title}
+                        className="w-full h-48"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
                     </div>
                     <div className="p-5">
-                      <h3 className="font-semibold text-gray-900 text-base mb-2 line-clamp-2">{v.title}</h3>
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{v.description || 'No description'}</p>
+                      <h3 className="font-semibold text-gray-900 text-base mb-2 line-clamp-2">
+                        {v.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                        {v.description || 'No description'}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -174,47 +224,57 @@ function DonationDashboard() {
               </h2>
               <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                 {history.length === 0 ? (
-                  <div className="p-6 text-center text-gray-500">No donation history yet.</div>
+                  <div className="p-6 text-center text-gray-500">
+                    No donation history yet.
+                  </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Date
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Amount
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Cause
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Receipt
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {history.map((d, idx) => (
-                        <tr key={idx}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(d.donationTime).toLocaleDateString()}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{Number(d.amount || 0).toLocaleString()} RWF</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{d.donationCause || 'General'}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              {d.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <button className="text-orange-500 hover:text-orange-600 font-medium">View</button>
-                          </td>
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Date
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Amount
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Cause
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Receipt
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {history.map((d, idx) => (
+                          <tr key={idx}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {new Date(d.donationTime).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {Number(d.amount || 0).toLocaleString()} RWF
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {d.donationCause || 'General'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                {d.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              <button className="text-orange-500 hover:text-orange-600 font-medium">
+                                View
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </div>

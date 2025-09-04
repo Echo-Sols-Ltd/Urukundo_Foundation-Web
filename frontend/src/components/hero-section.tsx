@@ -21,7 +21,7 @@ export function HeroSection() {
         });
       } catch (error) {
         console.error('Error fetching hero stats:', error);
-        setStats(prev => ({ ...prev, isLoading: false }));
+        setStats((prev) => ({ ...prev, isLoading: false }));
       }
     };
 
@@ -58,9 +58,13 @@ export function HeroSection() {
           <div className="flex items-center gap-12">
             <div>
               <div className="text-orange-500 font-sans text-3xl lg:text-4xl font-bold">
-                {stats.isLoading ? '...' : `RWF ${stats.totalAmount.toLocaleString()}`}
+                {stats.isLoading
+                  ? '...'
+                  : `RWF ${stats.totalAmount.toLocaleString()}`}
               </div>
-              <div className="font-serif text-sm text-white/80">Total Donations</div>
+              <div className="font-serif text-sm text-white/80">
+                Total Donations
+              </div>
             </div>
             <div>
               <div className="text-orange-500 font-sans text-3xl lg:text-4xl font-bold">

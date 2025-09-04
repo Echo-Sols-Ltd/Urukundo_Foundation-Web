@@ -31,9 +31,9 @@ export function TransformingSection() {
 
             <p className="font-serif text-lg text-muted-foreground leading-relaxed">
               We believe that transparency, compassion, and action are the keys
-              to creating lasting change. That&apos;s why we built a digital platform
-              that allows you to donate securely, watch real-time impact
-              stories, and track how your support makes a difference.
+              to creating lasting change. That&apos;s why we built a digital
+              platform that allows you to donate securely, watch real-time
+              impact stories, and track how your support makes a difference.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -28,13 +28,13 @@ export function VideoNewsSection() {
 
   const [videos, setVideos] = useState<Video[]>([]);
 
-  const mapBackendToUi = (be: { 
-    id?: string | number; 
-    title?: string; 
-    description?: string; 
-    thumbnailUrl?: string; 
-    url?: string; 
-    views?: number; 
+  const mapBackendToUi = (be: {
+    id?: string | number;
+    title?: string;
+    description?: string;
+    thumbnailUrl?: string;
+    url?: string;
+    views?: number;
   }): Video => ({
     id: generateStableId(be, 'video'),
     title: be.title ?? 'Video',
@@ -266,7 +266,7 @@ export function VideoNewsSection() {
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              title='Close video'
+              title="Close video"
               onClick={closeModal}
               className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 text-white hover:text-gray-300 transition-colors bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70"
             >
@@ -332,7 +332,7 @@ export function VideoNewsSection() {
                   </button>
 
                   <button
-                    title='Enter fullscreen'
+                    title="Enter fullscreen"
                     onClick={handleFullscreen}
                     className="hover:text-gray-300 transition-colors"
                   >

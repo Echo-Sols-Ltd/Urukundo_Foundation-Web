@@ -87,10 +87,13 @@ If port 3000 is already in use, you can run on a different port:
 
 docker run -d -p 8080:3000 --name urukundo-app urukundo-frontend-updated
 ```
+
 Then access via `http://localhost:8080`
 
 ### Environment Variables
+
 You can pass environment variables to the container:
+
 ```bash
 docker run -d -p 3000:3000 \
   -e NODE_ENV=production \
@@ -100,7 +103,9 @@ docker run -d -p 3000:3000 \
 ```
 
 ### Volume Mounting (Optional)
+
 To persist data or override configuration:
+
 ```bash
 docker run -d -p 3000:3000 \
   -v /path/to/your/config:/app/config \
@@ -127,6 +132,7 @@ docker run -d -p 3000:3000 --name urukundo-app urukundo-frontend-updated
 ## 🌐 Application Features
 
 ### User Dashboard
+
 - **Clean Interface**: No mock data - displays real user data
 - **Donation Tracking**: View your donation history and impact
 - **Event Management**: Browse upcoming charity events
@@ -134,6 +140,7 @@ docker run -d -p 3000:3000 --name urukundo-app urukundo-frontend-updated
 - **Real-time Updates**: Live donation statistics
 
 ### Key Pages
+
 - **Homepage** (`/`): Main landing page with foundation information
 - **Dashboard** (`/dashboard`): User dashboard with personalized data
 - **Donations** (`/donation`): Make donations to various causes
@@ -143,6 +150,7 @@ docker run -d -p 3000:3000 --name urukundo-app urukundo-frontend-updated
 ## 🔐 Authentication
 
 The application includes user authentication:
+
 - Sign up for new accounts
 - Login with existing credentials
 - Protected routes for authenticated users
@@ -151,6 +159,7 @@ The application includes user authentication:
 ## 📱 Responsive Design
 
 The application is fully responsive and works on:
+
 - Desktop computers
 - Tablets
 - Mobile phones
@@ -159,6 +168,7 @@ The application is fully responsive and works on:
 ## 🛠️ Troubleshooting
 
 ### Container won't start
+
 ```bash
 # Check Docker is running
 docker --version
@@ -168,12 +178,14 @@ netstat -an | findstr :3000
 ```
 
 ### Application not accessible
+
 1. Verify container is running: `docker ps`
 2. Check port mapping is correct
 3. Ensure firewall isn't blocking port 3000
 4. Try accessing via `http://127.0.0.1:3000`
 
 ### Performance issues
+
 ```bash
 # Check container resource usage
 docker stats urukundo-app
@@ -183,6 +195,7 @@ docker restart urukundo-app
 ```
 
 ### View detailed logs
+
 ```bash
 # Get last 100 log lines
 docker logs --tail 100 urukundo-app
@@ -204,12 +217,14 @@ docker logs -f urukundo-app
 To update to a newer version:
 
 1. Stop and remove the current container:
+
    ```bash
    docker stop urukundo-app
    docker rm urukundo-app
    ```
 
 2. Remove the old image (optional):
+
    ```bash
    docker rmi urukundo-frontend-updated
    ```
@@ -223,6 +238,7 @@ To update to a newer version:
 ## 🆘 Support
 
 For issues or questions:
+
 1. Check the troubleshooting section above
 2. View container logs for error details
 3. Ensure all prerequisites are met

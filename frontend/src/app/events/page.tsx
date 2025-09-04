@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
@@ -18,7 +18,7 @@ interface UiEventCard {
   goal: number;
   raised: number;
   supporters: number;
-};
+}
 
 const mapBackendEventToCard = (be: {
   id?: string | number;
@@ -39,22 +39,26 @@ const causesData = [
   {
     icon: Book,
     title: 'Education',
-    description: 'Empowering communities through quality education and learning opportunities',
+    description:
+      'Empowering communities through quality education and learning opportunities',
   },
   {
     icon: Droplet,
     title: 'Clean Water',
-    description: 'Providing access to clean, safe drinking water for underserved communities',
+    description:
+      'Providing access to clean, safe drinking water for underserved communities',
   },
   {
     icon: HeartPulse,
     title: 'Health Care',
-    description: 'Delivering essential healthcare services and medical support to those in need',
+    description:
+      'Delivering essential healthcare services and medical support to those in need',
   },
   {
     icon: Users,
     title: 'Local communities',
-    description: 'Building stronger, more resilient communities through local development programs',
+    description:
+      'Building stronger, more resilient communities through local development programs',
   },
 ];
 
@@ -67,7 +71,9 @@ export default function EventsPage() {
         const res = await fetch('/api/events');
         if (!res.ok) return;
         const data = await res.json();
-        const mapped = Array.isArray(data) ? data.map(mapBackendEventToCard) : [];
+        const mapped = Array.isArray(data)
+          ? data.map(mapBackendEventToCard)
+          : [];
         setCards(mapped);
       } catch {
         setCards([]);
@@ -94,9 +100,10 @@ export default function EventsPage() {
           Donate Today: Save a Life
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-          Join us in our upcoming events and initiatives that create lasting change. 
-          From community outreach programs to educational workshops, every event is an 
-          opportunity to bring hope and support to those who need it most.
+          Join us in our upcoming events and initiatives that create lasting
+          change. From community outreach programs to educational workshops,
+          every event is an opportunity to bring hope and support to those who
+          need it most.
         </p>
       </section>
 

@@ -38,7 +38,10 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
   const handleLogout = async () => {
     try {
-      const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+      const accessToken =
+        typeof window !== 'undefined'
+          ? localStorage.getItem('accessToken')
+          : null;
       await fetch('/api/auth/logout', {
         method: 'POST',
         headers: {
@@ -117,7 +120,9 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 href="/settings"
                 className="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
               >
-                <span className="text-lg"><Settings className="w-5 h-5" /></span>
+                <span className="text-lg">
+                  <Settings className="w-5 h-5" />
+                </span>
                 <span>Settings</span>
               </Link>
             </li>
@@ -126,7 +131,9 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 onClick={handleLogout}
                 className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
               >
-                <span className="text-lg"><LogOut className="w-5 h-5" /></span>
+                <span className="text-lg">
+                  <LogOut className="w-5 h-5" />
+                </span>
                 <span>Logout</span>
               </button>
             </li>
@@ -199,16 +206,23 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 onClick={onClose}
                 className="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
               >
-                <span className="text-lg"><Settings className="w-5 h-5" /></span>
+                <span className="text-lg">
+                  <Settings className="w-5 h-5" />
+                </span>
                 <span>Settings</span>
               </Link>
             </li>
             <li>
               <button
-                onClick={() => { onClose?.(); handleLogout(); }}
+                onClick={() => {
+                  onClose?.();
+                  handleLogout();
+                }}
                 className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
               >
-                <span className="text-lg"><LogOut className="w-5 h-5" /></span>
+                <span className="text-lg">
+                  <LogOut className="w-5 h-5" />
+                </span>
                 <span>Logout</span>
               </button>
             </li>

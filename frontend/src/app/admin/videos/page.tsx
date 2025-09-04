@@ -71,7 +71,7 @@ const mapBackendToUi = (be: BackendVideo): Video => ({
   duration: '00:00',
   views: Number(be.views ?? 0),
   thumbnail: be.thumbnailUrl ?? '/api/placeholder/400/225',
-    status: 'published',
+  status: 'published',
   uploadDate: new Date().toISOString().slice(0, 10),
   category: 'General',
 });
@@ -88,10 +88,15 @@ export default function VideosPage() {
   const [startStreamOpen, setStartStreamOpen] = useState(false);
   const [liveStreams, setLiveStreams] = useState<LiveStream[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [pendingDeleteVideoId, setPendingDeleteVideoId] = useState<string | null>(null);
+  const [pendingDeleteVideoId, setPendingDeleteVideoId] = useState<
+    string | null
+  >(null);
 
   const getAuthHeaders = (): Record<string, string> => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
@@ -99,32 +104,48 @@ export default function VideosPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch('/api/videos', { headers: { 'Content-Type': 'application/json', ...getAuthHeaders() } });
+        const res = await fetch('/api/videos', {
+          headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+        });
         if (!res.ok) return;
         const data = await res.json();
-        const mapped: Video[] = Array.isArray(data) ? data.map(mapBackendToUi) : [];
+        const mapped: Video[] = Array.isArray(data)
+          ? data.map(mapBackendToUi)
+          : [];
         setVideos(mapped);
       } catch {
         // keep empty
       }
       try {
-        const res2 = await fetch('/api/livestreams', { headers: { 'Content-Type': 'application/json', ...getAuthHeaders() } });
+        const res2 = await fetch('/api/livestreams', {
+          headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+        });
         if (res2.ok) {
           const data2 = await res2.json();
-          setLiveStreams(Array.isArray(data2) ? data2.map((s: BackendLiveStream) => ({
-            id: s.id,
-            title: s.title,
-            description: s.description,
-            startTime: s.startTime,
-            status: s.status,
-          })) : []);
+          setLiveStreams(
+            Array.isArray(data2)
+              ? data2.map((s: BackendLiveStream) => ({
+                  id: s.id,
+                  title: s.title,
+                  description: s.description,
+                  startTime: s.startTime,
+                  status: s.status,
+                }))
+              : [],
+          );
         }
       } catch {}
     };
     load();
   }, []);
 
-  const handleUpload = async (data: { title: string; description?: string; date?: string; file: File; thumbnail?: File }) => {
+  const handleUpload = async (data: {
+    title: string;
+    description?: string;
+    date?: string;
+    file: File;
+    thumbnail?: File;
+  }) => {
     const fd = new FormData();
     fd.append('title', data.title);
     if (data.description) fd.append('description', data.description);
@@ -154,27 +175,35 @@ export default function VideosPage() {
     const totalVideos = videos.length;
 
     // Videos uploaded this week
-    const thisWeekVideos = videos.filter(video => {
+    const thisWeekVideos = videos.filter((video) => {
       const uploadDate = new Date(video.uploadDate);
       return uploadDate >= oneWeekAgo;
     });
 
     // Active live streams
-    const activeLiveStreams = liveStreams.filter(stream => stream.status === 'LIVE');
+    const activeLiveStreams = liveStreams.filter(
+      (stream) => stream.status === 'LIVE',
+    );
 
     // Total views across all videos
     const totalViews = videos.reduce((sum, video) => sum + video.views, 0);
 
     // Last month views for comparison
     const lastMonthViews = Math.floor(totalViews * 0.8); // Simulate 20% growth
-    const viewsGrowth = lastMonthViews > 0 
-      ? ((totalViews - lastMonthViews) / lastMonthViews * 100).toFixed(0)
-      : '0';
+    const viewsGrowth =
+      lastMonthViews > 0
+        ? (((totalViews - lastMonthViews) / lastMonthViews) * 100).toFixed(0)
+        : '0';
 
     // Calculate average engagement rate (simplified simulation)
-    const avgEngagement = videos.length > 0 
-      ? (videos.reduce((sum, video) => sum + video.views, 0) / videos.length / 100).toFixed(1)
-      : '0';
+    const avgEngagement =
+      videos.length > 0
+        ? (
+            videos.reduce((sum, video) => sum + video.views, 0) /
+            videos.length /
+            100
+          ).toFixed(1)
+        : '0';
 
     return [
       {
@@ -247,7 +276,9 @@ export default function VideosPage() {
       }
     } catch {}
     // fallback local update
-    setVideos((prev) => prev.map((v) => (v.id === updatedVideo.id ? updatedVideo : v)));
+    setVideos((prev) =>
+      prev.map((v) => (v.id === updatedVideo.id ? updatedVideo : v)),
+    );
   };
 
   const handleDeleteVideo = async (videoId: string) => {
@@ -256,7 +287,10 @@ export default function VideosPage() {
   };
 
   const executeDeleteVideo = async () => {
-    if (!pendingDeleteVideoId) { setConfirmOpen(false); return; }
+    if (!pendingDeleteVideoId) {
+      setConfirmOpen(false);
+      return;
+    }
     try {
       await fetch(`/api/videos/${pendingDeleteVideoId}`, {
         method: 'DELETE',
@@ -323,11 +357,17 @@ export default function VideosPage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                <button onClick={() => setStartStreamOpen(true)} className="flex items-center justify-center gap-2 px-4 py-2.5 text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium text-sm">
+                <button
+                  onClick={() => setStartStreamOpen(true)}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium text-sm"
+                >
                   <Circle className="w-4 h-4 text-red-500 fill-current" />
                   <span>Start Live Stream</span>
                 </button>
-                <button onClick={() => setUploadOpen(true)} className="flex items-center justify-center gap-2 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors duration-200 font-medium text-sm shadow-sm">
+                <button
+                  onClick={() => setUploadOpen(true)}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors duration-200 font-medium text-sm shadow-sm"
+                >
                   <Upload className="w-4 h-4" />
                   <span>Upload Video</span>
                 </button>
@@ -439,7 +479,9 @@ export default function VideosPage() {
                             </td>
                             <td className="py-4 px-6 whitespace-nowrap">
                               <div>
-                                <div className="text-sm font-medium text-gray-900">{new Date(stream.startTime).toLocaleString()}</div>
+                                <div className="text-sm font-medium text-gray-900">
+                                  {new Date(stream.startTime).toLocaleString()}
+                                </div>
                               </div>
                             </td>
                             <td className="py-4 px-6 whitespace-nowrap">
@@ -460,12 +502,27 @@ export default function VideosPage() {
                             </td>
                             <td className="py-4 px-6 whitespace-nowrap">
                               {stream.status === 'LIVE' ? (
-                                <button onClick={async () => {
-                                  try {
-                                    await fetch(`/api/livestreams/${stream.id}/stop`, { method: 'POST', headers: { ...getAuthHeaders() } });
-                                    setLiveStreams((prev) => prev.map((s) => s.id === stream.id ? { ...s, status: 'ENDED' } : s));
-                                  } catch {}
-                                }} className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-600 transition-colors duration-200 flex items-center gap-1.5">
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      await fetch(
+                                        `/api/livestreams/${stream.id}/stop`,
+                                        {
+                                          method: 'POST',
+                                          headers: { ...getAuthHeaders() },
+                                        },
+                                      );
+                                      setLiveStreams((prev) =>
+                                        prev.map((s) =>
+                                          s.id === stream.id
+                                            ? { ...s, status: 'ENDED' }
+                                            : s,
+                                        ),
+                                      );
+                                    } catch {}
+                                  }}
+                                  className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-600 transition-colors duration-200 flex items-center gap-1.5"
+                                >
                                   <Circle className="w-3 h-3 fill-current" />
                                   <span>End Stream</span>
                                 </button>
@@ -514,7 +571,10 @@ export default function VideosPage() {
         title="Delete this video?"
         description="This action will permanently remove the video."
         confirmText="Delete Video"
-        onCancel={() => { setConfirmOpen(false); setPendingDeleteVideoId(null); }}
+        onCancel={() => {
+          setConfirmOpen(false);
+          setPendingDeleteVideoId(null);
+        }}
         onConfirm={executeDeleteVideo}
       />
 
@@ -526,7 +586,10 @@ export default function VideosPage() {
             const params = new URLSearchParams();
             params.set('title', title);
             if (description) params.set('description', description);
-            const res = await fetch(`/api/livestreams/start?${params.toString()}`, { method: 'POST', headers: { ...getAuthHeaders() } });
+            const res = await fetch(
+              `/api/livestreams/start?${params.toString()}`,
+              { method: 'POST', headers: { ...getAuthHeaders() } },
+            );
             if (res.ok) {
               const created = await res.json();
               setLiveStreams((prev) => [created, ...prev]);

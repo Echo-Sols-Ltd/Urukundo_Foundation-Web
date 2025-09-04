@@ -17,7 +17,7 @@ This authentication system has been completely rewritten to integrate with the e
 - **API Base URL**: `http://localhost:8080` (configurable via `NEXT_PUBLIC_API_URL`)
 - **Authentication Endpoints**:
   - `POST /api/auth/login` - User login
-  - `POST /api/auth/register` - User registration  
+  - `POST /api/auth/register` - User registration
   - `POST /api/auth/logout` - User logout
   - `POST /api/auth/refresh-token` - Token refresh
 
@@ -70,9 +70,9 @@ The system works with Spring Security JWT tokens:
 
 ```json
 {
-  "sub": "user@example.com",  // User email
-  "exp": 1234567890,          // Expiration timestamp
-  "iat": 1234567890,          // Issued at timestamp  
+  "sub": "user@example.com", // User email
+  "exp": 1234567890, // Expiration timestamp
+  "iat": 1234567890, // Issued at timestamp
   "authorities": ["ROLE_DONOR"] // User roles
 }
 ```
@@ -111,7 +111,7 @@ The system works with Spring Security JWT tokens:
 4. Submit form
 5. Should automatically login and redirect to appropriate dashboard
 
-#### 2. User Login  
+#### 2. User Login
 
 1. Navigate to `/login`
 2. Enter email and password
@@ -123,7 +123,7 @@ The system works with Spring Security JWT tokens:
 #### 3. Route Protection
 
 1. Try accessing `/admin` without login → redirects to `/login`
-2. Login as DONOR → try accessing `/admin` → redirects to `/dashboard`  
+2. Login as DONOR → try accessing `/admin` → redirects to `/dashboard`
 3. Try accessing `/login` while logged in → redirects to dashboard
 
 #### 4. Token Refresh
@@ -166,7 +166,7 @@ All errors are displayed to users with appropriate messaging.
 ## Next Steps
 
 1. **User Profile Integration**: Fetch full user profile data from backend
-2. **Password Reset**: Implement forgot password functionality  
+2. **Password Reset**: Implement forgot password functionality
 3. **Email Verification**: Add email verification during registration
 4. **Session Management**: Add "Remember Me" functionality
 5. **Security Headers**: Add CSRF protection and security headers
@@ -183,6 +183,6 @@ All errors are displayed to users with appropriate messaging.
 ### Development Tips
 
 - Use browser DevTools to inspect localStorage tokens
-- Check Network tab for API call failures  
+- Check Network tab for API call failures
 - Monitor console for authentication errors
 - Test with different user roles to verify access control

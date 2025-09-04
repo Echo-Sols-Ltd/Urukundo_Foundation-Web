@@ -17,7 +17,10 @@ export default function ViewEventDialog({
   event,
   onViewAttendees,
   onDelete,
-}: ViewEventDialogProps & { onViewAttendees?: (eventId: string) => void; onDelete?: (eventId: string) => void }) {
+}: ViewEventDialogProps & {
+  onViewAttendees?: (eventId: string) => void;
+  onDelete?: (eventId: string) => void;
+}) {
   if (!isOpen || !event) return null;
 
   const statusColors = {

@@ -22,7 +22,10 @@ export function Header() {
   };
 
   const handleDonateClick = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
     if (!token) {
       router.push('/login?next=/donation/donate');
     } else {
@@ -76,7 +79,7 @@ export function Header() {
             Contacts
           </Link>
         </nav>
-        <Button 
+        <Button
           onClick={handleDonateClick}
           className="bg-orange-500 hover:bg-orange-600 text-white font-medium px-6"
         >

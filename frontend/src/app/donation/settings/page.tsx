@@ -28,10 +28,13 @@ function SettingsPage() {
 
   // Helper function to get auth headers
   const getHeaders = (): Record<string, string> => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
     return {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   };
 
@@ -39,18 +42,16 @@ function SettingsPage() {
   useEffect(() => {
     const loadUserData = async () => {
       if (!user) return;
-      
+
       try {
-        
         // Update form data with user information
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           firstName: user.firstName || '',
           lastName: user.lastName || '',
           email: user.email || '',
           phone: '', // Phone number will be loaded from user preferences API
         }));
-        
       } catch (error) {
         console.error('Failed to load user data:', error);
       }
@@ -65,7 +66,6 @@ function SettingsPage() {
 
   const handleSave = async () => {
     try {
-      
       // Prepare data for backend update
       const updateData = {
         firstName: formData.firstName,

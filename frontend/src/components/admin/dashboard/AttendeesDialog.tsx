@@ -97,7 +97,8 @@ export default function AttendeesDialog({
                 </div>
               </div>
               <div className="text-sm text-blue-700">
-                {attendees.filter(a => a.status === 'CONFIRMED').length} confirmed
+                {attendees.filter((a) => a.status === 'CONFIRMED').length}{' '}
+                confirmed
               </div>
             </div>
           </div>
@@ -136,7 +137,8 @@ export default function AttendeesDialog({
                             </div>
                             <div>
                               <div className="font-medium text-gray-900">
-                                {attendee.user.firstName} {attendee.user.lastName}
+                                {attendee.user.firstName}{' '}
+                                {attendee.user.lastName}
                               </div>
                               <div className="text-sm text-gray-500">
                                 ID: {attendee.user.id}
@@ -150,7 +152,7 @@ export default function AttendeesDialog({
                         <td className="px-4 py-4 whitespace-nowrap">
                           <span
                             className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                              attendee.status
+                              attendee.status,
                             )}`}
                           >
                             {attendee.status}

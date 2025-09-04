@@ -23,13 +23,15 @@ export default function RecentDonations() {
       try {
         setIsLoading(true);
         const donations = await donationsApi.getUserDonations();
-        
+
         // Transform and get recent donations (last 5)
         const transformedDonations = donations
           .map(dataTransformers.donationToUI)
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+          )
           .slice(0, 5);
-        
+
         setRecentDonations(transformedDonations);
       } catch (error) {
         console.error('Error fetching recent donations:', error);
@@ -62,7 +64,10 @@ export default function RecentDonations() {
           // Loading state
           <div className="space-y-4">
             {[...Array(3)].map((_, index) => (
-              <div key={index} className="flex items-start space-x-3 p-3 rounded-lg">
+              <div
+                key={index}
+                className="flex items-start space-x-3 p-3 rounded-lg"
+              >
                 <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
                 <div className="flex-1 space-y-2">
                   <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>

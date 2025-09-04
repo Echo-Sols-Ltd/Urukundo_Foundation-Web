@@ -18,13 +18,9 @@ export function withAuth<T extends object>(
     requireAuth?: boolean;
     requiredRole?: 'ADMIN' | 'DONOR' | 'MANAGER';
     redirectTo?: string;
-  } = {}
+  } = {},
 ) {
-  const {
-    requireAuth = true,
-    requiredRole,
-    redirectTo = '/login'
-  } = options;
+  const { requireAuth = true, requiredRole, redirectTo = '/login' } = options;
 
   return function AuthenticatedComponent(props: T) {
     const { user, isAuthenticated, isLoading } = useAuth();
@@ -80,43 +76,53 @@ export function withAuth<T extends object>(
 }
 
 // HOC for admin-only pages
-export function withAdminAuth<T extends object>(WrappedComponent: React.ComponentType<T>) {
+export function withAdminAuth<T extends object>(
+  WrappedComponent: React.ComponentType<T>,
+) {
   return withAuth(WrappedComponent, {
     requireAuth: true,
     requiredRole: 'ADMIN',
-    redirectTo: '/login'
+    redirectTo: '/login',
   });
 }
 
 // HOC for donor pages
-export function withDonorAuth<T extends object>(WrappedComponent: React.ComponentType<T>) {
+export function withDonorAuth<T extends object>(
+  WrappedComponent: React.ComponentType<T>,
+) {
   return withAuth(WrappedComponent, {
     requireAuth: true,
     requiredRole: 'DONOR',
-    redirectTo: '/login'
+    redirectTo: '/login',
   });
 }
 
 // HOC for manager pages
-export function withManagerAuth<T extends object>(WrappedComponent: React.ComponentType<T>) {
+export function withManagerAuth<T extends object>(
+  WrappedComponent: React.ComponentType<T>,
+) {
   return withAuth(WrappedComponent, {
     requireAuth: true,
     requiredRole: 'MANAGER',
-    redirectTo: '/login'
+    redirectTo: '/login',
   });
 }
 
 // HOC for any authenticated user
-export function withAnyAuth<T extends object>(WrappedComponent: React.ComponentType<T>) {
+export function withAnyAuth<T extends object>(
+  WrappedComponent: React.ComponentType<T>,
+) {
   return withAuth(WrappedComponent, {
     requireAuth: true,
-    redirectTo: '/login'
+    redirectTo: '/login',
   });
 }
 
 // HOC for guest-only pages (login, signup)
-export function withGuest<T extends object>(WrappedComponent: React.ComponentType<T>) {
+export function withGuest<T extends object>(
+  WrappedComponent: React.ComponentType<T>,
+) {
   return withAuth(WrappedComponent, {
-    requireAuth: false
+    requireAuth: false,
   });
 }

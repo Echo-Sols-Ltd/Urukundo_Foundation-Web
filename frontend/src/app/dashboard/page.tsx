@@ -3,16 +3,8 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import {
-  Play,
-  Download,
-  X,
-  Volume2,
-  VolumeX,
-  Maximize2,
-} from 'lucide-react';
+import { Play, Download, X, Volume2, VolumeX, Maximize2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Sidebar from '@/components/donation/Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -42,9 +34,11 @@ function DashboardPage() {
   const { user } = useAuth();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [upcomingEvents, setUpcomingEvents] = useState<{ title: string; date: string; description: string; image: string; }[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<
+    { title: string; date: string; description: string; image: string }[]
+  >([]);
   const [recentVideos, setRecentVideos] = useState<Video[]>([]);
-  
+
   // Update useState to use Video | null
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -54,7 +48,10 @@ function DashboardPage() {
 
   // Helper function to get auth headers (same pattern as other pages)
   const getHeaders = (): Record<string, string> => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
@@ -63,9 +60,11 @@ function DashboardPage() {
     const fetchDashboardData = async () => {
       try {
         setIsLoading(true);
-        
+
         // Fetch donations
-        const donationsRes = await fetch('/api/donation', { headers: getHeaders() });
+        const donationsRes = await fetch('/api/donation', {
+          headers: getHeaders(),
+        });
         if (donationsRes.ok) {
           const donationsData = await donationsRes.json();
           setDonations(Array.isArray(donationsData) ? donationsData : []);
@@ -73,17 +72,22 @@ function DashboardPage() {
 
         // Fetch events
         try {
-          const eventsRes = await fetch('/api/events', { headers: getHeaders() });
+          const eventsRes = await fetch('/api/events', {
+            headers: getHeaders(),
+          });
           if (eventsRes.ok) {
             const eventsData = await eventsRes.json();
-            const transformedEvents = Array.isArray(eventsData) 
+            const transformedEvents = Array.isArray(eventsData)
               ? eventsData
-                  .filter(event => event.status === 'UPCOMING' || event.status === 'ONGOING')
-                  .map(event => ({
+                  .filter(
+                    (event) =>
+                      event.status === 'UPCOMING' || event.status === 'ONGOING',
+                  )
+                  .map((event) => ({
                     title: event.eventName || 'Event',
                     date: new Date(event.startDate).toLocaleDateString(),
                     description: event.description || '',
-                    image: event.imageUrl || '/image/plant.jpg'
+                    image: event.imageUrl || '/image/plant.jpg',
                   }))
                   .slice(0, 4)
               : [];
@@ -95,18 +99,20 @@ function DashboardPage() {
 
         // Fetch videos
         try {
-          const videosRes = await fetch('/api/videos', { headers: getHeaders() });
+          const videosRes = await fetch('/api/videos', {
+            headers: getHeaders(),
+          });
           if (videosRes.ok) {
             const videosData = await videosRes.json();
-            const transformedVideos = Array.isArray(videosData) 
-              ? videosData.slice(0, 4).map(video => ({
+            const transformedVideos = Array.isArray(videosData)
+              ? videosData.slice(0, 4).map((video) => ({
                   id: video.id || Math.random().toString(),
                   title: video.title || 'Video',
                   description: video.description || '',
                   views: video.views || '0 views',
                   thumbnail: video.thumbnail || '/image/video-thumbnail.jpg',
                   videoUrl: video.videoUrl || '',
-                  duration: video.duration || '0:00'
+                  duration: video.duration || '0:00',
                 }))
               : [];
             setRecentVideos(transformedVideos);
@@ -127,17 +133,23 @@ function DashboardPage() {
   }, [user]);
 
   // Calculate stats from donations
-  const totalAmount = donations.reduce((sum, donation) => sum + (Number(donation.amount) || 0), 0);
+  const totalAmount = donations.reduce(
+    (sum, donation) => sum + (Number(donation.amount) || 0),
+    0,
+  );
 
   // Transform donations for donation history
   const donationHistory = donations
-    .sort((a, b) => new Date(b.donationTime).getTime() - new Date(a.donationTime).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.donationTime).getTime() - new Date(a.donationTime).getTime(),
+    )
     .slice(0, 10)
-    .map(donation => ({
+    .map((donation) => ({
       date: new Date(donation.donationTime).toLocaleDateString(),
       amount: `${Number(donation.amount).toLocaleString()} Rwf`,
       cause: donation.donationText || 'General Fund',
-      status: donation.status || 'COMPLETED'
+      status: donation.status || 'COMPLETED',
     }));
 
   // Update handleVideoClick to use Video type
@@ -219,9 +231,8 @@ function DashboardPage() {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-    
       {/* Sidebar */}
-        <Sidebar />
+      <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
@@ -240,7 +251,9 @@ function DashboardPage() {
               <div className="text-right">
                 <p className="text-sm text-gray-500">Total Donations</p>
                 <p className="text-2xl font-bold text-orange-500">
-                  {isLoading ? 'Loading...' : `${totalAmount.toLocaleString()} Rwf`}
+                  {isLoading
+                    ? 'Loading...'
+                    : `${totalAmount.toLocaleString()} Rwf`}
                 </p>
               </div>
               <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
@@ -304,7 +317,9 @@ function DashboardPage() {
               ) : (
                 <div className="col-span-full text-center py-12 text-gray-500">
                   <p className="text-lg">No upcoming events at the moment.</p>
-                  <p className="text-sm">Check back later for new events and activities.</p>
+                  <p className="text-sm">
+                    Check back later for new events and activities.
+                  </p>
                 </div>
               )}
             </div>
@@ -366,7 +381,9 @@ function DashboardPage() {
               ) : (
                 <div className="col-span-full text-center py-12 text-gray-500">
                   <p className="text-lg">No videos available at the moment.</p>
-                  <p className="text-sm">Videos showcasing our impact will appear here.</p>
+                  <p className="text-sm">
+                    Videos showcasing our impact will appear here.
+                  </p>
                 </div>
               )}
             </div>
@@ -407,7 +424,9 @@ function DashboardPage() {
                           <td className="p-4 text-gray-900 font-medium">
                             {donation.amount}
                           </td>
-                          <td className="p-4 text-gray-600">{donation.cause}</td>
+                          <td className="p-4 text-gray-600">
+                            {donation.cause}
+                          </td>
                           <td className="p-4">
                             <Badge
                               variant="secondary"
@@ -430,9 +449,15 @@ function DashboardPage() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={5} className="p-12 text-center text-gray-500">
+                        <td
+                          colSpan={5}
+                          className="p-12 text-center text-gray-500"
+                        >
                           <p className="text-lg">No donation history found.</p>
-                          <p className="text-sm">Your donation history will appear here once you make a donation.</p>
+                          <p className="text-sm">
+                            Your donation history will appear here once you make
+                            a donation.
+                          </p>
                         </td>
                       </tr>
                     )}
@@ -456,7 +481,7 @@ function DashboardPage() {
           >
             {/* Close Button */}
             <button
-              title='Close video'
+              title="Close video"
               onClick={closeModal}
               className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 text-white hover:text-gray-300 transition-colors bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70"
             >
@@ -529,7 +554,7 @@ function DashboardPage() {
 
                   {/* Fullscreen Button */}
                   <button
-                    title='Toggle fullscreen'
+                    title="Toggle fullscreen"
                     onClick={handleFullscreen}
                     className="hover:text-gray-300 transition-colors"
                   >

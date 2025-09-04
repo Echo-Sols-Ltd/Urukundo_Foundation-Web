@@ -47,8 +47,13 @@ export default function ViewVideoDialog({
                   src={video.videoUrl}
                   controls
                   onLoadedMetadata={(e) => {
-                    const label = document.getElementById('video-duration-badge');
-                    if (label) label.textContent = formatDuration(e.currentTarget.duration);
+                    const label = document.getElementById(
+                      'video-duration-badge',
+                    );
+                    if (label)
+                      label.textContent = formatDuration(
+                        e.currentTarget.duration,
+                      );
                   }}
                 />
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -78,7 +83,10 @@ export default function ViewVideoDialog({
               </span>
             </div>
             <div className="absolute bottom-4 right-4">
-              <span id="video-duration-badge" className="inline-flex items-center px-2 py-1 rounded bg-black bg-opacity-70 text-white text-xs font-medium">
+              <span
+                id="video-duration-badge"
+                className="inline-flex items-center px-2 py-1 rounded bg-black bg-opacity-70 text-white text-xs font-medium"
+              >
                 {video.duration}
               </span>
             </div>
@@ -145,7 +153,9 @@ export default function ViewVideoDialog({
           <div className="flex justify-between space-x-3 pt-4 border-t border-gray-200">
             <button
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              onClick={() => { if (video && onDelete) onDelete(video.id); }}
+              onClick={() => {
+                if (video && onDelete) onDelete(video.id);
+              }}
             >
               Delete Video
             </button>

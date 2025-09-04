@@ -58,7 +58,9 @@ const urgentCauses = [
 export default function EventDetailPage({
   params,
 }: {
-  params: Promise<{ slug: 'clean-water-for-all' | 'improve-education' | 'end-hunger' }>;
+  params: Promise<{
+    slug: 'clean-water-for-all' | 'improve-education' | 'end-hunger';
+  }>;
 }) {
   // Unwrap params using React.use()
   const resolvedParams = use(params);

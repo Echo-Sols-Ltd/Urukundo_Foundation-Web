@@ -26,7 +26,7 @@ export function ImpactStats() {
         });
       } catch (error) {
         console.error('Error fetching impact stats:', error);
-        setStats(prev => ({ ...prev, isLoading: false }));
+        setStats((prev) => ({ ...prev, isLoading: false }));
       }
     };
 
@@ -34,25 +34,27 @@ export function ImpactStats() {
   }, []);
 
   const statsData = [
-    { 
-      number: stats.isLoading ? '...' : stats.totalEvents.toString(), 
-      label: 'Events Completed', 
-      icon: Rocket 
+    {
+      number: stats.isLoading ? '...' : stats.totalEvents.toString(),
+      label: 'Events Completed',
+      icon: Rocket,
     },
-    { 
-      number: stats.isLoading ? '...' : stats.totalDonations.toString(), 
-      label: 'Total Donations', 
-      icon: Package 
+    {
+      number: stats.isLoading ? '...' : stats.totalDonations.toString(),
+      label: 'Total Donations',
+      icon: Package,
     },
-    { 
-      number: stats.isLoading ? '...' : stats.totalDonors.toString(), 
-      label: 'Active Donors', 
-      icon: Globe 
+    {
+      number: stats.isLoading ? '...' : stats.totalDonors.toString(),
+      label: 'Active Donors',
+      icon: Globe,
     },
-    { 
-      number: stats.isLoading ? '...' : `RWF ${stats.totalAmount.toLocaleString()}`, 
-      label: 'Amount Raised', 
-      icon: Gift 
+    {
+      number: stats.isLoading
+        ? '...'
+        : `RWF ${stats.totalAmount.toLocaleString()}`,
+      label: 'Amount Raised',
+      icon: Gift,
     },
   ];
 

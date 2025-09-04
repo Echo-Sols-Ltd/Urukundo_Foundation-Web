@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from 'react';
 
 interface Toast {
   id: string;
@@ -33,20 +39,23 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const hideToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  const showToast = useCallback((toast: Omit<Toast, 'id'>) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    const newToast = { ...toast, id };
-    
-    setToasts(prev => [...prev, newToast]);
-    
-    // Auto remove after duration
-    setTimeout(() => {
-      hideToast(id);
-    }, toast.duration || 5000);
-  }, [hideToast]);
+  const showToast = useCallback(
+    (toast: Omit<Toast, 'id'>) => {
+      const id = Math.random().toString(36).substr(2, 9);
+      const newToast = { ...toast, id };
+
+      setToasts((prev) => [...prev, newToast]);
+
+      // Auto remove after duration
+      setTimeout(() => {
+        hideToast(id);
+      }, toast.duration || 5000);
+    },
+    [hideToast],
+  );
 
   const getToastStyles = (type: Toast['type']) => {
     switch (type) {
@@ -81,7 +90,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast, hideToast }}>
       {children}
-      
+
       {/* Toast Container */}
       <div className="fixed top-4 right-4 z-50 space-y-2">
         {toasts.map((toast) => (

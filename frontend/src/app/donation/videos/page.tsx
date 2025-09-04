@@ -40,7 +40,9 @@ export default function VideosPage() {
   const incrementViews = async (id: string) => {
     try {
       await fetch(`/api/videos/${id}/views`, { method: 'POST' });
-      setVideos((prev) => prev.map((v) => (v.id === id ? { ...v, views: v.views + 1 } : v)));
+      setVideos((prev) =>
+        prev.map((v) => (v.id === id ? { ...v, views: v.views + 1 } : v)),
+      );
     } catch {}
   };
 
@@ -118,7 +120,9 @@ export default function VideosPage() {
                     </p>
 
                     <div className="flex items-center justify-between mb-4">
-                      <span className="text-sm text-gray-500">{video.views.toLocaleString()} views</span>
+                      <span className="text-sm text-gray-500">
+                        {video.views.toLocaleString()} views
+                      </span>
                     </div>
 
                     <div className="text-center">

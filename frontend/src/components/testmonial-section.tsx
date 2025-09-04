@@ -11,9 +11,9 @@ export function TestimonialSection() {
               Together, we can change lives for the better
             </h2>
             <p className="font-serif text-lg text-card-foreground mb-8 leading-relaxed">
-              &quot;I always wanted to help, but I didn&apos;t know where to start.
-              Urukundo Foundation made it so easy to give and actually see the
-              change. Watching the live stories made it real.&quot;
+              &quot;I always wanted to help, but I didn&apos;t know where to
+              start. Urukundo Foundation made it so easy to give and actually
+              see the change. Watching the live stories made it real.&quot;
             </p>
             <div>
               <div className="font-sans font-semibold text-card-foreground">

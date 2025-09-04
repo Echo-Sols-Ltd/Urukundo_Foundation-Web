@@ -46,7 +46,7 @@ export default function ContactsPage() {
     {
       question: 'Can I give to more than one charity?',
       answer:
-        "You can support multiple causes and charities through our platform. Simply select the different campaigns you&apos;d like to support and allocate your donation amounts accordingly.",
+        'You can support multiple causes and charities through our platform. Simply select the different campaigns you&apos;d like to support and allocate your donation amounts accordingly.',
     },
     {
       question: 'When will my charity receive my donation?',
@@ -92,9 +92,10 @@ export default function ContactsPage() {
           Every Act of Kindness Counts
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-          Have questions about our mission, need help with donations, or want to get involved? 
-          We&apos;re here to help you make a meaningful impact in the lives of those who need it most. 
-          Reach out to us and let&apos;s work together to create positive change.
+          Have questions about our mission, need help with donations, or want to
+          get involved? We&apos;re here to help you make a meaningful impact in
+          the lives of those who need it most. Reach out to us and let&apos;s
+          work together to create positive change.
         </p>
       </section>
 
@@ -108,7 +109,8 @@ export default function ContactsPage() {
               donate hope.
             </h2>
             <p className="text-gray-300 mb-8 text-sm">
-              Connect with us to learn more about our ongoing projects and how you can make a difference.
+              Connect with us to learn more about our ongoing projects and how
+              you can make a difference.
             </p>
 
             <div className="space-y-6">

@@ -13,12 +13,15 @@ export function useStableId(prefix: string = 'id'): string {
 }
 
 // Utility function to generate stable IDs for arrays
-export function generateStableId(item: { id?: string | number } | null | undefined, prefix: string = 'item'): string {
+export function generateStableId(
+  item: { id?: string | number } | null | undefined,
+  prefix: string = 'item',
+): string {
   // If item has an ID, use it; otherwise use a fallback
   if (item?.id) {
     return String(item.id);
   }
-  
+
   // For server-side rendering, return a predictable temporary ID
   // This will be replaced on the client side if needed
   return `${prefix}-temp`;

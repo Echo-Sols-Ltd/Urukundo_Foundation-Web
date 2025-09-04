@@ -15,43 +15,70 @@ export default function PopularCauses({ donations = [] }: PopularCausesProps) {
       // Fallback data if no donations
       return [
         { name: 'Education', percentage: 40, color: 'bg-green-500', amount: 0 },
-        { name: 'Health Care', percentage: 35, color: 'bg-blue-500', amount: 0 },
-        { name: 'Water Shortage', percentage: 25, color: 'bg-orange-500', amount: 0 },
+        {
+          name: 'Health Care',
+          percentage: 35,
+          color: 'bg-blue-500',
+          amount: 0,
+        },
+        {
+          name: 'Water Shortage',
+          percentage: 25,
+          color: 'bg-orange-500',
+          amount: 0,
+        },
       ];
     }
 
     // Group donations by cause and calculate totals
-    const causeAmounts = donations.reduce((acc, donation) => {
-      const cause = donation.donationCause || 'OTHER';
-      const friendlyName = {
-        'EDUCATION': 'Education',
-        'HEALTH_CARE': 'Health Care', 
-        'WATER_SHORTAGE': 'Water Shortage',
-        'OTHER': 'Others'
-      }[cause] || 'Others';
-      
-      if (!acc[friendlyName]) {
-        acc[friendlyName] = 0;
-      }
-      acc[friendlyName] += Number(donation.amount) || 0;
-      return acc;
-    }, {} as Record<string, number>);
+    const causeAmounts = donations.reduce(
+      (acc, donation) => {
+        const cause = donation.donationCause || 'OTHER';
+        const friendlyName =
+          {
+            EDUCATION: 'Education',
+            HEALTH_CARE: 'Health Care',
+            WATER_SHORTAGE: 'Water Shortage',
+            OTHER: 'Others',
+          }[cause] || 'Others';
 
-    const total = Object.values(causeAmounts).reduce((sum, amount) => sum + amount, 0);
-    
+        if (!acc[friendlyName]) {
+          acc[friendlyName] = 0;
+        }
+        acc[friendlyName] += Number(donation.amount) || 0;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    const total = Object.values(causeAmounts).reduce(
+      (sum, amount) => sum + amount,
+      0,
+    );
+
     if (total === 0) {
       return [
         { name: 'Education', percentage: 40, color: 'bg-green-500', amount: 0 },
-        { name: 'Health Care', percentage: 35, color: 'bg-blue-500', amount: 0 },
-        { name: 'Water Shortage', percentage: 25, color: 'bg-orange-500', amount: 0 },
+        {
+          name: 'Health Care',
+          percentage: 35,
+          color: 'bg-blue-500',
+          amount: 0,
+        },
+        {
+          name: 'Water Shortage',
+          percentage: 25,
+          color: 'bg-orange-500',
+          amount: 0,
+        },
       ];
     }
 
     const colors = {
-      'Education': 'bg-green-500',
+      Education: 'bg-green-500',
       'Health Care': 'bg-blue-500',
       'Water Shortage': 'bg-orange-500',
-      'Others': 'bg-purple-500'
+      Others: 'bg-purple-500',
     };
 
     return Object.entries(causeAmounts)
@@ -59,7 +86,7 @@ export default function PopularCauses({ donations = [] }: PopularCausesProps) {
         name,
         percentage: Math.round((amount / total) * 100),
         color: colors[name as keyof typeof colors] || 'bg-gray-500',
-        amount
+        amount,
       }))
       .sort((a, b) => b.percentage - a.percentage);
   }, [donations]);
@@ -94,17 +121,24 @@ export default function PopularCauses({ donations = [] }: PopularCausesProps) {
                 'bg-blue-500': '#3b82f6',
                 'bg-orange-500': '#f97316',
                 'bg-purple-500': '#8b5cf6',
-                'bg-gray-500': '#6b7280'
+                'bg-gray-500': '#6b7280',
               };
-              
-              const strokeColor = strokeColors[cause.color as keyof typeof strokeColors] || '#6b7280';
+
+              const strokeColor =
+                strokeColors[cause.color as keyof typeof strokeColors] ||
+                '#6b7280';
               const circumference = 2 * Math.PI * 50;
               const strokeDasharray = `${(cause.percentage / 100) * circumference} ${circumference}`;
-              
+
               // Calculate offset for each segment
-              const previousPercentages = causes.slice(0, index).reduce((sum, c) => sum + c.percentage, 0);
-              const strokeDashoffset = -((previousPercentages / 100) * circumference);
-              
+              const previousPercentages = causes
+                .slice(0, index)
+                .reduce((sum, c) => sum + c.percentage, 0);
+              const strokeDashoffset = -(
+                (previousPercentages / 100) *
+                circumference
+              );
+
               return (
                 <circle
                   key={cause.name}
@@ -121,7 +155,7 @@ export default function PopularCauses({ donations = [] }: PopularCausesProps) {
               );
             })}
           </svg>
-          
+
           {/* Center text showing total */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-2xl font-bold text-gray-900">

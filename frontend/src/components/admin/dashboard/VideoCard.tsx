@@ -52,7 +52,9 @@ export default function VideoCard({
             className="w-full h-48 object-cover bg-black"
             src={video.url}
             preload="metadata"
-            onLoadedMetadata={(e) => setDurationText(formatDuration(e.currentTarget.duration))}
+            onLoadedMetadata={(e) =>
+              setDurationText(formatDuration(e.currentTarget.duration))
+            }
             onClick={() => onViewDetails(video)}
           />
         ) : (

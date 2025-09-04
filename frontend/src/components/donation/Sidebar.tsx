@@ -58,12 +58,14 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-6 h-6 rounded flex items-center justify-center">
-              <span className="text-white text-xs font-bold"><Image
-                src="/image/charity.svg"
-                alt="Urukundo Foundation Logo"
-                width={24}
-                height={24}
-              /></span>
+              <span className="text-white text-xs font-bold">
+                <Image
+                  src="/image/charity.svg"
+                  alt="Urukundo Foundation Logo"
+                  width={24}
+                  height={24}
+                />
+              </span>
             </div>
             <div>
               <h1 className="font-bold text-gray-900 text-sm">

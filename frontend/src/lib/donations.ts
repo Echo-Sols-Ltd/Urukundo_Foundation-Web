@@ -1,5 +1,7 @@
 // API functions for donations
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  'https://urukundo-fromntend-urukundo-back-1.onrender.com';
 //const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 export interface Donation {
@@ -54,14 +56,21 @@ export async function getUserDonations(): Promise<Donation[]> {
 export async function getUserDonationStats(): Promise<DonationStats> {
   try {
     const donations = await getUserDonations();
-    
+
     // Filter donations for the current user if needed
     // Since the backend should already filter by authenticated user
-    
-    const totalAmount = donations.reduce((sum, donation) => sum + donation.amount, 0);
+
+    const totalAmount = donations.reduce(
+      (sum, donation) => sum + donation.amount,
+      0,
+    );
     const totalDonations = donations.length;
     const recentDonations = donations
-      .sort((a, b) => new Date(b.donationTime).getTime() - new Date(a.donationTime).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.donationTime).getTime() -
+          new Date(a.donationTime).getTime(),
+      )
       .slice(0, 5);
 
     return {
@@ -80,7 +89,9 @@ export async function getUserDonationStats(): Promise<DonationStats> {
 }
 
 // Create a new donation
-export async function createDonation(donationData: Partial<Donation>): Promise<Donation> {
+export async function createDonation(
+  donationData: Partial<Donation>,
+): Promise<Donation> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/donation`, {
       method: 'POST',
