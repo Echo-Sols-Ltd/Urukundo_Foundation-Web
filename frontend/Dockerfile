@@ -36,6 +36,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+# Ensure Next.js image cache directory exists and is writable at runtime
+RUN mkdir -p /app/.next/cache && chown -R 1001:1001 /app/.next
+
 USER 1001
 EXPOSE 3000
 
