@@ -5,7 +5,7 @@ nixPkgs = ['nodejs_20']
 cmds = ['npm ci --production=false']
 
 [phases.build]
-cmds = ['rm -rf .next', 'chmod +x debug-build.sh', './debug-build.sh', 'npm run build']
+cmds = ['chmod +x debug-build.sh', './debug-build.sh', 'npm run build']
 
 [start]
 cmd = 'node .next/standalone/server.js'
