@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
-    "start": "next start",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,css,md,json}\""

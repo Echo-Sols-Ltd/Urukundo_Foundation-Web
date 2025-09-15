@@ -2,8 +2,6 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  // Reduce memory usage during build
-  swcMinify: true,
   async rewrites() {
     return [
       {
