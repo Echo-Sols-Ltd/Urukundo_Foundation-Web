@@ -2,10 +2,10 @@
 nixPkgs = ['nodejs_20']
 
 [phases.install]
-cmds = ['npm ci --production=false']
+cmds = ['cd frontend && npm ci --production=false']
 
 [phases.build]
-cmds = ['npm run build']
+cmds = ['cd frontend && npm run build']
 
 [start]
-cmd = 'node .next/standalone/server.js'
+cmd = 'cd frontend && node .next/standalone/server.js'
