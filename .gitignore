@@ -230,8 +230,4 @@ docker-compose.override.yml
 .terraform/
 .terraform.lock.hcl
 
-# Local development
-.local/
-local/
-frontend/src/app/layout.tsx
-frontend/src/app/layout.tsx
+
