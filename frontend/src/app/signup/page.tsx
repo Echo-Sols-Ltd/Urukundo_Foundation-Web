@@ -118,7 +118,7 @@ function SignupPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      
 
       <div className="flex items-center justify-center py-16 px-4">
         <div className="w-full max-w-md">
