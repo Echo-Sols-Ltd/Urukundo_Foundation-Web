@@ -1,7 +1,6 @@
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   'https://urukundo-fromntend-urukundo-back-1.onrender.com';
-// ...existing code...
 
 // Types for API responses
 export interface Event {
@@ -83,6 +82,21 @@ export interface DonationStats {
     amount: number;
     percentage: number;
   }>;
+}
+
+export interface UserProfile {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: 'ADMIN' | 'DONOR' | 'MANAGER';
+  gender?: 'MALE' | 'FEMALE' | 'OTHER' | null;
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+  confirmationPassword: string;
 }
 
 // Get authorization headers
@@ -445,4 +459,52 @@ export const dataTransformers = {
     videoUrl: video.videoUrl,
     duration: video.duration || '0:00',
   }),
+};
+
+// Users API
+export const usersApi = {
+  getMe: async (): Promise<UserProfile | null> => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/users/me`, {
+        headers: getAuthHeaders(),
+      });
+      if (!res.ok) return null;
+      return res.json();
+    } catch (e) {
+      console.error('getMe failed', e);
+      return null;
+    }
+  },
+
+  update: async (
+    id: number,
+    data: Partial<UserProfile>,
+  ): Promise<UserProfile | null> => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/users/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) return null;
+      return res.json();
+    } catch (e) {
+      console.error('update user failed', e);
+      return null;
+    }
+  },
+
+  changePassword: async (payload: ChangePasswordPayload): Promise<boolean> => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/users`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload),
+      });
+      return res.ok;
+    } catch (e) {
+      console.error('changePassword failed', e);
+      return false;
+    }
+  },
 };

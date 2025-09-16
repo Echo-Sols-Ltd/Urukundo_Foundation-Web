@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   description:
     'At Urukundo Foundation, we believe that technology and compassion together can bridge the gap between those who want to give and those in need.',
   keywords: ['charity', 'donation', 'helping others'],
+  //add favicon
+  icons: {
+    icon: '/image/charity.svg', // Adjust the path to where your favicon is stored
+  },
   authors: [
     {
       name: 'Echo Sols',

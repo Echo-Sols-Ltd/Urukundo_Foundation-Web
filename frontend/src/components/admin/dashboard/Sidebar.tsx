@@ -55,13 +55,13 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       <div className="hidden lg:flex w-64 bg-white border-r border-gray-200 h-screen flex-col">
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center">
+            <div className="w-6 h-6  rounded flex items-center justify-center">
               <span className="text-white text-xs font-bold">
                 <Image
                   src="/image/charity.svg"
                   alt="Logo"
-                  width={16}
-                  height={16}
+                  width={32}
+                  height={32}
                   className="object-contain"
                 />
               </span>
@@ -106,8 +106,12 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           <ul className="space-y-1">
             <li>
               <Link
-                href="/settings"
-                className="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                href="/admin/settings"
+                className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  pathname === '/admin/settings'
+                    ? 'bg-orange-500 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
               >
                 <span className="text-lg">
                   <Settings className="w-5 h-5" />
@@ -191,9 +195,13 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           <ul className="space-y-1">
             <li>
               <Link
-                href="/settings"
+                href="/admin/settings"
                 onClick={onClose}
-                className="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  pathname === '/admin/settings'
+                    ? 'bg-orange-500 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
               >
                 <span className="text-lg">
                   <Settings className="w-5 h-5" />

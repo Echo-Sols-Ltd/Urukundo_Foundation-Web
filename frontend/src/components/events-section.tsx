@@ -65,13 +65,15 @@ export function EventsSection() {
   return (
     <section className="section-padding-lg bg-background">
       <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-16">{/* Increased from mb-12 */}
+        <div className="flex justify-between items-center mb-16">
+          {/* Increased from mb-12 */}
           <h2 className="font-sans text-3xl lg:text-4xl font-bold text-foreground">
             Latest Events
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-12">{/* Increased gaps */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-12">
+          {/* Increased gaps */}
           {isLoading ? (
             // Loading state
             [...Array(3)].map((_, index) => (
@@ -105,8 +107,10 @@ export function EventsSection() {
                   height={192} // Adjusted height to match h-48 (48 * 4 = 192)
                   className="w-full h-48 object-cover"
                 />
-                <CardContent className="card-padding-lg">{/* Enhanced padding */}
-                  <h3 className="font-sans text-xl font-semibold text-card-foreground mb-4">{/* Increased from mb-3 */}
+                <CardContent className="card-padding-lg">
+                  {/* Enhanced padding */}
+                  <h3 className="font-sans text-xl font-semibold text-card-foreground mb-4">
+                    {/* Increased from mb-3 */}
                     {event.title}
                   </h3>
                   <div className="space-y-2 mb-4">

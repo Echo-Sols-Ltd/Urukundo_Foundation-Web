@@ -61,18 +61,21 @@ export function ImpactStats() {
   return (
     <section className="section-padding-lg bg-background">
       <div className="container mx-auto">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">{/* Increased from gap-8 */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Increased from gap-8 */}
           {statsData.map((stat, index) => {
             const IconComponent = stat.icon;
             return (
               <div key={index} className="text-center">
-                <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">{/* Increased size and margin */}
+                <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  {/* Increased size and margin */}
                   <IconComponent
                     className="w-10 h-10 text-orange-500"
                     strokeWidth={1.5}
                   />
                 </div>
-                <div className="font-sans text-3xl lg:text-4xl font-bold text-foreground mb-3">{/* Increased from mb-2 */}
+                <div className="font-sans text-3xl lg:text-4xl font-bold text-foreground mb-3">
+                  {/* Increased from mb-2 */}
                   {stat.number}
                 </div>
                 <div className="font-serif text-muted-foreground">
