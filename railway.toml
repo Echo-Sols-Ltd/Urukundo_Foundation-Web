@@ -2,11 +2,7 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "cd frontend && PORT=$PORT HOSTNAME=0.0.0.0 node .next/standalone/server.js"
+startCommand = "cd frontend && npm start"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
-
-[variables]
-PORT = "8080"
-HOSTNAME = "0.0.0.0"
