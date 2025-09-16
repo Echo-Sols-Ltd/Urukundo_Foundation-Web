@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '../contexts/AuthContext';
+import { ToastProvider } from '../components/ui/toast';
 
 export const metadata: Metadata = {
   title: 'Urukundo Foundation - Share Love, Save Lives',
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="antialiased">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   );

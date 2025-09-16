@@ -28,6 +28,31 @@ export default function NotificationsPage() {
   const newNotifications = notificationsList.filter((n) => !n.isRead);
   const readNotifications = notificationsList.filter((n) => n.isRead);
 
+  const formatDisplayTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) return timestamp;
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMinutes = Math.floor(diffMs / (60 * 1000));
+    const diffHours = Math.floor(diffMs / (60 * 60 * 1000));
+    const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+
+    // Use relative time for recent notifications (< 36 hours), else full date
+    if (diffHours < 36) {
+      if (diffMinutes < 1) return 'Just now';
+      if (diffMinutes < 60) return `${diffMinutes} min ago`;
+      if (diffHours < 24)
+        return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+      return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+    }
+
+    return date.toLocaleDateString(undefined, {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar
@@ -77,7 +102,7 @@ export default function NotificationsPage() {
                           {notification.title}
                         </p>
                         <p className="text-sm text-gray-600 mt-1">
-                          {notification.timestamp}
+                          {formatDisplayTime(notification.timestamp)}
                         </p>
                       </div>
                     </div>
@@ -107,7 +132,7 @@ export default function NotificationsPage() {
                       <div>
                         <p className="text-gray-700">{notification.title}</p>
                         <p className="text-sm text-gray-500 mt-1">
-                          {notification.timestamp}
+                          {formatDisplayTime(notification.timestamp)}
                         </p>
                       </div>
                     </div>
