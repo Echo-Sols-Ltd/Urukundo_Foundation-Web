@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build": "next build",
     "start": "node .next/standalone/server.js",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,md,json}\"",
@@ -31,7 +31,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.0",
     "prettier": "^3.6.2",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.13",
     "tw-animate-css": "^1.3.7",
     "typescript": "^5.9.2"
   }

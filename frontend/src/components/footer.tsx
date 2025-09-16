@@ -43,7 +43,7 @@ export function Footer() {
                 <Twitter className="w-4 h-4 text-white" />
               </a>
               <a
-                href="https://instagram.com/urukundofoundation" // Replace with your Instagram URL
+                href="https://www.instagram.com/echo_sols/" // Replace with your Instagram URL
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 bg-white rounded-full flex items-center justify-center"
@@ -105,12 +105,11 @@ export function Footer() {
             </h3>
             <div className="space-y-2 font-serif text-sm">
               <p className="text-gray-300">
-                <span className="text-white font-medium">Phone:</span> (610)
-                566-7843
+                <span className="text-white font-medium">Phone:</span> +250 793 373 953
               </p>
               <p className="text-gray-300">
                 <span className="text-white font-medium">Portfolio:</span>{' '}
-                https://lex-tech-portfolio.vercel.app/
+                https://charity-portfolio.vercel.app/
               </p>
             </div>
           </div>

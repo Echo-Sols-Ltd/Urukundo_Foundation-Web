@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { withGuest } from '../../components/auth/withAuth';
+import Header from '../../components/header';
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -40,29 +41,7 @@ function LoginPage() {
   };
   return (
     <div className="min-h-screen bg-white">
-      <nav className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-black rounded-sm flex items-center justify-center">
-            <span className="text-white text-sm">🌿</span>
-          </div>
-          <span className="text-xl font-semibold text-black">Urukundo</span>
-        </div>
-
-        <div className="flex items-center space-x-8">
-          <Link href="/" className="text-gray-700 hover:text-gray-900">
-            Home
-          </Link>
-          <Link href="#" className="text-gray-700 hover:text-gray-900">
-            About
-          </Link>
-          <Link href="#" className="text-gray-700 hover:text-gray-900">
-            Contact
-          </Link>
-          <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full text-sm font-medium">
-            Donate
-          </button>
-        </div>
-      </nav>
+      <Header />
 
       <div className="flex items-center justify-center py-20 px-4">
         <div className="w-full max-w-sm">

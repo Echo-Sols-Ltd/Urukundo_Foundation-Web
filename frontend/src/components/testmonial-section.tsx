@@ -17,7 +17,7 @@ export function TestimonialSection() {
             </p>
             <div>
               <div className="font-sans font-semibold text-card-foreground">
-                George Henry
+                SHEMA Leandre
               </div>
               <div className="font-serif text-muted-foreground">Donor</div>
             </div>
@@ -32,10 +32,11 @@ export function TestimonialSection() {
 
           <div className="flex-1 max-w-md">
             <Image
-              src="/image/george.png"
-              alt="George Henry - Donor testimonial"
+              src="/image/frique.jpg"
+              alt="SHEMA Leandre- Donor testimonial"
               width={400} // Adjusted width for max-w-md (approx. 400px)
-              height={400} // Adjusted height (square aspect ratio as a starting point)
+              height={400} // A
+              // djusted height (square aspect ratio as a starting point)
               className="w-full h-auto rounded-lg shadow-lg"
             />
           </div>
