@@ -8,8 +8,4 @@ cmds = ['cd frontend && npm ci --production=false']
 cmds = ['cd frontend && npm run build']
 
 [start]
-cmd = 'cd frontend && PORT=$PORT HOSTNAME=0.0.0.0 node .next/standalone/server.js'
-
-[variables]
-PORT = '8080'
-HOSTNAME = '0.0.0.0'
+cmd = 'cd frontend && node .next/standalone/server.js'
