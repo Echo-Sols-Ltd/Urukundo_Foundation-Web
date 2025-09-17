@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/admin/dashboard/Header';
 import Sidebar from '@/components/admin/dashboard/Sidebar';
+import { withAdminAuth } from '@/components/auth/withAuth';
 import MetricCard from '@/components/admin/dashboard/MetricCard';
 import EventCard from '@/components/admin/dashboard/EventCard';
 import CreateEventDialog from '@/components/admin/dashboard/CreateEventDialog';
@@ -61,7 +62,7 @@ type CreateEventForm = {
   tags?: string[]; // changed from string to string[]
 };
 
-export default function EventsPage() {
+function EventsPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -854,3 +855,5 @@ export default function EventsPage() {
     </div>
   );
 }
+
+export default withAdminAuth(EventsPage);

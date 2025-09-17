@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/admin/dashboard/Header';
 import Sidebar from '@/components/admin/dashboard/Sidebar';
+import { withAdminAuth } from '@/components/auth/withAuth';
 import MetricCard from '@/components/admin/dashboard/MetricCard';
 import VideoCard from '@/components/admin/dashboard/VideoCard';
 import ViewVideoDialog from '@/components/admin/dashboard/ViewVideoDialog';
@@ -76,7 +77,7 @@ const mapBackendToUi = (be: BackendVideo): Video => ({
   category: 'General',
 });
 
-export default function VideosPage() {
+function VideosPage() {
   const [activeTab, setActiveTab] = useState<'library' | 'streams'>('library');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showOptions, setShowOptions] = useState<string | null>(null);
@@ -600,3 +601,5 @@ export default function VideosPage() {
     </div>
   );
 }
+
+export default withAdminAuth(VideosPage);

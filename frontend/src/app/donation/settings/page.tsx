@@ -64,9 +64,14 @@ function SettingsPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = async () => {
+  const handleProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user?.id) {
+      console.error('User ID not available');
+      return;
+    }
+
     try {
-      // Prepare data for backend update
       const updateData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -75,8 +80,8 @@ function SettingsPage() {
         // Add other fields as supported by your backend
       };
 
-      // Update user profile
-      const response = await fetch('/api/users/profile', {
+      // Update user profile using the current user's ID
+      const response = await fetch(`/api/users/${user.id}`, {
         method: 'PUT',
         headers: getHeaders(),
         body: JSON.stringify(updateData),
@@ -92,6 +97,13 @@ function SettingsPage() {
       console.error('Failed to save settings:', error);
       alert('Failed to save settings. Please try again.');
     }
+  };
+
+  const handleSave = async () => {
+    // For now, just handle profile updates
+    // In the future, you can add logic for other tabs
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    await handleProfileSubmit(fakeEvent);
   };
 
   const tabs = [
