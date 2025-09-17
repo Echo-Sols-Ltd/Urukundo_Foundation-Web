@@ -4,6 +4,7 @@ import { AuthProvider } from '../contexts/AuthContext';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://urukundo-chariy-foundation.up.railway.app';
 const TWITTER_HANDLE = process.env.NEXT_PUBLIC_TWITTER ?? '@urukundo';
+import { ToastProvider } from '../components/ui/toast';
 
 export const metadata: Metadata = {
   title: 'Urukundo Foundation - Share Love, Save Lives',
@@ -109,7 +110,9 @@ export default function RootLayout({
         <link rel="canonical" href={SITE_URL} />
       </head>
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </AuthProvider>
 
         {/* JSON-LD structured data for SEO */}
         <script

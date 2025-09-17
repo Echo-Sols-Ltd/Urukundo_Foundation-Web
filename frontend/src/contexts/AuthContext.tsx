@@ -22,7 +22,9 @@ import {
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
-  register: (userData: RegisterRequest) => Promise<void>;
+  register: (
+    userData: RegisterRequest,
+  ) => Promise<{ success: boolean; user?: User }>;
   logout: () => Promise<void>;
   refreshAuth: () => Promise<void>;
 }
@@ -111,7 +113,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async (userData: RegisterRequest): Promise<void> => {
+  const register = async (
+    userData: RegisterRequest,
+  ): Promise<{ success: boolean; user?: User }> => {
     try {
       setAuthState((prev) => ({ ...prev, isLoading: true }));
       const user = await authRegister(userData);
@@ -121,8 +125,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading: false,
       });
 
-      // Redirect to donation dashboard after successful registration
-      router.push('/donation');
+      // Return success without redirecting - let the component handle the redirect
+      return { success: true, user };
     } catch (error) {
       setAuthState({
         user: null,

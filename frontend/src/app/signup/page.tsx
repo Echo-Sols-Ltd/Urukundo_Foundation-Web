@@ -2,10 +2,14 @@
 
 import type React from 'react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 import { withGuest } from '../../components/auth/withAuth';
+import { useToast } from '../../components/ui/toast';
 
 function SignupPage() {
+  const router = useRouter();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -96,7 +100,7 @@ function SignupPage() {
     setIsLoading(true);
 
     try {
-      await register({
+      const result = await register({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -105,7 +109,21 @@ function SignupPage() {
         role: formData.role === 'partner' ? 'MANAGER' : 'DONOR',
         gender: formData.gender,
       });
-      // Navigation will be handled by the AuthProvider redirecting after registration
+
+      if (result.success) {
+        // Show success toast
+        showToast({
+          type: 'success',
+          title: 'Account Created Successfully!',
+          message: 'Please log in to access your account.',
+          duration: 4000,
+        });
+
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      }
     } catch (error) {
       setErrors({
         general: error instanceof Error ? error.message : 'Registration failed',
@@ -117,16 +135,69 @@ function SignupPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="flex items-center justify-center py-16 px-4">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+      <nav className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-black rounded-sm flex items-center justify-center">
+            <span className="text-white text-sm">🌿</span>
+          </div>
+          <span className="text-lg sm:text-xl font-semibold text-black">
+            Urukundo
+          </span>
+        </div>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+          <a
+            href="#"
+            className="text-gray-700 hover:text-gray-900 text-sm lg:text-base"
+          >
+            Home
+          </a>
+          <a
+            href="#"
+            className="text-gray-700 hover:text-gray-900 text-sm lg:text-base"
+          >
+            About
+          </a>
+          <a
+            href="#"
+            className="text-gray-700 hover:text-gray-900 text-sm lg:text-base"
+          >
+            Contact
+          </a>
+          <button className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium">
+            Donate
+          </button>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button className="md:hidden p-2 text-gray-700 hover:text-gray-900">
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      </nav>
+
+      <div className="flex items-center justify-center py-8 sm:py-12 lg:py-16 px-4">
+        <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               Create your account
             </h1>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
                   htmlFor="firstName"
@@ -143,7 +214,7 @@ function SignupPage() {
                   onChange={(e) =>
                     handleInputChange('firstName', e.target.value)
                   }
-                  className={`w-full px-4 py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 ${
+                  className={`w-full px-3 py-3 sm:px-4 sm:py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 text-sm sm:text-base ${
                     errors.firstName ? 'ring-2 ring-red-500' : ''
                   }`}
                   placeholder="First Name"
@@ -171,7 +242,7 @@ function SignupPage() {
                   onChange={(e) =>
                     handleInputChange('lastName', e.target.value)
                   }
-                  className={`w-full px-4 py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 ${
+                  className={`w-full px-3 py-3 sm:px-4 sm:py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 text-sm sm:text-base ${
                     errors.lastName ? 'ring-2 ring-red-500' : ''
                   }`}
                   placeholder="Last Name"
@@ -196,7 +267,7 @@ function SignupPage() {
                 required
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                className={`w-full px-4 py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 ${
+                className={`w-full px-3 py-3 sm:px-4 sm:py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 text-sm sm:text-base ${
                   errors.email ? 'ring-2 ring-red-500' : ''
                 }`}
                 placeholder="Your email"
@@ -220,7 +291,7 @@ function SignupPage() {
                 required
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                className={`w-full px-4 py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 ${
+                className={`w-full px-3 py-3 sm:px-4 sm:py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 text-sm sm:text-base ${
                   errors.phone ? 'ring-2 ring-red-500' : ''
                 }`}
                 placeholder="Phone number"
@@ -244,7 +315,7 @@ function SignupPage() {
                 required
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
-                className={`w-full px-4 py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 ${
+                className={`w-full px-3 py-3 sm:px-4 sm:py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 text-sm sm:text-base ${
                   errors.password ? 'ring-2 ring-red-500' : ''
                 }`}
                 placeholder="Password"
@@ -270,7 +341,7 @@ function SignupPage() {
                 onChange={(e) =>
                   handleInputChange('confirmPassword', e.target.value)
                 }
-                className={`w-full px-4 py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 ${
+                className={`w-full px-3 py-3 sm:px-4 sm:py-3 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 text-sm sm:text-base ${
                   errors.confirmPassword ? 'ring-2 ring-red-500' : ''
                 }`}
                 placeholder="Confirm your password"
@@ -295,7 +366,7 @@ function SignupPage() {
                 required
                 value={formData.role}
                 onChange={(e) => handleInputChange('role', e.target.value)}
-                className={`w-full px-4 py-3 rounded-lg bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 ${
+                className={`w-full px-3 py-3 sm:px-4 sm:py-3 rounded-lg bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 text-sm sm:text-base ${
                   errors.role ? 'ring-2 ring-red-500' : ''
                 }`}
               >
@@ -311,10 +382,10 @@ function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-black mb-4">
+              <label className="block text-sm font-medium text-black mb-3 sm:mb-4">
                 Donation interests
               </label>
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
@@ -367,7 +438,7 @@ function SignupPage() {
                   </span>
                 </label>
 
-                <label className="flex items-center">
+                <label className="flex items-center sm:col-span-2">
                   <input
                     type="checkbox"
                     checked={formData.donationInterests.animalWelfare}
@@ -401,7 +472,7 @@ function SignupPage() {
                     e.target.value as 'MALE' | 'FEMALE' | 'OTHER',
                   )
                 }
-                className="w-full px-4 py-3 rounded-lg bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0"
+                className="w-full px-3 py-3 sm:px-4 sm:py-3 rounded-lg bg-gray-100 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white border-0 text-sm sm:text-base"
               >
                 <option value="OTHER">Prefer not to say</option>
                 <option value="MALE">Male</option>
@@ -418,7 +489,7 @@ function SignupPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 sm:py-4 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
             >
               {isLoading ? (
                 <>
@@ -440,7 +511,7 @@ function SignupPage() {
               </a>
             </div>
 
-            <div className="text-center text-xs text-gray-500 mt-4">
+            <div className="text-center text-xs text-gray-500 mt-4 px-4">
               By continuing, you agree to our Terms of Service and Privacy
               Policy
             </div>
