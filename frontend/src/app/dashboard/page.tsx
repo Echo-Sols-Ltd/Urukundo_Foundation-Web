@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { Download, Play } from 'lucide-react';
+import { Download, Play, Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -74,6 +74,7 @@ const defaultUpcomingEvents = [
 
 function DashboardPage() {
   const { user } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [donations, setDonations] = useState<Donation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [upcomingEvents, setUpcomingEvents] = useState<
@@ -223,13 +224,25 @@ function DashboardPage() {
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+      />
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 mr-2"
+              title="Open menu"
+              aria-label="Open navigation menu"
+            >
+              <Menu className="w-5 h-5 text-gray-600" />
+            </button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Welcome, {user?.firstName || 'User'}

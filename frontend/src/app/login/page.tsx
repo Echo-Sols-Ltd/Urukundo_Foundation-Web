@@ -1,6 +1,7 @@
 'use client';
 import type React from 'react';
 import { useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { withGuest } from '../../components/auth/withAuth';
 import { useToast } from '../../components/ui/toast';
