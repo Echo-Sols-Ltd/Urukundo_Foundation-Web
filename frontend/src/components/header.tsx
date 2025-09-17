@@ -35,22 +35,23 @@ export function Header() {
 
   return (
     <header className="bg-black text-white fixed top-0 left-0 right-0 z-50">
-      <div className="container mx-auto px-2 py-4 flex items-center justify-between">
-        {' '}
-        {/* Reduced px-4 to px-2 */}
-        <div className="flex items-center gap-2">
+      <div className="container mx-auto px-16 py-4  flex items-center justify-between">
+        {/* Enhanced padding */}
+        <div className="flex items-center gap-3">
+          {/* Increased from gap-2 */}
           <Image
             src="/image/charity.svg" // Adjust the path to where your logo.svg is stored
             alt="Urukundo Foundation Logo"
-            width={32}
-            height={32}
+            width={34}
+            height={34}
             className="w-8 h-8 filter invert brightness-0 saturate-100"
           />
           <span className="font-sans font-semibold text-lg">
             URUKUNDO FOUNDATION
           </span>
         </div>
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-8">
+          {/* Increased from gap-6 */}
           <Link href="/" className="hover:text-orange-500 transition-colors">
             Home
           </Link>
@@ -81,8 +82,9 @@ export function Header() {
         </nav>
         <Button
           onClick={handleDonateClick}
-          className="bg-orange-500 hover:bg-orange-600 text-white font-medium px-6"
+          className="bg-orange-500 hover:bg-orange-600 text-white font-medium px-8 py-3"
         >
+          {/* Enhanced padding */}
           DONATE
         </Button>
       </div>

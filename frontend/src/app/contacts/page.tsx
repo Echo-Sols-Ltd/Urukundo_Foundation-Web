@@ -139,16 +139,34 @@ export default function ContactsPage() {
               </div>
             </div>
 
-            <div className="flex gap-4 mt-8">
-              <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <Facebook className="w-5 h-5" />
-              </div>
-              <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <Twitter className="w-5 h-5" />
-              </div>
-              <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <Instagram className="w-5 h-5" />
-              </div>
+            <div className="flex gap-3 mt-8">
+              <a
+                href="https://facebook.com/urukundofoundation"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+                title="Follow us on Facebook"
+              >
+                <Facebook className="w-4 h-4 text-black" />
+              </a>
+              <a
+                href="https://twitter.com/urukundofoundation"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center hover:bg-orange-600 transition-all duration-200 cursor-pointer"
+                title="Follow us on Twitter"
+              >
+                <Twitter className="w-4 h-4 text-white" />
+              </a>
+              <a
+                href="https://www.instagram.com/echo_sols/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+                title="Follow us on Instagram"
+              >
+                <Instagram className="w-4 h-4 text-black" />
+              </a>
             </div>
           </div>
 
@@ -266,7 +284,9 @@ export default function ContactsPage() {
               Questions
             </h2>
             <p className="text-gray-600">
-              At eu lobortis pretium tincidunt amet lacus ut senean aliquet
+              Find answers to common questions about our charity work, donation
+              process, and how you can make a meaningful impact in communities
+              around the world.
             </p>
           </div>
 

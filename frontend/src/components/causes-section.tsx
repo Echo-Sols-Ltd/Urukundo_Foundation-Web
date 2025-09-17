@@ -29,21 +29,26 @@ export function CausesSection() {
   ];
 
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <section className="section-padding-lg bg-white">
+      <div className="container mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+          {/* Increased from gap-8 */}
           {causes.map((cause, index) => {
             const IconComponent = cause.icon;
             return (
-              <div key={index} className="flex items-start gap-4">
+              <div key={index} className="flex items-start gap-6">
+                {/* Increased from gap-4 */}
                 <div className="flex-shrink-0">
-                  <IconComponent className="w-12 h-12 text-orange-500 stroke-2" />
+                  <IconComponent className="w-14 h-14 text-orange-500 stroke-2" />
+                  {/* Increased from w-12 h-12 */}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-sans text-xl font-semibold text-gray-900 mb-2">
+                  <h3 className="font-sans text-xl font-semibold text-gray-900 mb-3">
+                    {/* Increased from mb-2 */}
                     {cause.title}
                   </h3>
-                  <p className="font-serif text-gray-600 text-sm">
+                  <p className="font-serif text-gray-600 text-sm leading-relaxed">
+                    {/* Added leading-relaxed */}
                     {cause.description}
                   </p>
                 </div>

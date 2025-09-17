@@ -1,7 +1,4 @@
 @import 'tailwindcss';
-@import 'tw-animate-css';
-
-@custom-variant dark (&:is(.dark *));
 
 /* Define modern system font stacks */
 :root {
@@ -85,8 +82,14 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
-@theme inline {
-  /* optional: --font-sans, --font-serif, --font-mono if they are applied in the layout.tsx */
+@theme {
+  /* Tailwind v4 CSS-based configuration */
+
+  /* Font families */
+  --font-family-sans: var(--font-sans), system-ui, sans-serif;
+  --font-family-heading: var(--font-heading), system-ui, sans-serif;
+
+  /* Colors using CSS variables */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -111,10 +114,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -123,6 +122,38 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Border radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Enhanced spacing scale */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+  --spacing-26: 6.5rem;
+  --spacing-30: 7.5rem;
+  --spacing-34: 8.5rem;
+  --spacing-38: 9.5rem;
+  --spacing-42: 10.5rem;
+  --spacing-46: 11.5rem;
+  --spacing-50: 12.5rem;
+  --spacing-54: 13.5rem;
+  --spacing-58: 14.5rem;
+  --spacing-62: 15.5rem;
+
+  /* Semantic padding tokens */
+  --spacing-section: 3rem;
+  --spacing-section-sm: 2rem;
+  --spacing-section-lg: 4rem;
+  --spacing-section-xl: 5rem;
+  --spacing-container: 1.5rem;
+  --spacing-container-sm: 1rem;
+  --spacing-container-lg: 2rem;
+  --spacing-card: 2rem;
+  --spacing-card-sm: 1.5rem;
+  --spacing-card-lg: 2.5rem;
 }
 
 @layer base {
@@ -146,5 +177,49 @@
   h5,
   h6 {
     font-family: var(--font-heading);
+  }
+}
+
+@layer utilities {
+  /* Enhanced padding utilities using standard Tailwind spacing */
+  .container-padding {
+    @apply px-6 py-12;
+  }
+
+  .section-padding {
+    @apply py-12 px-6;
+  }
+
+  .section-padding-sm {
+    @apply py-8 px-4;
+  }
+
+  .section-padding-lg {
+    @apply py-16 px-8;
+  }
+
+  .card-padding {
+    @apply p-8;
+  }
+
+  .card-padding-sm {
+    @apply p-6;
+  }
+
+  .card-padding-lg {
+    @apply p-10;
+  }
+
+  /* Enhanced responsive padding */
+  .responsive-padding {
+    @apply px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16 xl:px-12 xl:py-20;
+  }
+
+  .responsive-padding-sm {
+    @apply px-3 py-6 sm:px-4 sm:py-8 lg:px-6 lg:py-10 xl:px-8 xl:py-12;
+  }
+
+  .responsive-padding-lg {
+    @apply px-6 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20 xl:px-16 xl:py-24;
   }
 }

@@ -1,12 +1,10 @@
 'use client';
-
 import type React from 'react';
-
 import { useState } from 'react';
-import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { withGuest } from '../../components/auth/withAuth';
 import { useToast } from '../../components/ui/toast';
+import Header from '../../components/header';
 
 function LoginPage() {
   const { showToast } = useToast();
@@ -51,6 +49,7 @@ function LoginPage() {
   };
   return (
     <div className="min-h-screen bg-white">
+      <Header />
       <nav className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-black rounded-sm flex items-center justify-center">

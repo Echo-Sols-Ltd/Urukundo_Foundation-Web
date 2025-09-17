@@ -40,8 +40,9 @@ export function HeroSection() {
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/50" />
 
-      <div className="relative container mx-auto px-4 py-20 flex flex-col justify-center min-h-[600px]">
-        <div className="max-w-2xl space-y-8">
+      <div className="relative container mx-auto responsive-padding-lg flex flex-col justify-center min-h-[600px]">
+        <div className="max-w-2xl space-y-10">
+          {/* Increased from space-y-8 */}
           <h1 className="font-sans text-5xl lg:text-7xl font-bold leading-tight">
             Share Love,
             <br />
@@ -55,7 +56,8 @@ export function HeroSection() {
             time.&quot;
           </p>
 
-          <div className="flex items-center gap-12">
+          <div className="flex items-center gap-16">
+            {/* Increased from gap-12 */}
             <div>
               <div className="text-orange-500 font-sans text-3xl lg:text-4xl font-bold">
                 {stats.isLoading
@@ -74,33 +76,6 @@ export function HeroSection() {
                 People Helped
               </div>
             </div>
-          </div>
-
-          <div className="flex items-center gap-6 text-sm text-white/70">
-            <span className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
-                <span className="text-xs">📧</span>
-              </div>
-              Email Verified
-            </span>
-            <span className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
-                <span className="text-xs">🏢</span>
-              </div>
-              Registered NGO
-            </span>
-            <span className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
-                <span className="text-xs">⚡</span>
-              </div>
-              Quick Impact
-            </span>
-            <span className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
-                <span className="text-xs">🎯</span>
-              </div>
-              Transparent Goals
-            </span>
           </div>
         </div>
       </div>
