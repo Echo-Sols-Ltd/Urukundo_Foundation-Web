@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { withGuest } from '../../components/auth/withAuth';
 import { useToast } from '../../components/ui/toast';
+import Link from 'next/link';
 import Header from '../../components/header';
 
 function LoginPage() {
@@ -87,7 +88,10 @@ function LoginPage() {
         </div>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden p-2 text-gray-700 hover:text-gray-900">
+        <button
+          title="Open navigation menu"
+          className="md:hidden p-2 text-gray-700 hover:text-gray-900"
+        >
           <svg
             className="w-6 h-6"
             fill="none"

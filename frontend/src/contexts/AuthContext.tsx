@@ -18,6 +18,7 @@ import {
   getCurrentUser,
   isAuthenticated as checkIsAuthenticated,
   refreshAccessToken,
+  User,
 } from '../lib/auth';
 
 interface AuthContextType extends AuthState {

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/admin/dashboard/Header';
 import Sidebar from '@/components/admin/dashboard/Sidebar';
+import { withAdminAuth } from '@/components/auth/withAuth';
 import MetricCard from '@/components/admin/dashboard/MetricCard';
 import ViewDonationDialog from '@/components/admin/dashboard/ViewDonationDialog';
 import EditDonationDialog from '@/components/admin/dashboard/EditDonationDialog';
@@ -71,7 +72,7 @@ const mapBackendDonationToUi = (d: BackendDonation): Donation => {
   };
 };
 
-export default function DonationsPage() {
+function DonationsPage() {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showOptions, setShowOptions] = useState<string | null>(null);
@@ -527,3 +528,5 @@ export default function DonationsPage() {
     </div>
   );
 }
+
+export default withAdminAuth(DonationsPage);

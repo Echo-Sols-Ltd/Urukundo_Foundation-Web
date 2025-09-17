@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '../contexts/AuthContext';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://urukundo-chariy-foundation.up.railway.app';
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  'https://urukundo-chariy-foundation.up.railway.app';
 const TWITTER_HANDLE = process.env.NEXT_PUBLIC_TWITTER ?? '@urukundo';
 import { ToastProvider } from '../components/ui/toast';
 
@@ -11,16 +13,16 @@ export const metadata: Metadata = {
   description:
     'At Urukundo Foundation, we believe that technology and compassion together can bridge the gap between those who want to give and those in need. Join us in making a lasting impact through donations and community support.',
   keywords: [
-    'charity', 
-    'donation', 
-    'helping others', 
-    'nonprofit', 
-    'community', 
-    'urukundo', 
+    'charity',
+    'donation',
+    'helping others',
+    'nonprofit',
+    'community',
+    'urukundo',
     'foundation',
     'compassion',
     'save lives',
-    'volunteering'
+    'volunteering',
   ],
   authors: [
     {
@@ -82,12 +84,13 @@ export default function RootLayout({
     name: 'Urukundo Foundation',
     url: SITE_URL,
     logo: `${SITE_URL}/image/charity.svg`,
-    description: 'Technology and compassion working together to bridge the gap between those who want to give and those in need.',
+    description:
+      'Technology and compassion working together to bridge the gap between those who want to give and those in need.',
     foundingDate: '2024',
     sameAs: [
-      'https://www.facebook.com/urukundo', 
+      'https://www.facebook.com/urukundo',
       'https://twitter.com/urukundo',
-      'https://www.instagram.com/urukundo'
+      'https://www.instagram.com/urukundo',
     ],
     contactPoint: [
       {
