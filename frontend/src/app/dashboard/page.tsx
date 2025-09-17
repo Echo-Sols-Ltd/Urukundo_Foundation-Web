@@ -12,7 +12,6 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 const FALLBACK_THUMBNAIL = '/image/children.jpg';
-const FALLBACK_VIDEO = '/videos/children.mp4';
 
 const normalizeAssetUrl = (raw?: string): string => {
   if (!raw || typeof raw !== 'string') return '';
