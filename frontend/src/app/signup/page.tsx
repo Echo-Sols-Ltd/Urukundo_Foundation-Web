@@ -171,7 +171,7 @@ function SignupPage() {
         </div>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden p-2 text-gray-700 hover:text-gray-900">
+        <button title='Open navigation menu' className="md:hidden p-2 text-gray-700 hover:text-gray-900">
           <svg
             className="w-6 h-6"
             fill="none"
