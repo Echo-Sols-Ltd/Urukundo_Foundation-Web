@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { withGuest } from '../../components/auth/withAuth';
 import { useToast } from '../../components/ui/toast';
-import Link from 'next/link';
 import Header from '../../components/header';
 
 function LoginPage() {
