@@ -143,8 +143,16 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center">
-                <span className="text-white text-xs font-bold">🌍</span>
+              <div className="w-6 h-6  rounded flex items-center justify-center">
+                <span className="text-white text-xs font-bold">
+                  <Image
+                    src="/image/charity.svg"
+                    alt="Logo"
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                  />
+                </span>
               </div>
               <div>
                 <h1 className="font-bold text-gray-900 text-sm">
