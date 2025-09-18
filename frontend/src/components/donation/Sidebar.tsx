@@ -27,7 +27,7 @@ interface SidebarProps {
 }
 
 const sidebarItems: SidebarItem[] = [
-  { icon: Home, label: 'Home', href: '/donation' },
+  { icon: Home, label: 'Home', href: '/dashboard' },
   { icon: Heart, label: 'Donate', href: '/donation/donate' },
   { icon: Calendar, label: 'Events', href: '/donation/events' },
   { icon: Video, label: 'Videos', href: '/donation/videos' },

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { donationsApi, usersApi } from '@/lib/api';
 import Header from '../../../components/donation/Header';
 import Sidebar from '../../../components/donation/Sidebar';
 import {
@@ -104,9 +105,13 @@ export default function MyDonationsPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch('/api/donation', { headers: getHeaders() });
-        if (!res.ok) return;
-        const data = await res.json();
+        const me = await usersApi.getMe();
+        let data = [] as BackendDonation[];
+        if (me?.id != null) {
+          data = (await donationsApi.getByDonor(me.id)) as unknown as BackendDonation[];
+        } else {
+          data = (await donationsApi.getUserDonations()) as unknown as BackendDonation[];
+        }
         const mapped: Donation[] = Array.isArray(data)
           ? data.map(mapBackendDonationToUi)
           : [];

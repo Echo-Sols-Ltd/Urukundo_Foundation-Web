@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/admin/dashboard/Header';
 import Sidebar from '@/components/admin/dashboard/Sidebar';
+import { withAdminAuth } from '@/components/auth/withAuth';
 import MetricCard from '@/components/admin/dashboard/MetricCard';
 import EventCard from '@/components/admin/dashboard/EventCard';
 import CreateEventDialog from '@/components/admin/dashboard/CreateEventDialog';
@@ -61,90 +62,15 @@ type CreateEventForm = {
   tags?: string[]; // changed from string to string[]
 };
 
-const initialUpcoming: Event[] = [
-  {
-    id: 'EVT-001',
-    title: 'Community Food Drive',
-    description: 'Collecting non-perishable food items for local shelters.',
-    date: '2025-02-15',
-    time: '09:00',
-    location: 'Community Center, Downtown',
-    category: 'Food Drive',
-    status: 'upcoming',
-    maxAttendees: 100,
-    currentAttendees: 15,
-    image: '',
-    organizer: 'Dylan Rayden',
-    cost: 0,
-    isPublic: true,
-    tags: ['community', 'food'],
-  },
-  {
-    id: 'EVT-002',
-    title: 'Educational Workshop',
-    description: 'Workshop focusing on digital literacy and essential skills.',
-    date: '2025-02-18',
-    time: '10:00',
-    location: 'Learning Hub, Downtown',
-    category: 'Workshop',
-    status: 'upcoming',
-    maxAttendees: 60,
-    currentAttendees: 15,
-    image: '',
-    organizer: 'Dylan Rayden',
-    cost: 0,
-    isPublic: true,
-    tags: ['education'],
-  },
-];
-
-const initialPast: Event[] = [
-  {
-    id: 'EVT-020',
-    title: 'Clothing Drive',
-    description: 'Collected clothing items for families in need.',
-    date: '2025-01-10',
-    time: '09:00',
-    location: 'Community Center, Downtown',
-    category: 'Charity',
-    status: 'completed',
-    maxAttendees: 200,
-    currentAttendees: 150,
-    image: '',
-    organizer: 'Dylan Rayden',
-    cost: 0,
-    isPublic: true,
-    tags: ['charity', 'clothing'],
-  },
-  {
-    id: 'EVT-019',
-    title: 'Technology Training',
-    description: 'Training seniors on basic computer and smartphone usage.',
-    date: '2025-01-05',
-    time: '10:00',
-    location: 'Tech Hub, Central',
-    category: 'Education',
-    status: 'completed',
-    maxAttendees: 80,
-    currentAttendees: 60,
-    image: '',
-    organizer: 'Dylan Rayden',
-    cost: 0,
-    isPublic: true,
-    tags: ['technology', 'education'],
-  },
-];
-
-export default function EventsPage() {
+function EventsPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [upcomingEvents, setUpcomingEvents] =
-    useState<Event[]>(initialUpcoming);
-  const [pastEvents, setPastEvents] = useState<Event[]>(initialPast);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [pastEvents, setPastEvents] = useState<Event[]>([]);
   const [attendeesDialogOpen, setAttendeesDialogOpen] = useState(false);
   const [selectedEventAttendees, setSelectedEventAttendees] = useState<
     Array<{
@@ -929,3 +855,5 @@ export default function EventsPage() {
     </div>
   );
 }
+
+export default withAdminAuth(EventsPage);

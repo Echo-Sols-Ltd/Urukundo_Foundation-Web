@@ -161,6 +161,20 @@ export const donationsApi = {
   // Get all donations for the current user
   getUserDonations: async (): Promise<Donation[]> => {
     try {
+      // Prefer donor-specific endpoint using the authenticated user's numeric id
+      const me = await usersApi.getMe();
+      if (me?.id != null) {
+        const donorRes = await fetch(
+          `${API_BASE_URL}/api/donation/donor/${me.id}`,
+          {
+            headers: getAuthHeaders(),
+          },
+        );
+        if (!donorRes.ok) throw new Error('Failed to fetch user donations');
+        return await donorRes.json();
+      }
+
+      // Fallback to generic endpoint if user id is unavailable
       const response = await fetch(`${API_BASE_URL}/api/donation`, {
         headers: getAuthHeaders(),
       });
@@ -238,6 +252,41 @@ export const donationsApi = {
     } catch (error) {
       console.error('Error fetching event donations:', error);
       return [];
+    }
+  },
+
+  // Get donations by donor id (numeric)
+  getByDonor: async (donorId: number): Promise<Donation[]> => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/donation/donor/${donorId}`,
+        {
+          headers: getAuthHeaders(),
+        },
+      );
+      if (!response.ok) throw new Error('Failed to fetch donor donations');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching donor donations:', error);
+      return [];
+    }
+  },
+
+  // Get total amount donated by donor id
+  getDonorTotalAmount: async (donorId: number): Promise<number> => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/donation/donor/amount/${donorId}`,
+        {
+          headers: getAuthHeaders(),
+        },
+      );
+      if (!response.ok) throw new Error('Failed to fetch donor total amount');
+      const amount = await response.json();
+      return typeof amount === 'number' ? amount : Number(amount) || 0;
+    } catch (error) {
+      console.error('Error fetching donor total amount:', error);
+      return 0;
     }
   },
 };

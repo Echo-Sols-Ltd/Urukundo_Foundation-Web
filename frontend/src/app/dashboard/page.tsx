@@ -1,14 +1,24 @@
 'use client';
 
-import Image from 'next/image';
+import { withAuth } from '@/components/auth/withAuth';
+import Sidebar from '@/components/donation/Sidebar';
+import VideoModal from '@/components/media/VideoModal';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Play, Download, X, Volume2, VolumeX, Maximize2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import Sidebar from '@/components/donation/Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
-import { withAuth } from '@/components/auth/withAuth';
+import { Download, Play, Menu } from 'lucide-react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { donationsApi, usersApi } from '@/lib/api';
+
+const FALLBACK_THUMBNAIL = '/image/children.jpg';
+
+const normalizeAssetUrl = (raw?: string): string => {
+  if (!raw || typeof raw !== 'string') return '';
+  if (raw.startsWith('@image/')) return `/image/${raw.slice('@image/'.length)}`;
+  return raw;
+};
 
 // Define the Video interface
 interface Video {
@@ -30,8 +40,41 @@ interface Donation {
   status: string;
 }
 
+// Dummy data for upcoming events
+const defaultUpcomingEvents = [
+  {
+    title: 'Community Health Workshop',
+    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    description:
+      'Join us for a comprehensive health workshop covering nutrition, hygiene, and preventive care for families in our community.',
+    image: '/image/plant.jpg',
+  },
+  {
+    title: "Children's Education Fundraiser",
+    date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    description:
+      'Help us raise funds to provide school supplies, books, and educational materials for children in need.',
+    image: '/image/plant.jpg',
+  },
+  {
+    title: 'Environmental Cleanup Drive',
+    date: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    description:
+      'Participate in our community cleanup initiative to make our neighborhoods cleaner and more sustainable.',
+    image: '/image/plant.jpg',
+  },
+  {
+    title: "Women's Empowerment Seminar",
+    date: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    description:
+      'An inspiring seminar focused on skill development, entrepreneurship, and leadership for women in our community.',
+    image: '/image/plant.jpg',
+  },
+];
+
 function DashboardPage() {
   const { user } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [donations, setDonations] = useState<Donation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [upcomingEvents, setUpcomingEvents] = useState<
@@ -41,10 +84,6 @@ function DashboardPage() {
 
   // Update useState to use Video | null
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
 
   // Helper function to get auth headers (same pattern as other pages)
   const getHeaders = (): Record<string, string> => {
@@ -61,13 +100,16 @@ function DashboardPage() {
       try {
         setIsLoading(true);
 
-        // Fetch donations
-        const donationsRes = await fetch('/api/donation', {
-          headers: getHeaders(),
-        });
-        if (donationsRes.ok) {
-          const donationsData = await donationsRes.json();
-          setDonations(Array.isArray(donationsData) ? donationsData : []);
+        // Fetch current user to get numeric id
+        const me = await usersApi.getMe();
+
+        // Fetch donations for this user only
+        if (me?.id != null) {
+          const userDonations = await donationsApi.getByDonor(me.id);
+          setDonations(Array.isArray(userDonations) ? userDonations : []);
+        } else {
+          const userDonations = await donationsApi.getUserDonations();
+          setDonations(Array.isArray(userDonations) ? userDonations : []);
         }
 
         // Fetch events
@@ -91,10 +133,20 @@ function DashboardPage() {
                   }))
                   .slice(0, 4)
               : [];
-            setUpcomingEvents(transformedEvents);
+
+            // If no events from API, use dummy data
+            if (transformedEvents.length === 0) {
+              setUpcomingEvents(defaultUpcomingEvents);
+            } else {
+              setUpcomingEvents(transformedEvents);
+            }
+          } else {
+            // If API call fails, use dummy data
+            setUpcomingEvents(defaultUpcomingEvents);
           }
         } catch {
-          setUpcomingEvents([]);
+          // If there's an error, use dummy data
+          setUpcomingEvents(defaultUpcomingEvents);
         }
 
         // Fetch videos
@@ -110,7 +162,7 @@ function DashboardPage() {
                   title: video.title || 'Video',
                   description: video.description || '',
                   views: video.views || '0 views',
-                  thumbnail: video.thumbnail || '/image/video-thumbnail.jpg',
+                  thumbnail: video.thumbnail || '/image/support.png',
                   videoUrl: video.videoUrl || '',
                   duration: video.duration || '0:00',
                 }))
@@ -155,90 +207,45 @@ function DashboardPage() {
   // Update handleVideoClick to use Video type
   const handleVideoClick = (video: Video) => {
     setSelectedVideo(video);
-    setIsPlaying(false);
-    setCurrentTime(0);
   };
 
   const closeModal = () => {
     setSelectedVideo(null);
-    setIsPlaying(false);
-    setCurrentTime(0);
   };
 
-  const togglePlay = () => {
-    const videoElement = document.getElementById(
-      'dashboard-video-player',
-    ) as HTMLVideoElement;
-    if (videoElement) {
-      if (isPlaying) {
-        videoElement.pause();
-      } else {
-        videoElement.play();
+  // Close modal with ESC
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedVideo) {
+        closeModal();
       }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const toggleMute = () => {
-    setIsMuted(!isMuted);
-  };
-
-  const handleTimeUpdate = (e: React.SyntheticEvent<HTMLVideoElement>) => {
-    const video = e.currentTarget;
-    setCurrentTime(video.currentTime);
-    setDuration(video.duration);
-  };
-
-  const handlePlay = () => {
-    setIsPlaying(true);
-  };
-
-  const handlePause = () => {
-    setIsPlaying(false);
-  };
-
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = parseFloat(e.target.value);
-    setCurrentTime(time);
-    if (selectedVideo) {
-      const videoElement = document.getElementById(
-        'dashboard-video-player',
-      ) as HTMLVideoElement;
-      if (videoElement) {
-        videoElement.currentTime = time;
-      }
-    }
-  };
-
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const handleFullscreen = () => {
-    const videoElement = document.getElementById(
-      'dashboard-video-player',
-    ) as HTMLVideoElement;
-    if (videoElement) {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        videoElement.requestFullscreen();
-      }
-    }
-  };
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedVideo]);
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+      />
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 mr-2"
+              title="Open menu"
+              aria-label="Open navigation menu"
+            >
+              <Menu className="w-5 h-5 text-gray-600" />
+            </button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Welcome, {user?.firstName || 'User'}
@@ -288,11 +295,24 @@ function DashboardPage() {
                   <Card key={index} className="overflow-hidden p-0">
                     <div className="h-48 relative w-full">
                       <Image
-                        src={event.image}
+                        src={
+                          normalizeAssetUrl(event.image) || FALLBACK_THUMBNAIL
+                        }
                         alt={event.title}
                         fill
                         className="object-cover object-center"
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        unoptimized={
+                          event.image?.startsWith('/uploads') ||
+                          event.image?.startsWith('http')
+                        }
+                        onError={(e) => {
+                          const img = e.currentTarget as HTMLImageElement;
+                          const fallback = `${window.location.origin}${FALLBACK_THUMBNAIL}`;
+                          if (img.src !== fallback) {
+                            img.src = FALLBACK_THUMBNAIL;
+                          }
+                        }}
                       />
                     </div>
                     <CardContent className="p-6">
@@ -340,11 +360,25 @@ function DashboardPage() {
                   >
                     <div className="h-48 relative w-full">
                       <Image
-                        src={video.thumbnail}
+                        src={
+                          normalizeAssetUrl(video.thumbnail) ||
+                          FALLBACK_THUMBNAIL
+                        }
                         alt={video.title}
                         fill
                         className="object-cover object-center"
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        unoptimized={
+                          video.thumbnail?.startsWith('/uploads') ||
+                          video.thumbnail?.startsWith('http')
+                        }
+                        onError={(e) => {
+                          const img = e.currentTarget as HTMLImageElement;
+                          const fallback = `${window.location.origin}${FALLBACK_THUMBNAIL}`;
+                          if (img.src !== fallback) {
+                            img.src = FALLBACK_THUMBNAIL;
+                          }
+                        }}
                       />
 
                       {/* Play Button Overlay */}
@@ -471,113 +505,19 @@ function DashboardPage() {
 
       {/* Video Modal */}
       {selectedVideo && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-2 sm:p-4"
-          onClick={closeModal}
-        >
-          <div
-            className="relative w-full max-w-5xl bg-black rounded-lg overflow-hidden shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              title="Close video"
-              onClick={closeModal}
-              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 text-white hover:text-gray-300 transition-colors bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70"
-            >
-              <X className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
-
-            {/* Video Player */}
-            <div className="relative">
-              <video
-                onClick={togglePlay}
-                style={{ cursor: 'pointer' }}
-                id="dashboard-video-player"
-                className="w-full h-auto max-h-[70vh] object-contain"
-                poster={selectedVideo.thumbnail}
-                onTimeUpdate={handleTimeUpdate}
-                onPlay={handlePlay}
-                onPause={handlePause}
-                onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-                muted={isMuted}
-              >
-                <source src={selectedVideo.videoUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-
-              {/* Video Controls */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 sm:p-4">
-                <div className="flex items-center gap-2 sm:gap-4 text-white">
-                  {/* Play/Pause Button */}
-                  <button
-                    onClick={togglePlay}
-                    className="hover:text-gray-300 transition-colors"
-                  >
-                    {isPlaying ? (
-                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-white rounded-sm"></div>
-                      </div>
-                    ) : (
-                      <Play className="w-6 h-6 sm:w-8 sm:h-8" />
-                    )}
-                  </button>
-
-                  {/* Progress Bar */}
-                  <div className="flex-1">
-                    <input
-                      type="range"
-                      min="0"
-                      max={duration || 0}
-                      value={currentTime}
-                      onChange={handleSeek}
-                      className="w-full h-1 bg-white bg-opacity-30 rounded-lg appearance-none cursor-pointer slider"
-                    />
-                  </div>
-
-                  {/* Time Display */}
-                  <span className="text-xs sm:text-sm hidden sm:block">
-                    {formatTime(currentTime)} / {formatTime(duration)}
-                  </span>
-
-                  {/* Volume Control */}
-                  <button
-                    onClick={toggleMute}
-                    className="hover:text-gray-300 transition-colors"
-                  >
-                    {isMuted ? (
-                      <VolumeX className="w-4 h-4 sm:w-5 sm:h-5" />
-                    ) : (
-                      <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                    )}
-                  </button>
-
-                  {/* Fullscreen Button */}
-                  <button
-                    title="Toggle fullscreen"
-                    onClick={handleFullscreen}
-                    className="hover:text-gray-300 transition-colors"
-                  >
-                    <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Video Info */}
-            <div className="p-4 sm:p-6 bg-white">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-                {selectedVideo.title}
-              </h3>
-              <p className="text-sm sm:text-base text-gray-600 mb-2">
-                {selectedVideo.description}
-              </p>
-              <p className="text-xs sm:text-sm text-gray-500">
-                {selectedVideo.views}
-              </p>
-            </div>
-          </div>
-        </div>
+        <VideoModal
+          open={!!selectedVideo}
+          video={{
+            id: selectedVideo.id,
+            title: selectedVideo.title,
+            description: selectedVideo.description,
+            views: selectedVideo.views,
+            thumbnail: selectedVideo.thumbnail,
+            videoUrl: selectedVideo.videoUrl,
+          }}
+          onClose={closeModal}
+          videoElementId="dashboard-video-player"
+        />
       )}
 
       <style jsx>{`

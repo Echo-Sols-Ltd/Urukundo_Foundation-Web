@@ -7,11 +7,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/donation/Sidebar';
 import { ChevronDown } from 'lucide-react';
-import {
-  getUserDonationStats,
-  createDonation,
-  type DonationCreateRequest,
-} from '@/lib/donations';
+import { createDonation, type DonationCreateRequest } from '@/lib/donations';
+import { donationsApi, usersApi } from '@/lib/api';
 
 interface DonationForm {
   cause: string;
@@ -52,8 +49,17 @@ export default function DonatePage() {
     (async () => {
       try {
         setStatsLoading(true);
-        const stats = await getUserDonationStats();
-        if (mounted) setTotalAmount(stats.totalAmount || 0);
+        const me = await usersApi.getMe();
+        let total = 0;
+        if (me?.id != null) {
+          total = await donationsApi.getDonorTotalAmount(me.id);
+        } else {
+          const list = await donationsApi.getUserDonations();
+          total = Array.isArray(list)
+            ? list.reduce((s, d) => s + (Number(d.amount) || 0), 0)
+            : 0;
+        }
+        if (mounted) setTotalAmount(total || 0);
       } finally {
         if (mounted) setStatsLoading(false);
       }
