@@ -94,23 +94,18 @@ export default function MyDonationsPage() {
     'all' | 'completed' | 'pending' | 'failed'
   >('all');
 
-  const getHeaders = (): Record<string, string> => {
-    const token =
-      typeof window !== 'undefined'
-        ? localStorage.getItem('accessToken')
-        : null;
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  };
-
   useEffect(() => {
     const load = async () => {
       try {
         const me = await usersApi.getMe();
         let data = [] as BackendDonation[];
         if (me?.id != null) {
-          data = (await donationsApi.getByDonor(me.id)) as unknown as BackendDonation[];
+          data = (await donationsApi.getByDonor(
+            me.id,
+          )) as unknown as BackendDonation[];
         } else {
-          data = (await donationsApi.getUserDonations()) as unknown as BackendDonation[];
+          data =
+            (await donationsApi.getUserDonations()) as unknown as BackendDonation[];
         }
         const mapped: Donation[] = Array.isArray(data)
           ? data.map(mapBackendDonationToUi)
