@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/donation/Sidebar';
 import { ChevronDown } from 'lucide-react';
-import { createDonation, type DonationCreateRequest } from '@/lib/donations';
+import { createDonation, getUserDonationStats, type DonationCreateRequest } from '@/lib/donations';
 import { donationsApi, usersApi } from '@/lib/api';
 
 interface DonationForm {
