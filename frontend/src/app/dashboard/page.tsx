@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Download, Play, Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { donationsApi, usersApi } from '@/lib/api';
 
 const FALLBACK_THUMBNAIL = '/image/children.jpg';
 
@@ -99,13 +100,16 @@ function DashboardPage() {
       try {
         setIsLoading(true);
 
-        // Fetch donations
-        const donationsRes = await fetch('/api/donation', {
-          headers: getHeaders(),
-        });
-        if (donationsRes.ok) {
-          const donationsData = await donationsRes.json();
-          setDonations(Array.isArray(donationsData) ? donationsData : []);
+        // Fetch current user to get numeric id
+        const me = await usersApi.getMe();
+
+        // Fetch donations for this user only
+        if (me?.id != null) {
+          const userDonations = await donationsApi.getByDonor(me.id);
+          setDonations(Array.isArray(userDonations) ? userDonations : []);
+        } else {
+          const userDonations = await donationsApi.getUserDonations();
+          setDonations(Array.isArray(userDonations) ? userDonations : []);
         }
 
         // Fetch events
