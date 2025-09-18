@@ -2,8 +2,8 @@ import Image from 'next/image'; // Import Image from next/image
 
 export function TransformingSection() {
   return (
-    <section className="py-16 bg-background">
-      <div className="container mx-auto px-4">
+    <section id="about" className="py-16 bg-background">
+      <div className="container mx-auto px-8 sm:px-8 lg:px-20">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1">
             <div className="relative">
@@ -11,25 +11,25 @@ export function TransformingSection() {
               <Image
                 src="/image/hands.jpg"
                 alt="Community support"
-                width={600} // Specify an appropriate width
-                height={400} // Match the original height
-                className="relative rounded-lg w-full h-[400px] object-cover"
+                width={600}
+                height={400}
+                className="relative rounded-lg w-full h-[220px] sm:h-[300px] lg:h-[400px] object-cover"
               />
             </div>
           </div>
 
           <div className="flex-1 space-y-8">
-            <h2 className="font-sans text-3xl lg:text-4xl font-bold text-foreground">
+            <h2 className="font-sans text-4xl md:text-5xl font-bold text-foreground">
               Transforming Good Intentions into Good Actions
             </h2>
 
-            <p className="font-serif text-lg text-muted-foreground leading-relaxed">
-              Urukundo Foundation is a life-changing initiative under Lex Tech
+            <p className="font-serif text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed">
+              Urukundo Foundation is a life-changing initiative under Echosols
               Company that uses the power of technology to connect people who
               care with communities in need.
             </p>
 
-            <p className="font-serif text-lg text-muted-foreground leading-relaxed">
+            <p className="font-serif text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed">
               We believe that transparency, compassion, and action are the keys
               to creating lasting change. That&apos;s why we built a digital
               platform that allows you to donate securely, watch real-time

@@ -15,6 +15,7 @@ interface Video {
   description: string;
   thumbnail: string;
   videoUrl: string;
+
   duration: string;
 }
 
@@ -164,8 +165,8 @@ export function VideoNewsSection() {
 
   return (
     <>
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
+      <section id="videos" className="py-16 bg-background">
+        <div className="container mx-auto px-6 sm:px-8 lg:px-20">
           <div className="flex justify-between items-center mb-12">
             <h2 className="font-sans text-3xl lg:text-4xl font-bold text-foreground">
               Live videos and news

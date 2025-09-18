@@ -1,11 +1,12 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { Facebook, Twitter, Instagram } from 'lucide-react';
 
 export function Footer() {
   return (
     <footer className="bg-black text-white section-padding-lg">
       {/* Enhanced padding */}
-      <div className="container mx-auto">
+      <div className="container mx-auto px-6 sm:px-8 lg:px-10">
         <div className="grid md:grid-cols-3 gap-12">
           {/* Increased from gap-8 */}
           <div>
@@ -42,7 +43,7 @@ export function Footer() {
                 {/* Increased icon size */}
               </a>
               <a
-                href="https://twitter.com/urukundofoundation" // Replace with your Twitter URL
+                href="https://x.com/EchoSols" // Replace with your Twitter URL
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center"
@@ -70,44 +71,44 @@ export function Footer() {
             <ul className="space-y-3 font-serif text-sm">
               {/* Increased spacing */}
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/"
                   className="text-gray-300 hover:text-orange-500 transition-colors"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="#about"
                   className="text-gray-300 hover:text-orange-500 transition-colors"
                 >
                   About us
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/#events"
                   className="text-gray-300 hover:text-orange-500 transition-colors"
                 >
                   Events
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="#videos"
                   className="text-gray-300 hover:text-orange-500 transition-colors"
                 >
                   Videos
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="#donate"
                   className="text-gray-300 hover:text-orange-500 transition-colors"
                 >
                   Donate
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -125,7 +126,7 @@ export function Footer() {
               </p>
               <p className="text-gray-300">
                 <span className="text-white font-medium">Portfolio:</span>{' '}
-                https://charity-portfolio.vercel.app/
+                https://www.echo-solution.com/
               </p>
             </div>
           </div>

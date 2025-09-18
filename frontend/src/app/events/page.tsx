@@ -86,7 +86,7 @@ export default function EventsPage() {
       <Header />
 
       {/* Breadcrumb */}
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-6 sm:px-8 lg:px-12 py-4">
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <span>Home</span>
           <ChevronRight className="h-4 w-4" />
@@ -95,7 +95,7 @@ export default function EventsPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 text-center">
+      <section className="container mx-auto px-6 sm:px-8 lg:px-12 py-16 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-black mb-6">
           Donate Today: Save a Life
         </h1>
@@ -108,7 +108,7 @@ export default function EventsPage() {
       </section>
 
       {/* Causes Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-6 sm:px-8 lg:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {causesData.map((cause, index) => (
             <div key={index} className="flex items-start gap-4">
@@ -129,7 +129,7 @@ export default function EventsPage() {
       </section>
 
       {/* Latest Events Section */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-6 sm:px-8 lg:px-12 py-16">
         <div className="flex justify-between items-center mb-12">
           <h2 className="text-3xl font-bold text-black">Latest Events</h2>
           <Button

@@ -27,6 +27,7 @@ export function HeroSection() {
 
     fetchStats();
   }, []);
+
   return (
     <section className="relative min-h-[600px] bg-gradient-to-br from-gray-900/95 to-gray-800/95 text-white overflow-hidden">
       {/* Background Image */}
@@ -49,7 +50,7 @@ export function HeroSection() {
             Save Lives
           </h1>
 
-          <p className="font-serif text-lg lg:text-xl max-w-lg leading-relaxed opacity-90">
+          <p className="font-serif text-lg sm:text-xl lg:text-2xl max-w-2xl leading-relaxed opacity-90">
             &quot;At Urukundo Foundation, we believe that technology and
             compassion together can bridge the gap between those who want to
             give and those in need — one donation, one life, one story at a
@@ -82,3 +83,5 @@ export function HeroSection() {
     </section>
   );
 }
+
+export default HeroSection;

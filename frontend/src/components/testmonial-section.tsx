@@ -1,9 +1,43 @@
-import Image from 'next/image'; // Import Image from next/image
+'use client';
+
+import Image from 'next/image';
+import { useState } from 'react';
 
 export function TestimonialSection() {
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  const testimonials = [
+    {
+      quote:
+        "I always wanted to help, but I didn't know where to start. Urukundo Foundation made it so easy to give and actually see the change. Watching the live stories made it real.",
+      name: 'SHEMA Leandre',
+      role: 'Donor',
+      image: '/image/frique.jpg',
+      alt: 'SHEMA Leandre - Donor testimonial',
+    },
+    {
+      quote:
+        "The transparency of this platform is amazing. I can see exactly where my donations go and the real impact they make. It's changed how I think about giving.",
+      name: 'RUKUNDO Bahati',
+      role: 'Supporter',
+      image: '/image/baba.png',
+      alt: 'RUKUNDO Bahati - Supporter testimonial',
+    },
+    {
+      quote:
+        "Being able to watch live videos of the communities we're helping makes the connection so much stronger. This isn't just charity, it's partnership.",
+      name: 'BYUKUSENGE Andrew',
+      role: 'Volunteer',
+      image: '/image/andrew.jpg',
+      alt: 'BYUKUSENGE Andrew - Volunteer testimonial',
+    },
+  ];
+
+  const currentTestimonialData = testimonials[currentTestimonial];
+
   return (
     <section className="py-16 bg-muted">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-6 sm:px-8 lg:px-20">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1">
             <div className="text-accent text-6xl font-bold mb-6">&quot;</div>
@@ -11,34 +45,44 @@ export function TestimonialSection() {
               Together, we can change lives for the better
             </h2>
             <p className="font-serif text-lg text-card-foreground mb-8 leading-relaxed">
-              &quot;I always wanted to help, but I didn&apos;t know where to
-              start. Urukundo Foundation made it so easy to give and actually
-              see the change. Watching the live stories made it real.&quot;
+              &quot;{currentTestimonialData.quote}&quot;
             </p>
             <div>
               <div className="font-sans font-semibold text-card-foreground">
-                SHEMA Leandre
+                {currentTestimonialData.name}
               </div>
-              <div className="font-serif text-muted-foreground">Donor</div>
+              <div className="font-serif text-muted-foreground">
+                {currentTestimonialData.role}
+              </div>
             </div>
 
             {/* Pagination dots */}
             <div className="flex gap-2 mt-8">
-              <div className="w-3 h-3 bg-accent rounded-full"></div>
-              <div className="w-3 h-3 bg-border rounded-full"></div>
-              <div className="w-3 h-3 bg-border rounded-full"></div>
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentTestimonial(index)}
+                  className={`w-3 h-3 rounded-full transition-colors ${
+                    index === currentTestimonial
+                      ? 'bg-orange-500'
+                      : 'bg-gray-300'
+                  }`}
+                  aria-label={`View testimonial ${index + 1}`}
+                />
+              ))}
             </div>
           </div>
 
-          <div className="flex-1 max-w-md">
-            <Image
-              src="/image/frique.jpg"
-              alt="SHEMA Leandre- Donor testimonial"
-              width={400} // Adjusted width for max-w-md (approx. 400px)
-              height={400} // A
-              // djusted height (square aspect ratio as a starting point)
-              className="w-full h-auto rounded-lg shadow-lg"
-            />
+          <div className="flex-1 max-w-sm">
+            <div className="w-full h-[350px] rounded-lg shadow-lg overflow-hidden">
+              <Image
+                src={currentTestimonialData.image}
+                alt={currentTestimonialData.alt}
+                width={300}
+                height={300}
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </div>

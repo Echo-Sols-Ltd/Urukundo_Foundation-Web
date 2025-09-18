@@ -79,7 +79,7 @@ export default function ContactsPage() {
     <div className="min-h-screen bg-white">
       <Header />
 
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-6 sm:px-8 lg:px-12 py-4">
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <span>Home</span>
           <ChevronRight className="h-4 w-4" />
@@ -87,7 +87,7 @@ export default function ContactsPage() {
         </div>
       </div>
 
-      <section className="container mx-auto px-4 py-16 text-center">
+      <section className="container mx-auto px-6 sm:px-8 lg:px-12 py-16 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-black mb-6">
           Every Act of Kindness Counts
         </h1>
@@ -99,7 +99,7 @@ export default function ContactsPage() {
         </p>
       </section>
 
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-6 sm:px-8 lg:px-12 py-16">
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Info Card */}
           <div className="bg-black text-white p-8 rounded-lg">
@@ -115,9 +115,7 @@ export default function ContactsPage() {
 
             <div className="space-y-6">
               <div>
-                <p className="font-semibold mb-2 text-sm">
-                  8911 Tanglewood Ave.
-                </p>
+                <p className="font-semibold mb-2 text-sm">Kigali-Rwanda</p>
                 <p className="text-gray-300 text-sm">
                   Capital Heights, MD 20743
                 </p>
@@ -125,7 +123,7 @@ export default function ContactsPage() {
 
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-orange-500" />
-                <span>+863-267-3634</span>
+                <span>+250 793 373 953</span>
               </div>
 
               <div className="flex items-center gap-3">
@@ -265,25 +263,13 @@ export default function ContactsPage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-8">
-        <div className="w-full h-64 bg-gradient-to-r from-gray-600 to-orange-400 rounded-lg">
-          <div className="w-full h-full flex items-center justify-center text-white">
-            <span className="text-lg">Interactive Map Location</span>
-          </div>
-        </div>
-      </section>
-
-      <section className="container mx-auto px-4 py-16">
-        <div className="grid lg:grid-cols-2 gap-12">
+      <section className="container mx-auto px-6 sm:px-8 lg:px-12 py-16">
+        <div className="grid  gap-12">
           <div>
-            <h2 className="text-4xl font-bold text-black mb-4">
-              Frequently
-              <br />
-              Asked
-              <br />
-              Questions
+            <h2 className="text-4xl font-bold text-black mb-4 ">
+              Frequently Asked Questions
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-lg max-w-2xl leading-relaxed">
               Find answers to common questions about our charity work, donation
               process, and how you can make a meaningful impact in communities
               around the world.
@@ -299,7 +285,7 @@ export default function ContactsPage() {
                   }
                   className="w-full flex items-center justify-between py-4 text-left gap-4"
                 >
-                  <span className="text-base md:text-lg font-semibold text-gray-900 flex-1">
+                  <span className="text-base md:text-lg font-semibold text-gray-900 flex-1 max-w-2xl leading-relaxed">
                     {faq.question}
                   </span>
                   {expandedFaq === index ? (
@@ -310,7 +296,7 @@ export default function ContactsPage() {
                 </button>
                 {expandedFaq === index && (
                   <div className="pb-4">
-                    <p className="text-gray-600 leading-relaxed text-sm pr-8">
+                    <p className="text-gray-600 leading-relaxed text-lg max-w-2xl">
                       {faq.answer}
                     </p>
                   </div>

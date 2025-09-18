@@ -10,13 +10,15 @@ import { Footer } from '@/components/footer';
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen ">
       <Header />
       <HeroSection />
       <div id="transforming-section">
         <TransformingSection />
       </div>
-      <EventsSection />
+      <div id="events">
+        <EventsSection />
+      </div>
       <ImpactStats />
       <TestimonialSection />
       <div id="videos-section">

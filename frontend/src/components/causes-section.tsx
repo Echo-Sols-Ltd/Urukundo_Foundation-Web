@@ -30,7 +30,7 @@ export function CausesSection() {
 
   return (
     <section className="section-padding-lg bg-white">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-6 sm:px-8 lg:px-10">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Increased from gap-8 */}
           {causes.map((cause, index) => {

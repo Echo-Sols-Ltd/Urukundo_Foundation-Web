@@ -63,10 +63,9 @@ export function EventsSection() {
   }, []);
 
   return (
-    <section className="section-padding-lg bg-background">
-      <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-16">
-          {/* Increased from mb-12 */}
+    <section className="py-16 bg-background">
+      <div className="container mx-auto px-6 sm:px-8 lg:px-20">
+        <div className="flex justify-between items-center mb-12">
           <h2 className="font-sans text-3xl lg:text-4xl font-bold text-foreground">
             Latest Events
           </h2>
