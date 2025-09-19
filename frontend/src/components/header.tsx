@@ -51,7 +51,7 @@ export function Header() {
             height={38}
             className="w-8 h-8 filter invert brightness-0 saturate-100"
           />
-          <span className="font-sans font-semibold md:text-lg-md sm:text-sm lg:text-2xl">
+          <span className="font-sans font-semibold md:text-lg-md sm:text-sm lg:text-xl">
             URUKUNDO FOUNDATION
           </span>
         </div>

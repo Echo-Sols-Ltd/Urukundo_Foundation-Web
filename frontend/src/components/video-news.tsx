@@ -297,13 +297,7 @@ export function VideoNewsSection() {
                     onClick={togglePlay}
                     className="hover:text-gray-300 transition-colors"
                   >
-                    {isPlaying ? (
-                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-white rounded-sm"></div>
-                      </div>
-                    ) : (
-                      <Play className="w-6 h-6 sm:w-8 sm:h-8" />
-                    )}
+                    <Play className="w-6 h-6 sm:w-8 sm:h-8" />
                   </button>
 
                   <div className="flex-1">
