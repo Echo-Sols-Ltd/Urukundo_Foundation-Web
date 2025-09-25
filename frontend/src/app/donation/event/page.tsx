@@ -58,39 +58,40 @@ function EventDonationPage() {
       router.push('/events');
       return;
     }
-    fetchEvent();
-  }, [eventId]);
 
-  const fetchEvent = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
-      const response = await fetch(`${API_BASE_URL}/api/event/${eventId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+    const fetchEvent = async () => {
+      try {
+        const token = localStorage.getItem('accessToken');
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+        const response = await fetch(`${API_BASE_URL}/api/event/${eventId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-      if (response.ok) {
-        const eventData = await response.json();
-        setEvent(eventData);
-        setFormData(prev => ({
-          ...prev,
-          donationCause: eventData.eventName || 'Event Support'
-        }));
-      } else {
+        if (response.ok) {
+          const eventData = await response.json();
+          setEvent(eventData);
+          setFormData(prev => ({
+            ...prev,
+            donationCause: eventData.eventName || 'Event Support'
+          }));
+        } else {
+          toast.error('Failed to load event details');
+          router.push('/events');
+        }
+      } catch (error) {
+        console.error('Error fetching event:', error);
         toast.error('Failed to load event details');
         router.push('/events');
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching event:', error);
-      toast.error('Failed to load event details');
-      router.push('/events');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+
+    fetchEvent();
+  }, [eventId, router]);
 
   const handleAmountSelect = (amount: number) => {
     setFormData(prev => ({ ...prev, amount }));
