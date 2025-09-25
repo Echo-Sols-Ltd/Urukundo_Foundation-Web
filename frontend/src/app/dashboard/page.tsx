@@ -40,40 +40,12 @@ interface Donation {
   status: string;
 }
 
-// Dummy data for upcoming events
-const defaultUpcomingEvents = [
-  {
-    title: 'Community Health Workshop',
-    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-    description:
-      'Join us for a comprehensive health workshop covering nutrition, hygiene, and preventive care for families in our community.',
-    image: '/image/plant.jpg',
-  },
-  {
-    title: "Children's Education Fundraiser",
-    date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-    description:
-      'Help us raise funds to provide school supplies, books, and educational materials for children in need.',
-    image: '/image/plant.jpg',
-  },
-  {
-    title: 'Environmental Cleanup Drive',
-    date: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-    description:
-      'Participate in our community cleanup initiative to make our neighborhoods cleaner and more sustainable.',
-    image: '/image/plant.jpg',
-  },
-  {
-    title: "Women's Empowerment Seminar",
-    date: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-    description:
-      'An inspiring seminar focused on skill development, entrepreneurship, and leadership for women in our community.',
-    image: '/image/plant.jpg',
-  },
-];
+
 
 function DashboardPage() {
-  const { user } = useAuth();
+  // Local minimal User shape to avoid implicit 'any' from useAuth()
+  type LocalUser = { id?: number; firstName?: string; lastName?: string } | null;
+  const { user } = useAuth() as { user: LocalUser };
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [donations, setDonations] = useState<Donation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,20 +105,11 @@ function DashboardPage() {
                   }))
                   .slice(0, 4)
               : [];
-
-            // If no events from API, use dummy data
-            if (transformedEvents.length === 0) {
-              setUpcomingEvents(defaultUpcomingEvents);
-            } else {
-              setUpcomingEvents(transformedEvents);
-            }
-          } else {
-            // If API call fails, use dummy data
-            setUpcomingEvents(defaultUpcomingEvents);
+            setUpcomingEvents(transformedEvents);
           }
-        } catch {
-          // If there's an error, use dummy data
-          setUpcomingEvents(defaultUpcomingEvents);
+        } catch (error) {
+          console.error('Error fetching events:', error);
+          setUpcomingEvents([]);
         }
 
         // Fetch videos

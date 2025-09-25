@@ -294,6 +294,7 @@ export function VideoNewsSection() {
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 sm:p-4">
                 <div className="flex items-center gap-2 sm:gap-4 text-white">
                   <button
+                    title='Play/Pause'
                     onClick={togglePlay}
                     className="hover:text-gray-300 transition-colors"
                   >

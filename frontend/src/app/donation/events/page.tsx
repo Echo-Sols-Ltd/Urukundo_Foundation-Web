@@ -162,9 +162,8 @@ export default function EventsPage() {
   };
 
   const handleDonateClick = (eventId: string) => {
-    setDonateForEventId(eventId);
-    setDonationAmount('');
-    setDonationMessage('');
+    // Redirect to dedicated event donation page
+    router.push(`/donation/event?eventId=${eventId}`);
   };
 
   const submitDonation = async () => {

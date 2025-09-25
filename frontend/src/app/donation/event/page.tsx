@@ -1,0 +1,441 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Calendar, MapPin, Users, Target, Heart } from 'lucide-react';
+import { withAuth } from '@/components/auth/withAuth';
+import Image from 'next/image';
+import { toast } from 'sonner';
+
+interface Event {
+  id: number;
+  eventName: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  capacity: number;
+  imageUrl?: string;
+  tags?: string;
+  status: 'UPCOMING' | 'ONGOING' | 'COMPLETED';
+  organizer?: string;
+  organization?: string;
+}
+
+interface DonationFormData {
+  amount: number;
+  donationText: string;
+  methodOfPayment: 'STRIPE' | 'PAYPAL' | 'MOBILE_MONEY';
+  donationCause: string;
+}
+
+function EventDonationPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const eventId = searchParams.get('eventId');
+  
+  const [event, setEvent] = useState<Event | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<DonationFormData>({
+    amount: 0,
+    donationText: '',
+    methodOfPayment: 'STRIPE',
+    donationCause: '',
+  });
+
+  // Preset donation amounts (in Rwanda Francs)
+  const presetAmounts = [2500, 5000, 10000, 25000, 50000, 100000];
+
+  useEffect(() => {
+    if (!eventId) {
+      router.push('/events');
+      return;
+    }
+    fetchEvent();
+  }, [eventId]);
+
+  const fetchEvent = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+      const response = await fetch(`${API_BASE_URL}/api/event/${eventId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const eventData = await response.json();
+        setEvent(eventData);
+        setFormData(prev => ({
+          ...prev,
+          donationCause: eventData.eventName || 'Event Support'
+        }));
+      } else {
+        toast.error('Failed to load event details');
+        router.push('/events');
+      }
+    } catch (error) {
+      console.error('Error fetching event:', error);
+      toast.error('Failed to load event details');
+      router.push('/events');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAmountSelect = (amount: number) => {
+    setFormData(prev => ({ ...prev, amount }));
+  };
+
+  const handleCustomAmount = (value: string) => {
+    const amount = parseFloat(value) || 0;
+    setFormData(prev => ({ ...prev, amount }));
+  };
+
+  const handleInputChange = (field: keyof DonationFormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (formData.amount <= 0) {
+      toast.error('Please enter a valid donation amount');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+      const response = await fetch(`${API_BASE_URL}/api/donation/event/${eventId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: formData.amount,
+          donationText: formData.donationText,
+          methodOfPayment: formData.methodOfPayment,
+          donationCause: formData.donationCause,
+        }),
+      });
+
+      if (response.ok) {
+        const donation = await response.json();
+        toast.success('Thank you for your generous donation!');
+        
+        // Redirect to success page or back to event
+        router.push(`/donation/success?donationId=${donation.id}`);
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || 'Failed to process donation');
+      }
+    } catch (error) {
+      console.error('Error submitting donation:', error);
+      toast.error('Failed to process donation. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading event details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!event) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Event Not Found</h1>
+          <p className="text-gray-600 mb-6">The event you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+          <Button onClick={() => router.push('/events')}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Events
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <Button
+            variant="outline"
+            onClick={() => router.back()}
+            className="mb-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+          
+          <div className="text-center">
+            <Heart className="mx-auto h-12 w-12 text-orange-500 mb-4" />
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Make a Donation
+            </h1>
+            <p className="text-lg text-gray-600">
+              Support this meaningful cause and help make a difference
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Event Details */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-orange-500" />
+                Event Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {event.imageUrl && (
+                  <div className="relative w-full h-48 rounded-lg overflow-hidden">
+                    <Image
+                      src={event.imageUrl}
+                      alt={event.eventName}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {event.eventName}
+                  </h3>
+                  <Badge variant={
+                    event.status === 'UPCOMING' ? 'default' :
+                    event.status === 'ONGOING' ? 'destructive' : 'secondary'
+                  }>
+                    {event.status}
+                  </Badge>
+                </div>
+
+                <p className="text-gray-600">
+                  {event.description}
+                </p>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Calendar className="h-4 w-4" />
+                    <span>
+                      {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <MapPin className="h-4 w-4" />
+                    <span>{event.location}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Users className="h-4 w-4" />
+                    <span>Capacity: {event.capacity}</span>
+                  </div>
+                </div>
+
+                {event.organizer && (
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">Organized by:</span> {event.organizer}
+                    </p>
+                    {event.organization && (
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Organization:</span> {event.organization}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Donation Form */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="h-5 w-5 text-orange-500" />
+                Your Donation
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Amount Selection */}
+                <div>
+                  <Label className="text-base font-medium mb-4 block">
+                    Choose Donation Amount
+                  </Label>
+                  
+                  {/* Preset Amounts */}
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    {presetAmounts.map((amount) => (
+                      <Button
+                        key={amount}
+                        type="button"
+                        variant={formData.amount === amount ? "default" : "outline"}
+                        onClick={() => handleAmountSelect(amount)}
+                        className={`h-12 ${
+                          formData.amount === amount 
+                            ? 'bg-orange-500 hover:bg-orange-600' 
+                            : 'hover:bg-orange-50'
+                        }`}
+                      >
+                        {amount.toLocaleString()} Rwf
+                      </Button>
+                    ))}
+                  </div>
+
+                  {/* Custom Amount */}
+                  <div>
+                    <Label htmlFor="customAmount" className="text-sm text-gray-600 mb-2 block">
+                      Or enter custom amount
+                    </Label>
+                    <div className="relative">
+                      <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                        Rwf
+                      </span>
+                      <Input
+                        id="customAmount"
+                        type="number"
+                        min="1"
+                        step="1"
+                        placeholder="0"
+                        value={formData.amount > 0 ? formData.amount.toString() : ''}
+                        onChange={(e) => handleCustomAmount(e.target.value)}
+                        className="pr-12 h-12 text-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Method */}
+                <div>
+                  <Label className="text-base font-medium mb-3 block">
+                    Payment Method
+                  </Label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'STRIPE', label: 'Credit/Debit Card (Stripe)' },
+                      { value: 'PAYPAL', label: 'PayPal' },
+                      { value: 'MOBILE_MONEY', label: 'Mobile Money' },
+                    ].map((method) => (
+                      <label key={method.value} className="flex items-center space-x-3">
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value={method.value}
+                          checked={formData.methodOfPayment === method.value}
+                          onChange={(e) => handleInputChange('methodOfPayment', e.target.value as 'STRIPE' | 'PAYPAL' | 'MOBILE_MONEY')}
+                          className="form-radio h-4 w-4 text-orange-500"
+                        />
+                        <span className="text-sm">{method.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div>
+                  <Label htmlFor="message" className="text-base font-medium mb-2 block">
+                    Message (Optional)
+                  </Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Share why this cause matters to you..."
+                    value={formData.donationText}
+                    onChange={(e) => handleInputChange('donationText', e.target.value)}
+                    className="h-20"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || formData.amount <= 0}
+                  className="w-full h-12 text-lg bg-orange-500 hover:bg-orange-600"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Heart className="mr-2 h-5 w-5" />
+                      Donate {formData.amount.toLocaleString()} Rwf
+                    </>
+                  )}
+                </Button>
+
+                <p className="text-xs text-gray-500 text-center">
+                  By donating, you agree to our terms of service and privacy policy.
+                  Your donation helps support this event and its beneficiaries.
+                </p>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Impact Section */}
+        <Card className="mt-8">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Your Impact Matters
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Heart className="h-6 w-6 text-orange-500" />
+                  </div>
+                  <h4 className="font-medium text-gray-900 mb-1">Direct Impact</h4>
+                  <p className="text-sm text-gray-600">Your donation goes directly to supporting this event</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Users className="h-6 w-6 text-orange-500" />
+                  </div>
+                  <h4 className="font-medium text-gray-900 mb-1">Community Support</h4>
+                  <p className="text-sm text-gray-600">Help strengthen our community initiatives</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Target className="h-6 w-6 text-orange-500" />
+                  </div>
+                  <h4 className="font-medium text-gray-900 mb-1">Lasting Change</h4>
+                  <p className="text-sm text-gray-600">Create meaningful and sustainable impact</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+export default withAuth(EventDonationPage);

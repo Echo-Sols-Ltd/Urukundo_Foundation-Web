@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 import { withGuest } from '../../components/auth/withAuth';
 import { useToast } from '../../components/ui/toast';
+import Header from '@/components/header';
 
 function SignupPage() {
   const router = useRouter();
@@ -135,66 +136,67 @@ function SignupPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-black rounded-sm flex items-center justify-center">
-            <span className="text-white text-sm">🌿</span>
-          </div>
-          <span className="text-lg sm:text-xl font-semibold text-black">
-            Urukundo
-          </span>
-        </div>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
-          <a
-            href="#"
-            className="text-gray-700 hover:text-gray-900 text-sm lg:text-base"
-          >
-            Home
-          </a>
-          <a
-            href="#"
-            className="text-gray-700 hover:text-gray-900 text-sm lg:text-base"
-          >
-            About
-          </a>
-          <a
-            href="#"
-            className="text-gray-700 hover:text-gray-900 text-sm lg:text-base"
-          >
-            Contact
-          </a>
-          <button className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium">
-            Donate
-          </button>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          title="Open navigation menu"
-          className="md:hidden p-2 text-gray-700 hover:text-gray-900"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-      </nav>
-
-      <div className="flex items-center justify-center py-8 sm:py-12 lg:py-16 px-4">
+      {/* <nav className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100"> */}
+        {/* <div className="flex items-center space-x-2"> */}
+          {/* <div className="w-8 h-8 bg-black rounded-sm flex items-center justify-center"> */}
+            {/* <span className="text-white text-sm">🌿</span> */}
+          {/* </div> */}
+          {/* <span className="text-lg sm:text-xl font-semibold text-black"> */}
+            {/* Urukundo */}
+          {/* </span> */}
+        {/* </div> */}
+{/*  */}
+        {/* <!~~ Desktop Navigation ~~> */}
+        {/* <div className="hidden md:flex items-center space-x-6 lg:space-x-8"> */}
+          {/* <a */}
+            {/* href="#" */}
+            {/* className="text-gray-700 hover:text-gray-900 text-sm lg:text-base" */}
+          {/* > */}
+            {/* Home */}
+          {/* </a> */}
+          {/* <a */}
+            {/* href="#" */}
+            {/* className="text-gray-700 hover:text-gray-900 text-sm lg:text-base" */}
+          {/* > */}
+            {/* About */}
+          {/* </a> */}
+          {/* <a */}
+            {/* href="#" */}
+            {/* className="text-gray-700 hover:text-gray-900 text-sm lg:text-base" */}
+          {/* > */}
+            {/* Contact */}
+          {/* </a> */}
+          {/* <button className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 lg:px-4 lg:py-2 rounded-full text-xs lg:text-sm font-medium"> */}
+            {/* Donate */}
+          {/* </button> */}
+        {/* </div> */}
+{/*  */}
+        {/* <!~~ Mobile Menu Button ~~> */}
+        {/* <button */}
+          {/* title="Open navigation menu" */}
+          {/* className="md:hidden p-2 text-gray-700 hover:text-gray-900" */}
+        {/* > */}
+          {/* <svg */}
+            {/* className="w-6 h-6" */}
+            {/* fill="none" */}
+            {/* stroke="currentColor" */}
+            {/* viewBox="0 0 24 24" */}
+          {/* > */}
+            {/* <path */}
+              {/* strokeLinecap="round" */}
+              {/* strokeLinejoin="round" */}
+              {/* strokeWidth={2} */}
+              {/* d="M4 6h16M4 12h16M4 18h16" */}
+            {/* /> */}
+          {/* </svg> */}
+        {/* </button> */}
+      {/* </nav> */}
+{/*  */}
+<Header />
+      <div className="flex items-center justify-center py-16 sm:py-12 lg:py-16 px-4">
         <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
           <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 mt-10">
               Create your account
             </h1>
           </div>
