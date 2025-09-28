@@ -2,6 +2,7 @@
 
 import { withAuth } from '@/components/auth/withAuth';
 import Sidebar from '@/components/donation/Sidebar';
+
 import VideoModal from '@/components/media/VideoModal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,12 +13,52 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { donationsApi, usersApi } from '@/lib/api';
 
-const FALLBACK_THUMBNAIL = '/image/children.jpg';
+const DEFAULT_EVENT_IMAGE = '/image/children.jpg';
 
 const normalizeAssetUrl = (raw?: string): string => {
   if (!raw || typeof raw !== 'string') return '';
   if (raw.startsWith('@image/')) return `/image/${raw.slice('@image/'.length)}`;
   return raw;
+};
+
+// Function to generate thumbnail from video first frame
+const generateVideoThumbnail = (videoUrl: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      reject(new Error('Canvas context not available'));
+      return;
+    }
+
+    video.crossOrigin = 'anonymous';
+    video.currentTime = 0.5; // Capture at 0.5 seconds to avoid black frame
+    
+    video.onloadeddata = () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0);
+      
+      // Convert canvas to blob URL
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const thumbnailUrl = URL.createObjectURL(blob);
+          resolve(thumbnailUrl);
+        } else {
+          reject(new Error('Failed to generate thumbnail'));
+        }
+      }, 'image/jpeg', 0.8);
+    };
+
+    video.onerror = () => {
+      reject(new Error('Failed to load video'));
+    };
+
+    video.src = videoUrl;
+    video.load();
+  });
 };
 
 // Define the Video interface
@@ -53,6 +94,8 @@ function DashboardPage() {
     { title: string; date: string; description: string; image: string }[]
   >([]);
   const [recentVideos, setRecentVideos] = useState<Video[]>([]);
+  const [videoThumbnails, setVideoThumbnails] = useState<Map<string, string>>(new Map());
+  const [generatingThumbnails, setGeneratingThumbnails] = useState(false);
 
   // Update useState to use Video | null
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
@@ -119,18 +162,55 @@ function DashboardPage() {
           });
           if (videosRes.ok) {
             const videosData = await videosRes.json();
-            const transformedVideos = Array.isArray(videosData)
-              ? videosData.slice(0, 4).map((video) => ({
-                  id: video.id || Math.random().toString(),
-                  title: video.title || 'Video',
-                  description: video.description || '',
-                  views: video.views || '0 views',
-                  thumbnail: video.thumbnail || '/image/support.png',
-                  videoUrl: video.videoUrl || '',
-                  duration: video.duration || '0:00',
-                }))
+            const validVideos = Array.isArray(videosData)
+              ? videosData.filter((video) => 
+                  video.id && 
+                  video.title && 
+                  video.url
+                )
+                .slice(0, 4)
               : [];
+
+            // Generate thumbnails from first frame for each video
+            setGeneratingThumbnails(true);
+            const videosWithThumbnails = await Promise.allSettled(
+              validVideos.map(async (video) => {
+                try {
+                  const thumbnail = await generateVideoThumbnail(normalizeAssetUrl(video.url));
+                  return {
+                    id: String(video.id),
+                    title: video.title,
+                    description: video.description || '',
+                    views: `${video.views || 0} views`,
+                    thumbnail,
+                    videoUrl: normalizeAssetUrl(video.url),
+                    duration: '0:00', // Will be calculated when video loads
+                  };
+                } catch (error) {
+                  console.warn(`Failed to generate thumbnail for video ${video.id}:`, error);
+                  return null;
+                }
+              })
+            );
+            setGeneratingThumbnails(false);
+
+            // Filter out failed thumbnail generations
+            const transformedVideos = videosWithThumbnails
+              .filter((result): result is PromiseFulfilledResult<Video> => 
+                result.status === 'fulfilled' && result.value !== null
+              )
+              .map(result => result.value);
+
             setRecentVideos(transformedVideos);
+            
+            // Store thumbnails in state for cleanup later
+            const thumbnailMap = new Map<string, string>();
+            transformedVideos.forEach(video => {
+              if (video.thumbnail.startsWith('blob:')) {
+                thumbnailMap.set(video.id, video.thumbnail);
+              }
+            });
+            setVideoThumbnails(thumbnailMap);
           }
         } catch {
           setRecentVideos([]);
@@ -186,6 +266,18 @@ function DashboardPage() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedVideo]);
+
+  // Cleanup blob URLs on component unmount
+  useEffect(() => {
+    return () => {
+      // Cleanup all generated blob URLs to prevent memory leaks
+      videoThumbnails.forEach((blobUrl) => {
+        if (blobUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(blobUrl);
+        }
+      });
+    };
+  }, [videoThumbnails]);
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -259,7 +351,7 @@ function DashboardPage() {
                     <div className="h-48 relative w-full">
                       <Image
                         src={
-                          normalizeAssetUrl(event.image) || FALLBACK_THUMBNAIL
+                          normalizeAssetUrl(event.image) || DEFAULT_EVENT_IMAGE
                         }
                         alt={event.title}
                         fill
@@ -271,9 +363,9 @@ function DashboardPage() {
                         }
                         onError={(e) => {
                           const img = e.currentTarget as HTMLImageElement;
-                          const fallback = `${window.location.origin}${FALLBACK_THUMBNAIL}`;
+                          const fallback = `${window.location.origin}${DEFAULT_EVENT_IMAGE}`;
                           if (img.src !== fallback) {
-                            img.src = FALLBACK_THUMBNAIL;
+                            img.src = DEFAULT_EVENT_IMAGE;
                           }
                         }}
                       />
@@ -314,7 +406,13 @@ function DashboardPage() {
               Recent Videos
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {recentVideos.length > 0 ? (
+              {generatingThumbnails ? (
+                <div className="col-span-full text-center py-12 text-gray-500">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mb-4"></div>
+                  <p className="text-lg">Generating video thumbnails...</p>
+                  <p className="text-sm">This may take a moment.</p>
+                </div>
+              ) : recentVideos.length > 0 ? (
                 recentVideos.map((video) => (
                   <Card
                     key={video.id}
@@ -323,10 +421,7 @@ function DashboardPage() {
                   >
                     <div className="h-48 relative w-full">
                       <Image
-                        src={
-                          normalizeAssetUrl(video.thumbnail) ||
-                          FALLBACK_THUMBNAIL
-                        }
+                        src={normalizeAssetUrl(video.thumbnail)}
                         alt={video.title}
                         fill
                         className="object-cover object-center"
@@ -335,13 +430,6 @@ function DashboardPage() {
                           video.thumbnail?.startsWith('/uploads') ||
                           video.thumbnail?.startsWith('http')
                         }
-                        onError={(e) => {
-                          const img = e.currentTarget as HTMLImageElement;
-                          const fallback = `${window.location.origin}${FALLBACK_THUMBNAIL}`;
-                          if (img.src !== fallback) {
-                            img.src = FALLBACK_THUMBNAIL;
-                          }
-                        }}
                       />
 
                       {/* Play Button Overlay */}
@@ -486,14 +574,6 @@ function DashboardPage() {
       <style jsx>{`
         .slider::-webkit-slider-thumb {
           appearance: none;
-          height: 12px;
-          width: 12px;
-          border-radius: 50%;
-          background: #f97316;
-          cursor: pointer;
-        }
-
-        .slider::-moz-range-thumb {
           height: 12px;
           width: 12px;
           border-radius: 50%;

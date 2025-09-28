@@ -12,6 +12,7 @@ import { ArrowLeft, Calendar, MapPin, Users, Target, Heart } from 'lucide-react'
 import { withAuth } from '@/components/auth/withAuth';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import PaymentModal from '@/components/PaymentModal';
 
 interface Event {
   id: number;
@@ -32,7 +33,7 @@ interface DonationFormData {
   amount: number;
   donationText: string;
   methodOfPayment: 'STRIPE' | 'PAYPAL' | 'MOBILE_MONEY';
-  donationCause: string;
+  donationCause: 'EDUCATION' | 'WATER_SHORTAGE' | 'HEALTH_CARE';
 }
 
 function EventDonationPage() {
@@ -43,15 +44,18 @@ function EventDonationPage() {
   const [event, setEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [formData, setFormData] = useState<DonationFormData>({
     amount: 0,
     donationText: '',
     methodOfPayment: 'STRIPE',
-    donationCause: '',
+    donationCause: 'EDUCATION',
   });
 
   // Preset donation amounts (in Rwanda Francs)
   const presetAmounts = [2500, 5000, 10000, 25000, 50000, 100000];
+
+
 
   useEffect(() => {
     if (!eventId) {
@@ -63,7 +67,7 @@ function EventDonationPage() {
       try {
         const token = localStorage.getItem('accessToken');
         const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
-        const response = await fetch(`${API_BASE_URL}/api/event/${eventId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -73,10 +77,7 @@ function EventDonationPage() {
         if (response.ok) {
           const eventData = await response.json();
           setEvent(eventData);
-          setFormData(prev => ({
-            ...prev,
-            donationCause: eventData.eventName || 'Event Support'
-          }));
+          // User will select donation cause from the form options
         } else {
           toast.error('Failed to load event details');
           router.push('/events');
@@ -114,41 +115,17 @@ function EventDonationPage() {
       return;
     }
 
-    setIsSubmitting(true);
+    // Show payment modal with donation data
+    setShowPaymentModal(true);
+  };
 
-    try {
-      const token = localStorage.getItem('accessToken');
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
-      const response = await fetch(`${API_BASE_URL}/api/donation/event/${eventId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: formData.amount,
-          donationText: formData.donationText,
-          methodOfPayment: formData.methodOfPayment,
-          donationCause: formData.donationCause,
-        }),
-      });
+  const handlePaymentSuccess = (donationId: number) => {
+    // Redirect to success page after successful payment
+    router.push(`/donation/success?donationId=${donationId}`);
+  };
 
-      if (response.ok) {
-        const donation = await response.json();
-        toast.success('Thank you for your generous donation!');
-        
-        // Redirect to success page or back to event
-        router.push(`/donation/success?donationId=${donation.id}`);
-      } else {
-        const errorData = await response.json();
-        toast.error(errorData.message || 'Failed to process donation');
-      }
-    } catch (error) {
-      console.error('Error submitting donation:', error);
-      toast.error('Failed to process donation. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleClosePaymentModal = () => {
+    setShowPaymentModal(false);
   };
 
   if (isLoading) {
@@ -333,6 +310,41 @@ function EventDonationPage() {
                   </div>
                 </div>
 
+                {/* Donation Cause */}
+                <div>
+                  <Label className="text-base font-medium mb-3 block">
+                    Donation Cause
+                  </Label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'EDUCATION' as const, label: '📚 Education Support' },
+                      { value: 'WATER_SHORTAGE' as const, label: '💧 Clean Water Access' },
+                      { value: 'HEALTH_CARE' as const, label: '🏥 Healthcare Services' },
+                    ].map((cause) => (
+                      <label
+                        key={cause.value}
+                        className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                          formData.donationCause === cause.value
+                            ? 'bg-orange-50 border-orange-500'
+                            : 'bg-white border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="donationCause"
+                          value={cause.value}
+                          checked={formData.donationCause === cause.value}
+                          onChange={(e) =>
+                            handleInputChange('donationCause', e.target.value as DonationFormData['donationCause'])
+                          }
+                          className="sr-only"
+                        />
+                        <span className="text-sm font-medium">{cause.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Payment Method */}
                 <div>
                   <Label className="text-base font-medium mb-3 block">
@@ -382,12 +394,12 @@ function EventDonationPage() {
                   {isSubmitting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Processing...
+                      Creating Donation...
                     </>
                   ) : (
                     <>
                       <Heart className="mr-2 h-5 w-5" />
-                      Donate {formData.amount.toLocaleString()} Rwf
+                      Continue to Payment ({formData.amount.toLocaleString()} Rwf)
                     </>
                   )}
                 </Button>
@@ -434,7 +446,20 @@ function EventDonationPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+            </div>
+
+      {/* New Payment Modal */}
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={handleClosePaymentModal}
+        donationData={{
+          amount: formData.amount,
+          donationText: formData.donationText,
+          donationCause: formData.donationCause,
+          eventId: event?.id,
+        }}
+        onSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 }

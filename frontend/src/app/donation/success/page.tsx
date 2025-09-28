@@ -7,6 +7,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, Heart, ArrowLeft, Download, Share2 } from 'lucide-react';
 import { withAuth } from '@/components/auth/withAuth';
 import { toast } from 'sonner';
+import Header from '@/components/donation/Header';
+import Sidebar from '@/components/donation/Sidebar';
 
 interface DonationDetails {
   id: number;
@@ -28,6 +30,7 @@ function DonationSuccessPage() {
   
   const [donation, setDonation] = useState<DonationDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!donationId) {
@@ -154,21 +157,33 @@ function DonationSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Success Header */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-green-500" />
-          </div>
-          
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Thank You for Your Donation!
-          </h1>
-          <p className="text-lg text-gray-600">
-            Your generous contribution makes a real difference
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex">
+      <Sidebar
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+      />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header
+          title="Donation Success"
+          onMobileMenuToggle={() => setIsMobileMenuOpen(true)}
+        />
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Success Header */}
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-12 h-12 text-green-500" />
+              </div>
+              
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Thank You for Your Donation!
+              </h1>
+              <p className="text-lg text-gray-600">
+                Your generous contribution makes a real difference
+              </p>
+            </div>
 
         {/* Donation Details Card */}
         <Card className="mb-6">
@@ -282,6 +297,8 @@ function DonationSuccessPage() {
             </div>
           </CardContent>
         </Card>
+          </div>
+        </main>
       </div>
     </div>
   );

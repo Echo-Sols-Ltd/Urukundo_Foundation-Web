@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from '../contexts/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import { ToastProvider } from '../components/ui/toast';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   'https://urukundo-chariy-foundation.up.railway.app';
 const TWITTER_HANDLE = process.env.NEXT_PUBLIC_TWITTER ?? '@urukundo';
-import { ToastProvider } from '../components/ui/toast';
 
 export const metadata: Metadata = {
   title: 'Urukundo Foundation - Share Love, Save Lives',
@@ -114,7 +116,10 @@ export default function RootLayout({
       </head>
       <body>
         <AuthProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            {children}
+            <ToastContainer position="top-right" />
+          </ToastProvider>
         </AuthProvider>
 
         {/* JSON-LD structured data for SEO */}

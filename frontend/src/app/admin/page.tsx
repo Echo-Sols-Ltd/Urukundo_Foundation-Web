@@ -9,26 +9,12 @@ import PopularCauses from '../../components/admin/dashboard/PopularCauses';
 import RecentActivity from '../../components/admin/dashboard/RecentActivity';
 import { Calendar, DollarSign, Heart, TrendingUp } from 'lucide-react';
 import { withAdminAuth } from '../../components/auth/withAuth';
+import { eventsApi, donationsApi, videosApi, Event as ApiEvent, Donation as ApiDonation, Video as ApiVideo } from '../../lib/api';
 
-// TypeScript interfaces
-interface Donation {
-  id: number;
-  amount: number;
-  donationTime: string;
-  status: string;
-  donor?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-}
-
-interface Event {
-  id: number;
-  title: string;
-  eventDate: string;
-  status: string;
-}
+// Use API types
+type Donation = ApiDonation;
+type Event = ApiEvent;
+type Video = ApiVideo;
 
 function AdminDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -37,35 +23,27 @@ function AdminDashboard() {
     totalDonationAmount: 0,
     totalDonors: 0,
     totalEvents: 0,
+    totalVideos: 0,
+    totalViews: 0,
     donations: [] as Donation[],
     events: [] as Event[],
     isLoading: true,
   });
 
-  // Helper function to get auth headers
-  const getHeaders = (): Record<string, string> => {
-    const token =
-      typeof window !== 'undefined'
-        ? localStorage.getItem('accessToken')
-        : null;
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  };
+
 
   // Fetch analytics data
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
         // Fetch donations
-        const donationsRes = await fetch('/api/donation', {
-          headers: getHeaders(),
-        });
-        const donations: Donation[] = donationsRes.ok
-          ? await donationsRes.json()
-          : [];
+        const donations: Donation[] = await donationsApi.getAll();
 
         // Fetch events
-        const eventsRes = await fetch('/api/events', { headers: getHeaders() });
-        const events: Event[] = eventsRes.ok ? await eventsRes.json() : [];
+        const events: Event[] = await eventsApi.getAll();
+
+        // Fetch videos
+        const videos: Video[] = await videosApi.getAll();
 
         // Calculate analytics
         const totalDonationAmount = donations.reduce(
@@ -77,11 +55,18 @@ function AdminDashboard() {
           donations.map((d: Donation) => d.donor?.id).filter(Boolean),
         ).size;
 
+        const totalViews = videos.reduce(
+          (sum: number, video: Video) => sum + (parseInt(video.views) || 0),
+          0,
+        );
+
         setAnalytics({
           totalDonations: donations.length,
           totalDonationAmount,
           totalDonors: uniqueDonors,
           totalEvents: events.length,
+          totalVideos: videos.length,
+          totalViews,
           donations,
           events,
           isLoading: false,
@@ -125,8 +110,12 @@ function AdminDashboard() {
     },
     {
       title: 'Video Views',
-      value: '89.4K',
-      change: '+12%',
+      value: analytics.isLoading
+        ? 'Loading...'
+        : analytics.totalViews.toLocaleString(),
+      change: analytics.isLoading
+        ? ''
+        : `${analytics.totalVideos} ${analytics.totalVideos === 1 ? 'video' : 'videos'}`,
       icon: TrendingUp,
       color: 'bg-orange-100 text-orange-600',
     },

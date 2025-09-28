@@ -6,8 +6,8 @@ import Header from '../../components/donation/Header';
 import Sidebar from '../../components/donation/Sidebar';
 import { withAnyAuth } from '../../components/auth/withAuth';
 import { getCurrentUser } from '@/lib/auth';
-import { donationsApi, eventsApi, videosApi } from '@/lib/api';
-import type { Donation, Event, Video } from '@/lib/api';
+import { donationsApi, eventsApi, videosApi, usersApi } from '@/lib/api';
+import type { Donation, Event, Video, UserProfile } from '@/lib/api';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -15,6 +15,7 @@ function DonationDashboard() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userName, setUserName] = useState<string>('');
+  const [userInitial, setUserInitial] = useState<string>('D');
   const [userTotal, setUserTotal] = useState<number>(0);
   const [featured, setFeatured] = useState<Event | null>(null);
   const [upcoming, setUpcoming] = useState<Event[]>([]);
@@ -22,9 +23,45 @@ function DonationDashboard() {
   const [history, setHistory] = useState<Donation[]>([]);
 
   useEffect(() => {
-    // Greeting
-    const user = getCurrentUser();
-    if (user) setUserName(user.firstName || user.email || '');
+    // Fetch user profile and set greeting
+    const loadUserProfile = async () => {
+      try {
+        const profile = await usersApi.getMe();
+        if (profile) {
+          const displayName = profile.firstName || profile.email || 'User';
+          setUserName(displayName);
+          
+          // Set user initial from firstName or email
+          const initial = profile.firstName 
+            ? profile.firstName.charAt(0).toUpperCase()
+            : profile.email.charAt(0).toUpperCase();
+          setUserInitial(initial);
+        } else {
+          // Fallback to token-based user info
+          const user = getCurrentUser();
+          if (user) {
+            setUserName(user.firstName || user.email || 'User');
+            const initial = user.firstName 
+              ? user.firstName.charAt(0).toUpperCase()
+              : user.email.charAt(0).toUpperCase();
+            setUserInitial(initial);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load user profile:', error);
+        // Fallback to token-based user info
+        const user = getCurrentUser();
+        if (user) {
+          setUserName(user.firstName || user.email || 'User');
+          const initial = user.firstName 
+            ? user.firstName.charAt(0).toUpperCase()
+            : user.email.charAt(0).toUpperCase();
+          setUserInitial(initial);
+        }
+      }
+    };
+
+    loadUserProfile();
 
     // Donations (user total + history)
     const loadDonations = async () => {
@@ -68,6 +105,7 @@ function DonationDashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header
           title="Donation Dashboard"
+          userInitial={userInitial}
           onMobileMenuToggle={() => setIsMobileMenuOpen(true)}
         />
 

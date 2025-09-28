@@ -15,17 +15,16 @@ interface RecentActivityProps {
     id: number;
     amount: number;
     donationCause?: string;
-    donationDate?: string;
-    user?: {
+    donationTime?: string;
+    donor?: {
       firstName?: string;
       lastName?: string;
-      username?: string;
     };
   }>;
   events?: Array<{
     id: number;
-    eventTitle?: string;
-    eventDate?: string;
+    eventName?: string;
+    startDate?: string;
   }>;
 }
 
@@ -38,19 +37,18 @@ export default function RecentActivity({
     const recentDonations = [...donations]
       .sort(
         (a, b) =>
-          new Date(b.donationDate || '').getTime() -
-          new Date(a.donationDate || '').getTime(),
+          new Date(b.donationTime || '').getTime() -
+          new Date(a.donationTime || '').getTime(),
       )
       .slice(0, 5)
       .map((donation) => ({
         type: 'donation' as const,
         description: 'New donation received',
-        user: donation.user
-          ? `${donation.user.firstName || ''} ${donation.user.lastName || ''}`.trim() ||
-            donation.user.username ||
+        user: donation.donor
+          ? `${donation.donor.firstName || ''} ${donation.donor.lastName || ''}`.trim() ||
             'Anonymous'
           : 'Anonymous',
-        time: getTimeAgo(donation.donationDate),
+        time: getTimeAgo(donation.donationTime),
         amount: donation.amount,
         id: donation.id,
       }));
@@ -59,16 +57,16 @@ export default function RecentActivity({
     const recentEvents = [...events]
       .sort(
         (a, b) =>
-          new Date(b.eventDate || '').getTime() -
-          new Date(a.eventDate || '').getTime(),
+          new Date(b.startDate || '').getTime() -
+          new Date(a.startDate || '').getTime(),
       )
       .slice(0, 3)
       .map((event) => ({
         type: 'event' as const,
         description: 'Event created',
         user: 'Admin',
-        time: getTimeAgo(event.eventDate),
-        title: event.eventTitle,
+        time: getTimeAgo(event.startDate),
+        title: event.eventName,
         id: event.id,
       }));
 

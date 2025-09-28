@@ -29,7 +29,7 @@ interface SidebarProps {
 const sidebarItems: SidebarItem[] = [
   { icon: Home, label: 'Home', href: '/dashboard' },
   { icon: Heart, label: 'Donate', href: '/donation/donate' },
-  { icon: Calendar, label: 'Events', href: '/donation/events' },
+  { icon: Calendar, label: 'Events & Donations', href: '/donation/events' },
   { icon: Video, label: 'Videos', href: '/donation/videos' },
   { icon: Bell, label: 'Notifications', href: '/donation/notifications' },
 ];
@@ -134,8 +134,15 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center">
-                <span className="text-white text-xs font-bold">🌍</span>
+              <div className="w-6 h-6  rounded flex items-center justify-center">
+                <span className="text-white text-xs font-bold">
+                  <Image
+                    src="/image/charity.svg"
+                    alt="Urukundo Foundation Logo"
+                    width={32}
+                    height={32}
+                  />
+                </span>
               </div>
               <div>
                 <h1 className="font-bold text-gray-900 text-sm">

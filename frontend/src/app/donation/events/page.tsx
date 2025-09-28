@@ -175,7 +175,7 @@ export default function EventsPage() {
       methodOfPayment: 'ONLINE',
       status: 'PENDING',
       donationText: donationMessage,
-      donationCause: 'Event',
+      donationCause: 'EDUCATION', // Default to a valid enum value
     });
     setDonateForEventId(null);
     alert('Thank you for your donation!');
