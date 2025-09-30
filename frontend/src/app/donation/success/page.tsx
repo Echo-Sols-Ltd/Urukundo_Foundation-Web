@@ -42,7 +42,7 @@ function DonationSuccessPage() {
       try {
         const token = localStorage.getItem('accessToken');
         // Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
-        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-production.up.railway.app';
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-chariy-foundation.up.railway.app';
         
         const response = await fetch(`${API_BASE_URL}/api/donation/${donationId}`, {
           headers: {
