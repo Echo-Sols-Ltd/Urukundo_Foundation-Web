@@ -1,6 +1,12 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+// Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+// Debug logging
+console.log('🔧 API Configuration:', {
+  'process.env.NODE_ENV': process.env.NODE_ENV,
+  'process.env.NEXT_PUBLIC_API_URL': process.env.NEXT_PUBLIC_API_URL,
+  'API_BASE_URL': API_BASE_URL
+});
 
 // Types for API responses
 export interface Event {

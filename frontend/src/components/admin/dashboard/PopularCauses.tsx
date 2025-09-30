@@ -12,22 +12,8 @@ export default function PopularCauses({ donations = [] }: PopularCausesProps) {
   // Process real donations data to calculate cause percentages
   const causesData = React.useMemo(() => {
     if (donations.length === 0) {
-      // Fallback data if no donations
-      return [
-        { name: 'Education', percentage: 40, color: 'bg-green-500', amount: 0 },
-        {
-          name: 'Health Care',
-          percentage: 35,
-          color: 'bg-blue-500',
-          amount: 0,
-        },
-        {
-          name: 'Water Shortage',
-          percentage: 25,
-          color: 'bg-orange-500',
-          amount: 0,
-        },
-      ];
+      // Return empty array if no donations - no placeholder data
+      return [];
     }
 
     // Group donations by cause and calculate totals
@@ -57,21 +43,7 @@ export default function PopularCauses({ donations = [] }: PopularCausesProps) {
     );
 
     if (total === 0) {
-      return [
-        { name: 'Education', percentage: 40, color: 'bg-green-500', amount: 0 },
-        {
-          name: 'Health Care',
-          percentage: 35,
-          color: 'bg-blue-500',
-          amount: 0,
-        },
-        {
-          name: 'Water Shortage',
-          percentage: 25,
-          color: 'bg-orange-500',
-          amount: 0,
-        },
-      ];
+      return [];
     }
 
     const colors = {
@@ -99,8 +71,17 @@ export default function PopularCauses({ donations = [] }: PopularCausesProps) {
         Popular causes
       </h3>
 
-      {/* Donut Chart Visualization */}
-      <div className="flex items-center justify-center mb-8">
+      {causes.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+          <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <p className="text-sm">No donation data available</p>
+        </div>
+      ) : (
+        <>
+          {/* Donut Chart Visualization */}
+          <div className="flex items-center justify-center mb-8">
         <div className="relative w-40 h-40">
           <svg
             className="w-full h-full transform -rotate-90"
@@ -181,7 +162,9 @@ export default function PopularCauses({ donations = [] }: PopularCausesProps) {
             </span>
           </div>
         ))}
-      </div>
+        </div>
+        </>
+      )}
     </div>
   );
 }

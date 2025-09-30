@@ -5,20 +5,23 @@ const nextConfig: NextConfig = {
   // Ensure the app runs on port 3000
   env: {
     PORT: '3000',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
   async rewrites() {
-    const isDevelopment = process.env.NODE_ENV === 'development';
-    const backendUrl = isDevelopment 
-      ? 'http://localhost:8080' 
-      : 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+    // Use environment variable for backend URL, fallback to localhost for development
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
     
     return {
       // First let Next.js match any internal routes (e.g., /api/health),
       // then proxy remaining /api/* calls to the backend.
-      afterFiles: [
+      fallback: [
         {
           source: '/api/:path*',
           destination: `${backendUrl}/api/:path*`,
+        },
+        {
+          source: '/uploads/:path*',
+          destination: `${backendUrl}/uploads/:path*`,
         },
       ],
     };

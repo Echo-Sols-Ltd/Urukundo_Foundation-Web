@@ -1,7 +1,6 @@
 // API functions for donations
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+// Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 // ...existing code...
 
 export interface Donation {
@@ -45,7 +44,20 @@ function getAuthHeaders(): HeadersInit {
 // Fetch all donations for a user
 export async function getUserDonations(): Promise<Donation[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/donation`, {
+    // First get the current user to get their ID
+    const userResponse = await fetch(`${API_BASE_URL}/api/users/me`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    if (!userResponse.ok) {
+      throw new Error('Failed to fetch user info');
+    }
+
+    const user = await userResponse.json();
+    
+    // Now fetch donations for this specific user
+    const response = await fetch(`${API_BASE_URL}/api/donation/donor/${user.id}`, {
       method: 'GET',
       headers: getAuthHeaders(),
     });

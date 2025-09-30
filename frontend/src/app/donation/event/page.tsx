@@ -66,7 +66,8 @@ function EventDonationPage() {
     const fetchEvent = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+        // Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
         const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -115,8 +116,16 @@ function EventDonationPage() {
       return;
     }
 
-    // Show payment modal with donation data
-    setShowPaymentModal(true);
+    // mark as submitting to reflect UI state
+    setIsSubmitting(true);
+
+    try {
+      // Show payment modal with donation data
+      setShowPaymentModal(true);
+    } finally {
+      // reset submitting state (actual completion will be handled by payment flow)
+      setIsSubmitting(false);
+    }
   };
 
   const handlePaymentSuccess = (donationId: number) => {

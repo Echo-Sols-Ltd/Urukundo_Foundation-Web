@@ -40,9 +40,8 @@ export interface JWTPayload {
   // Add other claims that might be in the JWT
 }
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+// Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 // ...existing code...
 
 // Decode JWT payload (real implementation)
@@ -125,7 +124,8 @@ export function getUserFromToken(token: string): User | null {
 // Login function
 export async function login(credentials: LoginRequest): Promise<User> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    // Using relative URL path for auth endpoints to ensure proper routing
+    const response = await fetch(`/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -162,7 +162,8 @@ export async function login(credentials: LoginRequest): Promise<User> {
 // Register function
 export async function register(userData: RegisterRequest): Promise<User> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+    // Using relative URL path for auth endpoints to ensure proper routing
+    const response = await fetch(`/api/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

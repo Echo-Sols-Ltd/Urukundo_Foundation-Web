@@ -1,7 +1,7 @@
-// Payment API functions for frontend
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
 
-// Payment Intent interfaces
+// Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
 export interface CreatePaymentIntentRequest {
   amount: number;
   currency: 'RWF' | 'USD';
@@ -131,6 +131,32 @@ export async function getPaymentIntent(paymentIntentId: string): Promise<Payment
     return await response.json();
   } catch (error) {
     console.error('Error getting payment intent:', error);
+    throw error;
+  }
+}
+
+/**
+ * Simulate successful payment (for development/testing)
+ * This creates a payment intent and immediately confirms it as successful
+ */
+export async function simulateSuccessfulPayment(
+  request: CreatePaymentIntentRequest
+): Promise<PaymentConfirmationResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/payments/simulate-success`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to simulate payment');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error simulating payment:', error);
     throw error;
   }
 }

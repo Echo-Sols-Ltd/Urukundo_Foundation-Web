@@ -41,7 +41,8 @@ function DonationSuccessPage() {
     const fetchDonationDetails = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+        // Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
         
         const response = await fetch(`${API_BASE_URL}/api/donation/${donationId}`, {
           headers: {
@@ -72,7 +73,8 @@ function DonationSuccessPage() {
   const handleDownloadReceipt = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-fromntend-urukundo-back-1.onrender.com';
+      // Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
       
       const response = await fetch(`${API_BASE_URL}/api/donation/${donationId}/receipt`, {
         headers: {
