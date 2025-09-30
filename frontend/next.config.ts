@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     // Use environment variable for backend URL, fallback to localhost for development
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8080';
+    const backendUrl = process.env.BACKEND_URL || 'https://urukundo-production.up.railway.app';
     
     return {
       // First let Next.js match any internal routes (e.g., /api/health),

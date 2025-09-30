@@ -1,5 +1,5 @@
 // Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-production.up.railway.app';
 
 // Debug logging
 console.log('🔧 API Configuration:', {

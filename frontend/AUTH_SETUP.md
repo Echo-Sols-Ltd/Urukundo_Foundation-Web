@@ -14,7 +14,7 @@ This authentication system has been completely rewritten to integrate with the e
 
 ### Backend Integration
 
-- **API Base URL**: `http://localhost:8080` (configurable via `NEXT_PUBLIC_API_URL`)
+- **API Base URL**: `https://urukundo-production.up.railway.app` (configurable via `NEXT_PUBLIC_API_URL`)
 - **Authentication Endpoints**:
   - `POST /api/auth/login` - User login
   - `POST /api/auth/register` - User registration
@@ -98,7 +98,7 @@ The system works with Spring Security JWT tokens:
 
 ### Prerequisites
 
-1. Spring Boot backend running on `http://localhost:8080`
+1. Spring Boot backend running on `https://urukundo-production.up.railway.app`
 2. Frontend development server: `npm run dev`
 
 ### Test Scenarios
@@ -140,7 +140,7 @@ The system works with Spring Security JWT tokens:
 Create `.env.local` in the frontend root:
 
 ```bash
-NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=https://urukundo-production.up.railway.app
 ```
 
 ### Backend CORS
