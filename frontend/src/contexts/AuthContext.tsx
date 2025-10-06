@@ -98,12 +98,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading: false,
       });
 
-      // Redirect based on user role
-      if (user.role === 'ADMIN') {
-        router.push('/admin');
-      } else {
-        router.push('/donation');
-      }
+      // Don't redirect here - let withGuest HOC handle the redirection
+      // This prevents double redirection issues
     } catch (error) {
       setAuthState({
         user: null,

@@ -37,7 +37,7 @@ export function withAuth<T extends object>(
 
       // If auth is not required but user is authenticated (for login/signup pages)
       if (!requireAuth && isAuthenticated) {
-        const dashboardRoute = user?.role === 'ADMIN' ? '/admin' : '/dashboard';
+        const dashboardRoute = user?.role === 'ADMIN' ? '/admin' : '/donation';
         router.push(dashboardRoute);
         return;
       }
@@ -45,7 +45,7 @@ export function withAuth<T extends object>(
       // If specific role is required
       if (requiredRole && user && user.role !== requiredRole) {
         // Redirect based on user's actual role
-        const userDashboard = user.role === 'ADMIN' ? '/admin' : '/dashboard';
+        const userDashboard = user.role === 'ADMIN' ? '/admin' : '/donation';
         router.push(userDashboard);
         return;
       }

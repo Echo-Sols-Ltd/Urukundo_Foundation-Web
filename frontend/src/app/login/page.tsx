@@ -43,7 +43,16 @@ function LoginPage() {
 
       // Navigation will be handled by the AuthProvider redirecting after login
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      setError(errorMessage);
+      
+      // Show error toast for better user experience
+      showToast({
+        type: 'error',
+        title: 'Login Failed',
+        message: errorMessage,
+        duration: 5000,
+      });
     } finally {
       setIsLoading(false);
     }

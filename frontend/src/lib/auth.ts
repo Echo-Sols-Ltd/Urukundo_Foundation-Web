@@ -124,8 +124,8 @@ export function getUserFromToken(token: string): User | null {
 // Login function
 export async function login(credentials: LoginRequest): Promise<User> {
   try {
-    // Using relative URL path for auth endpoints to ensure proper routing
-    const response = await fetch(`/api/auth/login`, {
+    // Using full API URL to backend server
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -135,8 +135,29 @@ export async function login(credentials: LoginRequest): Promise<User> {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage =
-        errorData.message || errorData.error || 'Invalid email or password';
+      let errorMessage = 'Invalid email or password';
+      
+      // Handle different error types
+      switch (response.status) {
+        case 400:
+          errorMessage = errorData.message || 'Invalid login data. Please check your inputs.';
+          break;
+        case 401:
+          errorMessage = errorData.message || 'Invalid email or password';
+          break;
+        case 403:
+          errorMessage = 'Access forbidden. Please check your credentials.';
+          break;
+        case 404:
+          errorMessage = 'Service not available. Please try again later.';
+          break;
+        case 500:
+          errorMessage = 'Server error. Please try again later.';
+          break;
+        default:
+          errorMessage = errorData.message || errorData.error || 'Login failed. Please try again.';
+      }
+      
       throw new Error(errorMessage);
     }
 
@@ -150,20 +171,30 @@ export async function login(credentials: LoginRequest): Promise<User> {
 
     return user;
   } catch (error) {
+    // If it's already an Error with a message, throw it as is
     if (error instanceof Error) {
+      // Check if it's a network error
+      if (error.message.includes('fetch') || error.message.includes('NetworkError') || error.name === 'TypeError') {
+        throw new Error('Network error. Please check your connection and try again.');
+      }
       throw error;
     }
-    throw new Error(
-      'Network error. Please check your connection and try again.',
-    );
+    
+    // Handle TypeError (usually network issues)
+    if (error instanceof TypeError) {
+      throw new Error('Network error. Please check your connection and try again.');
+    }
+    
+    // Fallback for unknown errors
+    throw new Error('An unexpected error occurred. Please try again.');
   }
 }
 
 // Register function
 export async function register(userData: RegisterRequest): Promise<User> {
   try {
-    // Using relative URL path for auth endpoints to ensure proper routing
-    const response = await fetch(`/api/auth/register`, {
+    // Using full API URL to backend server
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -175,13 +206,22 @@ export async function register(userData: RegisterRequest): Promise<User> {
       const errorData = await response.json().catch(() => ({}));
       let errorMessage = 'Registration failed';
 
-      if (response.status === 409) {
-        errorMessage =
-          'Email already exists. Please use a different email address.';
-      } else if (errorData.message) {
-        errorMessage = errorData.message;
-      } else if (errorData.error) {
-        errorMessage = errorData.error;
+      // Handle different error types
+      switch (response.status) {
+        case 400:
+          errorMessage = errorData.message || 'Invalid registration data. Please check your inputs.';
+          break;
+        case 409:
+          errorMessage = 'Email already exists. Please use a different email address.';
+          break;
+        case 403:
+          errorMessage = 'Registration not allowed. Please contact support.';
+          break;
+        case 500:
+          errorMessage = 'Server error. Please try again later.';
+          break;
+        default:
+          errorMessage = errorData.message || errorData.error || 'Registration failed. Please try again.';
       }
 
       throw new Error(errorMessage);
@@ -197,12 +237,22 @@ export async function register(userData: RegisterRequest): Promise<User> {
 
     return user;
   } catch (error) {
+    // If it's already an Error with a message, throw it as is
     if (error instanceof Error) {
+      // Check if it's a network error
+      if (error.message.includes('fetch') || error.message.includes('NetworkError') || error.name === 'TypeError') {
+        throw new Error('Network error. Please check your connection and try again.');
+      }
       throw error;
     }
-    throw new Error(
-      'Network error. Please check your connection and try again.',
-    );
+    
+    // Handle TypeError (usually network issues)
+    if (error instanceof TypeError) {
+      throw new Error('Network error. Please check your connection and try again.');
+    }
+    
+    // Fallback for unknown errors
+    throw new Error('An unexpected error occurred during registration. Please try again.');
   }
 }
 
