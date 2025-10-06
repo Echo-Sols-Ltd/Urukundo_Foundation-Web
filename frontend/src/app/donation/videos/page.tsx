@@ -8,6 +8,7 @@ import Image from 'next/image';
 import VideoModal from '../../../components/media/VideoModal';
 
 import { generateStableId } from '../../../hooks/useStableId';
+import { withAnyAuth } from '@/components/auth/withAuth';
 
 const FALLBACK_VIDEO = '/videos/children.mp4';
 const FALLBACK_THUMBNAIL = '/image/support.png';
@@ -51,7 +52,7 @@ const mapBackendToUi = (be: {
       : FALLBACK_VIDEO,
 });
 
-export default function VideosPage() {
+ function VideosPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [videos, setVideos] = useState<Video[]>([]);
@@ -286,3 +287,4 @@ export default function VideosPage() {
     </>
   );
 }
+export default withAnyAuth(VideosPage);

@@ -1,4 +1,5 @@
 import { SearchIcon, Menu } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface HeaderProps {
   title: string;
@@ -11,6 +12,9 @@ export default function Header({
   userInitial = 'A',
   onMobileMenuToggle,
 }: HeaderProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   return (
     <header className="bg-white border-b border-gray-200 px-4 sm:px-5 py-3.5">
       <div className="flex items-center justify-between">
@@ -33,11 +37,16 @@ export default function Header({
         <div className="flex items-center space-x-3 sm:space-x-4">
           {/* Search */}
           <button
-            className="hidden sm:block p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            onClick={() => router.push('/search')}
+            className={`hidden sm:block p-2 rounded-lg transition-colors duration-200 ${
+              pathname === '/search' 
+                ? 'bg-orange-100 text-orange-600' 
+                : 'text-gray-400 hover:bg-gray-100'
+            }`}
             title="Search"
             aria-label="Search"
           >
-            <SearchIcon className="w-5 h-5 text-gray-400" />
+            <SearchIcon className="w-5 h-5" />
           </button>
 
           {/* User Avatar */}

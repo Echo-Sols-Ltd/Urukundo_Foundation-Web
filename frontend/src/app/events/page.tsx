@@ -9,6 +9,7 @@ import { Book, Droplet, HeartPulse, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { generateStableId } from '../../hooks/useStableId';
+import { withAnyAuth } from '@/components/auth/withAuth';
 
 interface UiEventCard {
   id: string | number;
@@ -62,7 +63,7 @@ const causesData = [
   },
 ];
 
-export default function EventsPage() {
+  function EventsPage() {
   const [cards, setCards] = useState<UiEventCard[]>([]);
 
   useEffect(() => {
@@ -128,13 +129,34 @@ export default function EventsPage() {
         </div>
       </section>
 
+
+
       {/* Latest Events Section */}
       <section className="container mx-auto px-6 sm:px-8 lg:px-12 py-16">
         <div className="flex justify-between items-center mb-12">
-          <h2 className="text-3xl font-bold text-black">Latest Events</h2>
+          <h2 className="text-3xl font-bold text-black">
+            {cards.length > 0 ? 'Events' : 'Latest Events'}
+          </h2>
           <Button
             variant="outline"
             className="border-black text-black hover:bg-black hover:text-white bg-transparent"
+            onClick={() => {
+              // Reset to show all events
+              const load = async () => {
+                try {
+                  const res = await fetch('/api/events');
+                  if (!res.ok) return;
+                  const data = await res.json();
+                  const mapped = Array.isArray(data)
+                    ? data.map(mapBackendEventToCard)
+                    : [];
+                  setCards(mapped);
+                } catch {
+                  setCards([]);
+                }
+              };
+              load();
+            }}
           >
             ALL EVENTS
           </Button>
@@ -209,3 +231,5 @@ export default function EventsPage() {
     </div>
   );
 }
+
+export default withAnyAuth(EventsPage);

@@ -14,6 +14,7 @@ import {
   Download,
   Eye,
 } from 'lucide-react';
+import { withAnyAuth } from '@/components/auth/withAuth';
 
 interface BackendDonation {
   id: number;
@@ -87,7 +88,7 @@ const getStatusColor = (status: Donation['status']) => {
   }
 };
 
-export default function MyDonationsPage() {
+ function MyDonationsPage() {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [filter, setFilter] = useState<
@@ -350,3 +351,5 @@ export default function MyDonationsPage() {
     </div>
   );
 }
+
+export default withAnyAuth(MyDonationsPage);

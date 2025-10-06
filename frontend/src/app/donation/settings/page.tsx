@@ -5,6 +5,7 @@ import Header from '@/components/donation/Header';
 import Sidebar from '@/components/donation/Sidebar';
 import { User, Bell, Shield, Globe, Save } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { withAnyAuth } from '@/components/auth/withAuth';
 
 function SettingsPage() {
   const { user } = useAuth();
@@ -473,4 +474,4 @@ function SettingsPage() {
   );
 }
 
-export default SettingsPage;
+export default withAnyAuth(SettingsPage);

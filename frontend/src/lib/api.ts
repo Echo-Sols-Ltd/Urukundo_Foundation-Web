@@ -563,3 +563,226 @@ export const usersApi = {
     }
   },
 };
+
+// Search API
+export interface SearchResults {
+  events?: Event[];
+  donations?: Donation[];
+  users?: UserProfile[];
+  totalEvents?: number;
+  totalDonations?: number;
+  totalUsers?: number;
+  query?: string;
+  error?: string;
+  message?: string;
+}
+
+export interface SearchSuggestions {
+  eventNames?: string[];
+  locations?: string[];
+  organizers?: string[];
+  error?: string;
+  message?: string;
+}
+
+export const searchApi = {
+  // Global search across all entities
+  globalSearch: async (query: string): Promise<SearchResults> => {
+    try {
+      if (!query.trim()) {
+        return { events: [], donations: [], users: [] };
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/api/search/global?query=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders(),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Global search error:', error);
+      return { 
+        events: [], 
+        donations: [], 
+        users: [], 
+        error: 'Search failed', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  },
+
+  // Search events only
+  searchEvents: async (query: string): Promise<SearchResults> => {
+    try {
+      if (!query.trim()) {
+        const allEvents = await eventsApi.getAll();
+        return { events: allEvents, totalEvents: allEvents.length };
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/api/search/events?query=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders(),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Event search failed: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Event search error:', error);
+      return { 
+        events: [], 
+        error: 'Event search failed', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  },
+
+  // Search donations only
+  searchDonations: async (query: string): Promise<SearchResults> => {
+    try {
+      if (!query.trim()) {
+        const allDonations = await donationsApi.getAll();
+        return { donations: allDonations, totalDonations: allDonations.length };
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/api/search/donations?query=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders(),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Donation search failed: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Donation search error:', error);
+      return { 
+        donations: [], 
+        error: 'Donation search failed', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  },
+
+  // Search users only (admin access)
+  searchUsers: async (query: string): Promise<SearchResults> => {
+    try {
+      if (!query.trim()) {
+        return { users: [] };
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/api/search/users?query=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders(),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`User search failed: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('User search error:', error);
+      return { 
+        users: [], 
+        error: 'User search failed', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  },
+
+  // Get search suggestions for autocomplete
+  getSuggestions: async (query: string): Promise<SearchSuggestions> => {
+    try {
+      if (query.length < 2) {
+        return { eventNames: [], locations: [], organizers: [] };
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/api/search/suggestions?query=${encodeURIComponent(query)}`, {
+        headers: getAuthHeaders(),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Suggestions failed: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Search suggestions error:', error);
+      return { 
+        eventNames: [], 
+        locations: [], 
+        organizers: [], 
+        error: 'Suggestions failed', 
+        message: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  },
+
+  // Advanced event search with filters
+  searchEventsAdvanced: async (params: {
+    query?: string;
+    name?: string;
+    location?: string;
+    organizer?: string;
+    type?: string;
+  }): Promise<Event[]> => {
+    try {
+      
+      if (params.query) {
+        const response = await fetch(`${API_BASE_URL}/api/events/search?query=${encodeURIComponent(params.query)}`, {
+          headers: getAuthHeaders(),
+        });
+        if (response.ok) {
+          return await response.json();
+        }
+      }
+      
+      if (params.name) {
+        const response = await fetch(`${API_BASE_URL}/api/events/search/name?name=${encodeURIComponent(params.name)}`, {
+          headers: getAuthHeaders(),
+        });
+        if (response.ok) {
+          return await response.json();
+        }
+      }
+      
+      if (params.location) {
+        const response = await fetch(`${API_BASE_URL}/api/events/search/location?location=${encodeURIComponent(params.location)}`, {
+          headers: getAuthHeaders(),
+        });
+        if (response.ok) {
+          return await response.json();
+        }
+      }
+      
+      if (params.organizer) {
+        const response = await fetch(`${API_BASE_URL}/api/events/search/organizer?organizer=${encodeURIComponent(params.organizer)}`, {
+          headers: getAuthHeaders(),
+        });
+        if (response.ok) {
+          return await response.json();
+        }
+      }
+      
+      if (params.type) {
+        const response = await fetch(`${API_BASE_URL}/api/events/search/type?type=${encodeURIComponent(params.type)}`, {
+          headers: getAuthHeaders(),
+        });
+        if (response.ok) {
+          return await response.json();
+        }
+      }
+      
+      // Fallback to all events
+      return await eventsApi.getAll();
+      
+    } catch (error) {
+      console.error('Advanced event search error:', error);
+      return [];
+    }
+  },
+};

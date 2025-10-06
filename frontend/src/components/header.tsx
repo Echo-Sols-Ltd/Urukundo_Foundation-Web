@@ -4,13 +4,33 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { isAuthenticated } from '@/lib/auth';
 
 export function Header() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [currentHash, setCurrentHash] = useState('');
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  // Track hash changes for active state and check authentication
+  useEffect(() => {
+    const updateHash = () => setCurrentHash(window.location.hash);
+    const checkAuth = () => setIsUserAuthenticated(isAuthenticated());
+    
+    updateHash(); // Set initial hash
+    checkAuth(); // Check initial auth state
+    
+    window.addEventListener('hashchange', updateHash);
+    window.addEventListener('storage', checkAuth); // Listen for auth changes
+    
+    return () => {
+      window.removeEventListener('hashchange', updateHash);
+      window.removeEventListener('storage', checkAuth);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     if (pathname !== '/') {
@@ -66,7 +86,7 @@ export function Header() {
     <header className="bg-black text-white fixed top-0 left-0 right-0 z-50 shadow-lg">
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-3 sm:py-4 flex items-center justify-between">
         {/* Logo section with improved responsiveness */}
-        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0 hover:opacity-80 transition-opacity duration-300">
           <Image
             src="/image/charity.svg"
             alt="Urukundo Foundation Logo"
@@ -77,43 +97,76 @@ export function Header() {
           <span className="font-sans font-semibold text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl whitespace-nowrap">
             URUKUNDO FOUNDATION
           </span>
-        </div>
+        </Link>
         {/* Desktop Navigation - Hidden on mobile and small tablets */}
         <nav className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8">
           <Link
             href="/"
-            className="hover:text-orange-500 transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium"
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+              pathname === '/' && !currentHash
+                ? 'text-orange-500 border-orange-500' 
+                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+            }`}
           >
             Home
           </Link>
           <button
             onClick={() => scrollToSection('about')}
-            className="hover:text-orange-500 transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium"
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+              pathname === '/' && currentHash === '#about'
+                ? 'text-orange-500 border-orange-500' 
+                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+            }`}
           >
             About us
           </button>
           <button
             onClick={() => scrollToSection('events')}
-            className="hover:text-orange-500 transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium"
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+              pathname === '/events' || (pathname === '/' && currentHash === '#events')
+                ? 'text-orange-500 border-orange-500' 
+                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+            }`}
           >
             Events
           </button>
           <button
             onClick={() => scrollToSection('videos')}
-            className="hover:text-orange-500 transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium whitespace-nowrap"
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium whitespace-nowrap border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+              pathname === '/' && currentHash === '#videos'
+                ? 'text-orange-500 border-orange-500' 
+                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+            }`}
           >
             Live videos
           </button>
           <Link
             href="/contacts"
-            className="hover:text-orange-500 transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium"
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+              pathname === '/contacts' 
+                ? 'text-orange-500 border-orange-500' 
+                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+            }`}
           >
             Contacts
           </Link>
         </nav>
 
-        {/* Right section with donate button and mobile menu */}
+        {/* Right section with search, donate button and mobile menu */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Search Button - Desktop only, only for authenticated users */}
+          {isUserAuthenticated && (
+            <Button
+              onClick={() => router.push('/search')}
+              variant="ghost"
+              size="sm"
+              className="hidden lg:flex items-center gap-2 text-white hover:text-orange-500 hover:bg-gray-800 transition-colors duration-300"
+            >
+              <Search className="w-4 h-4" />
+              <span className="hidden xl:inline">Search</span>
+            </Button>
+          )}
+          
           {/* Desktop Donate Button - Hidden on mobile/tablet */}
           <Button
             onClick={handleDonateClick}
@@ -153,7 +206,11 @@ export function Header() {
                   <Link
                     href="/"
                     onClick={closeMobile}
-                    className="block hover:text-orange-500 transition-colors duration-300 py-2 px-2 rounded-md hover:bg-gray-800 font-medium"
+                    className={`block transition-colors duration-300 py-2 px-2 rounded-md font-medium ${
+                      pathname === '/' && !currentHash
+                        ? 'text-orange-500 bg-gray-800' 
+                        : 'text-white hover:text-orange-500 hover:bg-gray-800'
+                    }`}
                   >
                     Home
                   </Link>
@@ -164,7 +221,11 @@ export function Header() {
                       scrollToSection('about');
                       closeMobile();
                     }}
-                    className="block w-full text-left hover:text-orange-500 transition-colors duration-300 py-2 px-2 rounded-md hover:bg-gray-800 font-medium"
+                    className={`block w-full text-left transition-colors duration-300 py-2 px-2 rounded-md font-medium ${
+                      pathname === '/' && currentHash === '#about'
+                        ? 'text-orange-500 bg-gray-800' 
+                        : 'text-white hover:text-orange-500 hover:bg-gray-800'
+                    }`}
                   >
                     About us
                   </button>
@@ -175,7 +236,11 @@ export function Header() {
                       scrollToSection('events');
                       closeMobile();
                     }}
-                    className="block w-full text-left hover:text-orange-500 transition-colors duration-300 py-2 px-2 rounded-md hover:bg-gray-800 font-medium"
+                    className={`block w-full text-left transition-colors duration-300 py-2 px-2 rounded-md font-medium ${
+                      pathname === '/events' || (pathname === '/' && currentHash === '#events')
+                        ? 'text-orange-500 bg-gray-800' 
+                        : 'text-white hover:text-orange-500 hover:bg-gray-800'
+                    }`}
                   >
                     Events
                   </button>
@@ -186,7 +251,11 @@ export function Header() {
                       scrollToSection('videos');
                       closeMobile();
                     }}
-                    className="block w-full text-left hover:text-orange-500 transition-colors duration-300 py-2 px-2 rounded-md hover:bg-gray-800 font-medium"
+                    className={`block w-full text-left transition-colors duration-300 py-2 px-2 rounded-md font-medium ${
+                      pathname === '/' && currentHash === '#videos'
+                        ? 'text-orange-500 bg-gray-800' 
+                        : 'text-white hover:text-orange-500 hover:bg-gray-800'
+                    }`}
                   >
                     Live videos
                   </button>
@@ -195,11 +264,32 @@ export function Header() {
                   <Link
                     href="/contacts"
                     onClick={closeMobile}
-                    className="block hover:text-orange-500 transition-colors duration-300 py-2 px-2 rounded-md hover:bg-gray-800 font-medium"
+                    className={`block transition-colors duration-300 py-2 px-2 rounded-md font-medium ${
+                      pathname === '/contacts' 
+                        ? 'text-orange-500 bg-gray-800' 
+                        : 'text-white hover:text-orange-500 hover:bg-gray-800'
+                    }`}
                   >
                     Contacts
                   </Link>
                 </li>
+                {/* Search - Only for authenticated users */}
+                {isUserAuthenticated && (
+                  <li>
+                    <Link
+                      href="/search"
+                      onClick={closeMobile}
+                      className={`flex items-center gap-2 transition-colors duration-300 py-2 px-2 rounded-md font-medium ${
+                        pathname === '/search' 
+                          ? 'text-orange-500 bg-gray-800' 
+                          : 'text-white hover:text-orange-500 hover:bg-gray-800'
+                      }`}
+                    >
+                      <Search className="w-4 h-4" />
+                      Search
+                    </Link>
+                  </li>
+                )}
                 <li className="pt-2 mt-2 border-t border-gray-700">
                   <Button
                     onClick={() => {

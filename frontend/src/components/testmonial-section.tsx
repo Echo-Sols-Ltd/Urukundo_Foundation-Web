@@ -1,10 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function TestimonialSection() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [isAutoScrolling, setIsAutoScrolling] = useState(true);
 
   const testimonials = [
     {
@@ -19,7 +20,7 @@ export function TestimonialSection() {
       quote:
         "The transparency of this platform is amazing. I can see exactly where my donations go and the real impact they make. It's changed how I think about giving.",
       name: 'RUKUNDO Bahati',
-      role: 'Supporter',
+      role: 'Donor',
       image: '/image/baba.png',
       alt: 'RUKUNDO Bahati - Supporter testimonial',
     },
@@ -27,7 +28,7 @@ export function TestimonialSection() {
       quote:
         "Being able to watch live videos of the communities we're helping makes the connection so much stronger. This isn't just charity, it's partnership.",
       name: 'BYUKUSENGE Andrew',
-      role: 'Volunteer',
+      role: 'Donor',
       image: '/image/andrew.jpg',
       alt: 'BYUKUSENGE Andrew - Volunteer testimonial',
     },
@@ -35,10 +36,41 @@ export function TestimonialSection() {
 
   const currentTestimonialData = testimonials[currentTestimonial];
 
+  // Auto-scroll functionality with memory optimization
+  useEffect(() => {
+    if (!isAutoScrolling) return;
+
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => {
+        const next = prev === testimonials.length - 1 ? 0 : prev + 1;
+        return next;
+      });
+    }, 5000); // Change testimonial every 5 seconds
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isAutoScrolling]);
+
+  // Function to handle manual testimonial change
+  const handleTestimonialChange = (index: number) => {
+    setCurrentTestimonial(index);
+    setIsAutoScrolling(false); // Pause auto-scroll when user interacts
+    
+    // Resume auto-scroll after 10 seconds of no interaction
+    setTimeout(() => {
+      setIsAutoScrolling(true);
+    }, 10000);
+  };
+
   return (
     <section className="py-16 bg-muted">
       <div className="container mx-auto px-6 sm:px-8 lg:px-20">
-        <div className="flex flex-col lg:flex-row items-center gap-12">
+        <div 
+          className="flex flex-col lg:flex-row items-center gap-12"
+          onMouseEnter={() => setIsAutoScrolling(false)}
+          onMouseLeave={() => setIsAutoScrolling(true)}
+        >
           <div className="flex-1">
             <div className="text-accent text-6xl font-bold mb-6">&quot;</div>
             <h2 className="font-sans text-3xl lg:text-4xl font-bold text-card-foreground mb-6">
@@ -57,19 +89,24 @@ export function TestimonialSection() {
             </div>
 
             {/* Pagination dots */}
-            <div className="flex gap-2 mt-8">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentTestimonial
-                      ? 'bg-orange-500'
-                      : 'bg-gray-300'
-                  }`}
-                  aria-label={`View testimonial ${index + 1}`}
-                />
-              ))}
+            <div className="flex items-center gap-4 mt-8">
+              <div className="flex gap-2">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleTestimonialChange(index)}
+                    className={`w-3 h-3 rounded-full transition-colors hover:scale-110 transform ${
+                      index === currentTestimonial
+                        ? 'bg-orange-500'
+                        : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    aria-label={`View testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+              
+              {/* Auto-scroll indicator */}
+             
             </div>
           </div>
 

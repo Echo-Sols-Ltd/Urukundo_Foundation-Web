@@ -9,6 +9,7 @@ import Sidebar from '@/components/donation/Sidebar';
 import { ChevronDown } from 'lucide-react';
 import { createDonation, getUserDonationStats, type DonationCreateRequest } from '@/lib/donations';
 import { donationsApi, usersApi } from '@/lib/api';
+import { withAnyAuth } from '@/components/auth/withAuth';
 
 interface DonationForm {
   cause: string;
@@ -26,7 +27,7 @@ const causes = [
   'General Fund',
 ];
 
-export default function DonatePage() {
+ function DonatePage() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState<DonationForm>({
@@ -363,3 +364,4 @@ export default function DonatePage() {
     </div>
   );
 }
+export default withAnyAuth(DonatePage);

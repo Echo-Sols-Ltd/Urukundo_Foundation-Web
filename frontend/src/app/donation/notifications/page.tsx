@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import Header from '../../../components/donation/Header';
 import Sidebar from '../../../components/donation/Sidebar';
 import { notificationsApi, type NotificationItem } from '@/lib/api';
+import { withAnyAuth } from '@/components/auth/withAuth';
 
-export default function NotificationsPage() {
+ function NotificationsPage() {
   const [notificationsList, setNotificationsList] = useState<
     NotificationItem[]
   >([]);
@@ -161,3 +162,4 @@ export default function NotificationsPage() {
     </div>
   );
 }
+export default withAnyAuth(NotificationsPage);
