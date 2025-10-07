@@ -97,7 +97,7 @@ charityApp/
 
 ## 🔧 Local Development Setup
 
-### Frontend
+### Frontend_Development
 
 ```bash
 cd frontend
@@ -105,7 +105,8 @@ npm install
 npm run dev
 ```
 
-### Backend
+### Backend_Development
+
 ```bash
 cd backend
 mvn spring-boot:run
