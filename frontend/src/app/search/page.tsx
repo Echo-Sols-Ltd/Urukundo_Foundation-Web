@@ -9,18 +9,18 @@ import { type SearchResults as SearchResultsType } from '@/lib/api';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import DonationTrends from '@/components/DonationTrends';
 
 function SearchPage() {
   const [searchResults, setSearchResults] = useState<SearchResultsType>({});
   const [currentQuery, setCurrentQuery] = useState('');
   const router = useRouter();
 
-  const handleSearchResults = (results: SearchResultsType) => {
+  const handleSearchResults = (results: SearchResultsType, query?: string) => {
     setSearchResults(results);
-  };
-
-  const handleSearchStart = (query: string) => {
-    setCurrentQuery(query);
+    if (query !== undefined) {
+      setCurrentQuery(query);
+    }
   };
 
   return (
@@ -52,7 +52,20 @@ function SearchPage() {
       </div>
 
       {/* Results Section */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        {/* Donation Trends Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span>Donation Trends</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DonationTrends />
+          </CardContent>
+        </Card>
+
+        {/* Search Results Section */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
