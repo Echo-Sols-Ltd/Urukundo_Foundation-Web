@@ -38,6 +38,10 @@ export function Header() {
       return;
     }
 
+    // Update hash first to ensure active state changes immediately
+    window.history.replaceState(null, '', `#${sectionId}`);
+    setCurrentHash(`#${sectionId}`);
+    
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });

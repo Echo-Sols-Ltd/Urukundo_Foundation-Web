@@ -50,7 +50,7 @@ export function TestimonialSection() {
     return () => {
       clearInterval(interval);
     };
-  }, [isAutoScrolling]);
+  }, [isAutoScrolling, testimonials.length]);
 
   // Function to handle manual testimonial change
   const handleTestimonialChange = (index: number) => {
