@@ -7,7 +7,7 @@ yarn-error.log*
 
 # Docker files (force Railway to use nixpacks)
 Dockerfile*
-.dockerignore
+# .dockerignore
 docker-compose.yml
 
 # Next.js
