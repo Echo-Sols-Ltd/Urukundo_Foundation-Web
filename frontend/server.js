@@ -4,12 +4,6 @@ import next from 'next';
 const port = process.env.PORT || 8080;
 const hostname = process.env.HOSTNAME || '0.0.0.0';
 
-console.log(`Starting server on ${hostname}:${port}`);
-console.log('Environment variables:', {
-  PORT: process.env.PORT,
-  HOSTNAME: process.env.HOSTNAME,
-  NODE_ENV: process.env.NODE_ENV,
-});
 
 const app = next({
   dev: false,

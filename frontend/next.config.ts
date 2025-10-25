@@ -6,10 +6,11 @@ const nextConfig: NextConfig = {
   env: {
     PORT: '3000',
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    
   },
   async rewrites() {
     // Use environment variable for backend URL, fallback to localhost for development
-    const backendUrl = process.env.BACKEND_URL || 'https://urukundo-production.up.railway.app';
+    const backendUrl = process.env.BACKEND_URL || 'https://api.urukundo.echo-solution.com';
     
     return {
       // First let Next.js match any internal routes (e.g., /api/health),

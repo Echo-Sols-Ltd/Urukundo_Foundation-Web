@@ -1,12 +1,8 @@
 // Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-production.up.railway.app';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.urukundo.echo-solution.com';
 
 // Debug logging
-console.log('🔧 API Configuration:', {
-  'process.env.NODE_ENV': process.env.NODE_ENV,
-  'process.env.NEXT_PUBLIC_API_URL': process.env.NEXT_PUBLIC_API_URL,
-  'API_BASE_URL': API_BASE_URL
-});
+
 
 // Types for API responses
 export interface Event {

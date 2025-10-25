@@ -88,7 +88,7 @@ If port 3000 is already in use, you can run on a different port:
 docker run -d -p 8080:3000 --name urukundo-app urukundo-frontend-updated
 ```
 
-Then access via `https://urukundo-production.up.railway.app`
+Then access via `https://api.urukundo.echo-solution.com`
 
 ### Environment Variables
 
