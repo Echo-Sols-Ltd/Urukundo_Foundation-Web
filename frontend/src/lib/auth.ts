@@ -41,7 +41,7 @@ export interface JWTPayload {
 }
 
 // Use NEXT_PUBLIC_API_URL in production, fallback to localhost in development
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://urukundo-production.up.railway.app';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.urukundo.echo-solution.com';
 // ...existing code...
 
 // Decode JWT payload (real implementation)

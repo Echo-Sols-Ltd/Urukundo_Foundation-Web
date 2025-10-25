@@ -13,7 +13,6 @@ export function TestimonialSection() {
         "I always wanted to help, but I didn't know where to start. Urukundo Foundation made it so easy to give and actually see the change. Watching the live stories made it real.",
       name: 'SHEMA Leandre',
       role: 'Donor',
-      image: '/image/frique.jpg',
       alt: 'SHEMA Leandre - Donor testimonial',
     },
     {
@@ -21,7 +20,6 @@ export function TestimonialSection() {
         "The transparency of this platform is amazing. I can see exactly where my donations go and the real impact they make. It's changed how I think about giving.",
       name: 'RUKUNDO Bahati',
       role: 'Donor',
-      image: '/image/baba.png',
       alt: 'RUKUNDO Bahati - Supporter testimonial',
     },
     {
@@ -29,7 +27,6 @@ export function TestimonialSection() {
         "Being able to watch live videos of the communities we're helping makes the connection so much stronger. This isn't just charity, it's partnership.",
       name: 'BYUKUSENGE Andrew',
       role: 'Donor',
-      image: '/image/andrew.jpg',
       alt: 'BYUKUSENGE Andrew - Volunteer testimonial',
     },
   ];
@@ -110,17 +107,7 @@ export function TestimonialSection() {
             </div>
           </div>
 
-          <div className="flex-1 max-w-sm">
-            <div className="w-full h-[350px] rounded-lg shadow-lg overflow-hidden">
-              <Image
-                src={currentTestimonialData.image}
-                alt={currentTestimonialData.alt}
-                width={300}
-                height={300}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
+         
         </div>
       </div>
     </section>
