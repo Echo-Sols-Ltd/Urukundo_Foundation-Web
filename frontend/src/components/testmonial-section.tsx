@@ -69,7 +69,7 @@ export function TestimonialSection() {
           <div className="flex-1">
             <div className="text-accent text-6xl font-bold mb-6">&quot;</div>
             <h2 className="font-sans text-3xl lg:text-4xl font-bold text-card-foreground mb-6">
-              Together, we can change lives for the better
+              Together, We can change lives for the Better
             </h2>
             <p className="font-serif text-lg text-card-foreground mb-8 leading-relaxed">
               &quot;{currentTestimonialData.quote}&quot;
