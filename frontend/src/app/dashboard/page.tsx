@@ -91,8 +91,12 @@ function DashboardPage() {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [upcomingEvents, setUpcomingEvents] = useState<
-    { title: string; date: string; description: string; image: string }[]
+    { title: string; date: string; description: string; image: string; startDate: string }[]
   >([]);
+  const [pastEvents, setPastEvents] = useState<
+    { title: string; date: string; description: string; image: string; startDate: string }[]
+  >([]);
+  const [eventFilter, setEventFilter] = useState<'upcoming' | 'past'>('upcoming');
   const [recentVideos, setRecentVideos] = useState<Video[]>([]);
   const [videoThumbnails, setVideoThumbnails] = useState<Map<string, string>>(new Map());
   const [generatingThumbnails, setGeneratingThumbnails] = useState(false);
@@ -134,25 +138,41 @@ function DashboardPage() {
           });
           if (eventsRes.ok) {
             const eventsData = await eventsRes.json();
-            const transformedEvents = Array.isArray(eventsData)
-              ? eventsData
-                  .filter(
-                    (event) =>
-                      event.status === 'UPCOMING' || event.status === 'ONGOING',
-                  )
-                  .map((event) => ({
-                    title: event.eventName || 'Event',
-                    date: new Date(event.startDate).toLocaleDateString(),
-                    description: event.description || '',
-                    image: event.imageUrl || '/image/plant.jpg',
-                  }))
-                  .slice(0, 4)
-              : [];
-            setUpcomingEvents(transformedEvents);
+            if (Array.isArray(eventsData)) {
+              const now = new Date();
+              
+              // Separate upcoming and past events
+              const upcoming = eventsData
+                .filter((event) => new Date(event.startDate) >= now)
+                .map((event) => ({
+                  title: event.eventName || 'Event',
+                  date: new Date(event.startDate).toLocaleDateString(),
+                  description: event.description || '',
+                  image: event.imageUrl || '/image/plant.jpg',
+                  startDate: event.startDate,
+                }))
+                .slice(0, 4);
+              
+              const past = eventsData
+                .filter((event) => new Date(event.startDate) < now)
+                .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+                .map((event) => ({
+                  title: event.eventName || 'Event',
+                  date: new Date(event.startDate).toLocaleDateString(),
+                  description: event.description || '',
+                  image: event.imageUrl || '/image/plant.jpg',
+                  startDate: event.startDate,
+                }))
+                .slice(0, 4);
+              
+              setUpcomingEvents(upcoming);
+              setPastEvents(past);
+            }
           }
         } catch (error) {
           console.error('Error fetching events:', error);
           setUpcomingEvents([]);
+          setPastEvents([]);
         }
 
         // Fetch videos
@@ -339,63 +359,137 @@ function DashboardPage() {
             </div>
           </div>
 
-          {/* Upcoming Events */}
+          {/* Events Section with Tabs */}
           <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Upcoming Events
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Events
+              </h2>
+              <div className="flex gap-2">
+                <Button
+                  variant={eventFilter === 'upcoming' ? 'default' : 'outline'}
+                  onClick={() => setEventFilter('upcoming')}
+                  className={eventFilter === 'upcoming' ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                >
+                  Upcoming ({upcomingEvents.length})
+                </Button>
+                <Button
+                  variant={eventFilter === 'past' ? 'default' : 'outline'}
+                  onClick={() => setEventFilter('past')}
+                  className={eventFilter === 'past' ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                >
+                  Past ({pastEvents.length})
+                </Button>
+              </div>
+            </div>
+            
             <div className="grid md:grid-cols-2 gap-6">
-              {upcomingEvents.length > 0 ? (
-                upcomingEvents.map((event, index) => (
-                  <Card key={index} className="overflow-hidden p-0">
-                    <div className="h-48 relative w-full">
-                      <Image
-                        src={
-                          normalizeAssetUrl(event.image) || DEFAULT_EVENT_IMAGE
-                        }
-                        alt={event.title}
-                        fill
-                        className="object-cover object-center"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        unoptimized={
-                          event.image?.startsWith('/uploads') ||
-                          event.image?.startsWith('http')
-                        }
-                        onError={(e) => {
-                          const img = e.currentTarget as HTMLImageElement;
-                          const fallback = `${window.location.origin}${DEFAULT_EVENT_IMAGE}`;
-                          if (img.src !== fallback) {
-                            img.src = DEFAULT_EVENT_IMAGE;
+              {eventFilter === 'upcoming' ? (
+                upcomingEvents.length > 0 ? (
+                  upcomingEvents.map((event, index) => (
+                    <Card key={index} className="overflow-hidden p-0">
+                      <div className="h-48 relative w-full">
+                        <Image
+                          src={
+                            normalizeAssetUrl(event.image) || DEFAULT_EVENT_IMAGE
                           }
-                        }}
-                      />
-                    </div>
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="text-lg font-bold text-gray-900">
-                          {event.title}
-                        </h3>
-                        <span className="text-sm text-gray-500">
-                          {event.date}
-                        </span>
+                          alt={event.title}
+                          fill
+                          className="object-cover object-center"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          unoptimized={
+                            event.image?.startsWith('/uploads') ||
+                            event.image?.startsWith('http')
+                          }
+                          onError={(e) => {
+                            const img = e.currentTarget as HTMLImageElement;
+                            const fallback = `${window.location.origin}${DEFAULT_EVENT_IMAGE}`;
+                            if (img.src !== fallback) {
+                              img.src = DEFAULT_EVENT_IMAGE;
+                            }
+                          }}
+                        />
                       </div>
-                      <p className="text-gray-600 mb-4">{event.description}</p>
-                      <Button
-                        variant="outline"
-                        className="w-full border-orange-500 text-orange-500 hover:bg-orange-50 bg-transparent"
-                      >
-                        LEARN MORE
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-3">
+                          <h3 className="text-lg font-bold text-gray-900">
+                            {event.title}
+                          </h3>
+                          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                            {event.date}
+                          </Badge>
+                        </div>
+                        <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
+                        <Button
+                          variant="outline"
+                          className="w-full border-orange-500 text-orange-500 hover:bg-orange-50 bg-transparent"
+                        >
+                          LEARN MORE
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12 text-gray-500">
+                    <p className="text-lg">No upcoming events at the moment.</p>
+                    <p className="text-sm">
+                      Check back later for new events and activities.
+                    </p>
+                  </div>
+                )
               ) : (
-                <div className="col-span-full text-center py-12 text-gray-500">
-                  <p className="text-lg">No upcoming events at the moment.</p>
-                  <p className="text-sm">
-                    Check back later for new events and activities.
-                  </p>
-                </div>
+                pastEvents.length > 0 ? (
+                  pastEvents.map((event, index) => (
+                    <Card key={index} className="overflow-hidden p-0 opacity-90">
+                      <div className="h-48 relative w-full">
+                        <Image
+                          src={
+                            normalizeAssetUrl(event.image) || DEFAULT_EVENT_IMAGE
+                          }
+                          alt={event.title}
+                          fill
+                          className="object-cover object-center grayscale-[30%]"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          unoptimized={
+                            event.image?.startsWith('/uploads') ||
+                            event.image?.startsWith('http')
+                          }
+                          onError={(e) => {
+                            const img = e.currentTarget as HTMLImageElement;
+                            const fallback = `${window.location.origin}${DEFAULT_EVENT_IMAGE}`;
+                            if (img.src !== fallback) {
+                              img.src = DEFAULT_EVENT_IMAGE;
+                            }
+                          }}
+                        />
+                      </div>
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-3">
+                          <h3 className="text-lg font-bold text-gray-900">
+                            {event.title}
+                          </h3>
+                          <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
+                            {event.date}
+                          </Badge>
+                        </div>
+                        <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
+                        <Button
+                          variant="outline"
+                          className="w-full border-blue-500 text-blue-500 hover:bg-blue-50 bg-transparent"
+                        >
+                          VIEW DETAILS
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12 text-gray-500">
+                    <p className="text-lg">No past events found.</p>
+                    <p className="text-sm">
+                      Past events will appear here after they have concluded.
+                    </p>
+                  </div>
+                )
               )}
             </div>
           </section>

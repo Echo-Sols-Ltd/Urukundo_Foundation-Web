@@ -44,12 +44,7 @@ function SearchPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      {isAdmin ? (
-        <AdminHeader 
-          title="Search" 
-          onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        />
-      ) : null}
+      
 
       <div className="flex">
         {/* Sidebar */}
@@ -67,6 +62,12 @@ function SearchPage() {
 
         {/* Main Content */}
         <main className="flex-1 lg:ml-2">
+          {isAdmin ? (
+        <AdminHeader 
+          title="Search" 
+          onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        />
+      ) : null}
           <div className="p-6 lg:p-8">
             {/* Page Header */}
             <div className="mb-6">

@@ -85,6 +85,8 @@ export interface Event {
   cost: number;
   isPublic: boolean;
   tags: string[];
+  actualAttendees?: number; // for completed events
+  totalMoneyCollected?: number; // for completed events
 }
 
 export interface EventCardProps {

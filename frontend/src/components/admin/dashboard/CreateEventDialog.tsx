@@ -26,11 +26,15 @@ interface EventFormData {
   location: string;
   category: string;
   maxAttendees: number;
+  currentAttendees: number;
   organizer: string;
   cost: number;
   isPublic: boolean;
+  isCompleted: boolean;
   tags: string[];
   imageFile?: File | null;
+  totalMoneyCollected?: number; // For completed events
+  actualAttendees?: number; // For completed events
 }
 
 export default function CreateEventDialog({
@@ -46,11 +50,15 @@ export default function CreateEventDialog({
     location: '',
     category: '',
     maxAttendees: 50,
+    currentAttendees: 0,
     organizer: '',
     cost: 0,
     isPublic: true,
+    isCompleted: false,
     tags: [],
     imageFile: null,
+    totalMoneyCollected: 0,
+    actualAttendees: 0,
   });
 
   const handleInputChange = (
@@ -65,7 +73,7 @@ export default function CreateEventDialog({
         ...prev,
         [name]: checkbox.checked,
       }));
-    } else if (name === 'maxAttendees' || name === 'cost') {
+    } else if (name === 'maxAttendees' || name === 'cost' || name === 'currentAttendees' || name === 'totalMoneyCollected' || name === 'actualAttendees') {
       setFormData((prev: EventFormData) => ({
         ...prev,
         [name]: parseInt(value) || 0,
@@ -105,11 +113,15 @@ export default function CreateEventDialog({
       location: '',
       category: '',
       maxAttendees: 50,
+      currentAttendees: 0,
       organizer: '',
       cost: 0,
       isPublic: true,
+      isCompleted: false,
       tags: [],
       imageFile: null,
+      totalMoneyCollected: 0,
+      actualAttendees: 0,
     });
     onClose();
   };
@@ -276,6 +288,31 @@ export default function CreateEventDialog({
                   <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 </div>
               </div>
+              <div>
+                <label
+                  htmlFor="currentAttendees"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Current Attendees
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    id="currentAttendees"
+                    name="currentAttendees"
+                    value={formData.currentAttendees}
+                    onChange={handleInputChange}
+                    placeholder="0"
+                    min="0"
+                    max={formData.maxAttendees}
+                    className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 text-black"
+                  />
+                  <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Set manually for past events or leave at 0 for upcoming events
+                </p>
+              </div>
             </div>
 
             {/* Location */}
@@ -329,7 +366,7 @@ export default function CreateEventDialog({
                   htmlFor="cost"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  Event Cost ($)
+                  Event Cost (RWF)
                 </label>
                 <div className="relative">
                   <input
@@ -365,6 +402,92 @@ export default function CreateEventDialog({
                 This is a public event
               </label>
             </div>
+
+            {/* Mark as Completed/Past Event Checkbox */}
+            <div className="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <input
+                type="checkbox"
+                id="isCompleted"
+                name="isCompleted"
+                checked={formData.isCompleted}
+                onChange={handleInputChange}
+                className="w-4 h-4 mt-0.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <div className="flex-1">
+                <label
+                  htmlFor="isCompleted"
+                  className="text-sm font-semibold text-blue-900 block"
+                >
+                  Mark as Completed Event (Past Event)
+                </label>
+                <p className="text-xs text-blue-700 mt-1">
+                  Check this if you&apos;re creating a record for an event that already happened. 
+                  This will place the event in the &quot;Past Events&quot; section with completed status.
+                </p>
+              </div>
+            </div>
+
+            {/* Completed Event Details - Only show if event is marked as completed */}
+            {formData.isCompleted && (
+              <div className="space-y-4 bg-green-50 p-4 rounded-lg border border-green-200">
+                <h3 className="text-sm font-semibold text-green-900 mb-3">
+                  Completed Event Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      htmlFor="actualAttendees"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Actual Attendees <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        id="actualAttendees"
+                        name="actualAttendees"
+                        value={formData.actualAttendees || 0}
+                        onChange={handleInputChange}
+                        placeholder="Number of people who attended"
+                        min="0"
+                        className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 text-black bg-white"
+                        required={formData.isCompleted}
+                      />
+                      <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">
+                      How many people actually attended this past event?
+                    </p>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="totalMoneyCollected"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Total Money Collected (RWF) <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        id="totalMoneyCollected"
+                        name="totalMoneyCollected"
+                        value={formData.totalMoneyCollected || 0}
+                        onChange={handleInputChange}
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                        className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 text-black bg-white"
+                        required={formData.isCompleted}
+                      />
+                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Total donations/money raised during this event
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Tags */}
             <div>

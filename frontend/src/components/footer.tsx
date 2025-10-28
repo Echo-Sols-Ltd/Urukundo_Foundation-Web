@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Facebook, Twitter, Instagram } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
   return (
@@ -33,30 +34,30 @@ export function Footer() {
             <div className="flex gap-4 mt-6">
               {/* Increased gap from gap-3 */}
               <a
-                href="https://facebook.com/urukundofoundation" // Replace with your Facebook URL
+                href="https://web.facebook.com/profile.php?id=61581406167239&sk=reviews&_rdc=1&_rdr#" // Replace with your Facebook URL
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white rounded-full flex items-center justify-center"
+                className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-orange-500"
               >
                 {/* Increased size */}
                 <Facebook className="w-5 h-5 text-black" />
                 {/* Increased icon size */}
               </a>
               <a
-                href="https://x.com/EchoSols" // Replace with your Twitter URL
+                href="https://x.com/shema_Leandre" // Replace with your Twitter URL
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center"
+                className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-orange-500"
               >
                 {/* Increased size */}
-                <Twitter className="w-5 h-5 text-white" />
+                <Twitter className="w-5 h-5 text-black" />
                 {/* Increased icon size */}
               </a>
               <a
                 href="https://www.instagram.com/echo_sols/" // Replace with your Instagram URL
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white rounded-full flex items-center justify-center"
+                className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-orange-500"
               >
                 {/* Increased size */}
                 <Instagram className="w-5 h-5 text-black" />
@@ -102,14 +103,7 @@ export function Footer() {
                   Videos
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="#donate"
-                  className="text-gray-300 hover:text-orange-500 transition-colors"
-                >
-                  Donate
-                </Link>
-              </li>
+              
             </ul>
           </div>
 

@@ -93,14 +93,20 @@ export default function EventCard({ event, onViewDetails }: EventCardProps) {
         <div className="flex justify-between items-center py-1">
           <span className="text-gray-500 font-medium">Attendees:</span>
           <span className="font-semibold text-gray-900">
-            {event.currentAttendees}
+            {event.status === 'completed' && event.actualAttendees !== undefined
+              ? event.actualAttendees
+              : event.currentAttendees}
           </span>
         </div>
 
         <div className="flex justify-between items-center py-1">
           <span className="text-gray-500 font-medium">Funds Raised:</span>
           <span className="font-bold text-orange-600 text-base">
-            {formatCurrency(event.cost || 30000)} Rwf
+            {formatCurrency(
+              event.status === 'completed' && event.totalMoneyCollected !== undefined
+                ? event.totalMoneyCollected
+                : event.cost || 0
+            )} Rwf
           </span>
         </div>
       </div>

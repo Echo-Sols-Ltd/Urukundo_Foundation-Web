@@ -29,28 +29,50 @@ export function EventsSection() {
   const [events, setEvents] = useState<EventUI[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [detailsEvent, setDetailsEvent] = useState<EventUI | null>(null);
+  const [eventFilter, setEventFilter] = useState<'upcoming' | 'past'>('upcoming');
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         setIsLoading(true);
         const backendEvents = await eventsApi.getAll();
+        const now = new Date();
 
-        // Transform and get latest 3 upcoming events
-        const transformedEvents = backendEvents
+        // Separate upcoming and past events
+        const upcomingEvents = backendEvents
           .filter((event) => {
             const startDate = new Date(event.startDate);
-            const now = new Date();
-            return startDate >= now; // Only show upcoming events
+            return startDate >= now; // Upcoming events
           })
           .sort(
             (a, b) =>
               new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
-          ) // Sort by start date
+          )
           .map(dataTransformers.eventToUI)
           .slice(0, 3);
 
-        setEvents(transformedEvents);
+        const pastEvents = backendEvents
+          .filter((event) => {
+            const startDate = new Date(event.startDate);
+            return startDate < now; // Past events
+          })
+          .sort(
+            (a, b) =>
+              new Date(b.startDate).getTime() - new Date(a.startDate).getTime(), // Sort newest first
+          )
+          .map(dataTransformers.eventToUI)
+          .slice(0, 3);
+
+        // Show upcoming by default, or past if no upcoming events
+        if (upcomingEvents.length > 0) {
+          setEvents(upcomingEvents);
+          setEventFilter('upcoming');
+        } else if (pastEvents.length > 0) {
+          setEvents(pastEvents);
+          setEventFilter('past');
+        } else {
+          setEvents([]);
+        }
       } catch (error) {
         console.error('Error fetching events:', error);
         setEvents([]);
@@ -62,13 +84,69 @@ export function EventsSection() {
     fetchEvents();
   }, []);
 
+  const handleFilterChange = async (filter: 'upcoming' | 'past') => {
+    setEventFilter(filter);
+    setIsLoading(true);
+    
+    try {
+      const backendEvents = await eventsApi.getAll();
+      const now = new Date();
+
+      const filteredEvents = backendEvents
+        .filter((event) => {
+          const startDate = new Date(event.startDate);
+          return filter === 'upcoming' ? startDate >= now : startDate < now;
+        })
+        .sort(
+          (a, b) => {
+            const timeA = new Date(a.startDate).getTime();
+            const timeB = new Date(b.startDate).getTime();
+            return filter === 'upcoming' ? timeA - timeB : timeB - timeA;
+          }
+        )
+        .map(dataTransformers.eventToUI)
+        .slice(0, 3);
+
+      setEvents(filteredEvents);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      setEvents([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <section className="py-16 bg-background">
       <div className="container mx-auto px-6 sm:px-8 lg:px-20">
-        <div className="flex justify-between items-center mb-12">
+        <div className="flex justify-between items-center mb-8">
           <h2 className="font-sans text-3xl lg:text-4xl font-bold text-foreground">
             Latest Events
           </h2>
+        </div>
+
+        {/* Event Filter Tabs */}
+        <div className="flex gap-3 mb-8">
+          <button
+            onClick={() => handleFilterChange('upcoming')}
+            className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+              eventFilter === 'upcoming'
+                ? 'bg-orange-500 text-white shadow-md'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            Upcoming Events
+          </button>
+          <button
+            onClick={() => handleFilterChange('past')}
+            className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+              eventFilter === 'past'
+                ? 'bg-orange-500 text-white shadow-md'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            Past Events
+          </button>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-12">
@@ -99,13 +177,18 @@ export function EventsSection() {
                 key={index}
                 className="overflow-hidden hover:shadow-lg transition-shadow p-0"
               >
-                <Image
-                  src={event.image || '/placeholder.svg'}
-                  alt={event.title}
-                  width={300} // Adjusted width for each card (approx. 1/3 of 900px container)
-                  height={192} // Adjusted height to match h-48 (48 * 4 = 192)
-                  className="w-full h-48 object-cover"
-                />
+                <div className="relative w-full h-48 bg-gray-200">
+                  <Image
+                    src={event.image || '/placeholder.svg'}
+                    alt={event.title}
+                    fill
+                    className="object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder.svg';
+                    }}
+                  />
+                </div>
                 <CardContent className="card-padding-lg">
                   {/* Enhanced padding */}
                   <h3 className="font-sans text-xl font-semibold text-card-foreground mb-4">
@@ -227,12 +310,16 @@ export function EventsSection() {
       {detailsEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white w-full max-w-2xl mx-auto rounded-xl shadow-xl border border-gray-200 overflow-hidden">
-            <div className="relative w-full h-56">
+            <div className="relative w-full h-56 bg-gray-200">
               <Image
                 src={detailsEvent.image || '/placeholder.svg'}
                 alt={detailsEvent.title}
                 fill
                 className="object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/placeholder.svg';
+                }}
               />
             </div>
             <div className="p-6 space-y-3">
