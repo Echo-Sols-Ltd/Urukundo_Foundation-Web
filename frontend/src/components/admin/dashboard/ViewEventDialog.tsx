@@ -141,11 +141,44 @@ export default function ViewEventDialog({
                 </div>
               </div>
 
+              {/* Show completed event data if available */}
+              {event.status === 'completed' && (
+                <>
+                  {event.actualAttendees !== undefined && (
+                    <div className="flex items-center space-x-3 bg-green-50 p-3 rounded-lg">
+                      <Users className="w-5 h-5 text-green-600" />
+                      <div>
+                        <p className="font-medium text-green-900">
+                          {event.actualAttendees} people attended
+                        </p>
+                        <p className="text-sm text-green-700">
+                          Actual Attendance
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {event.totalMoneyCollected !== undefined && (
+                    <div className="flex items-center space-x-3 bg-blue-50 p-3 rounded-lg">
+                      <TrendingUp className="w-5 h-5 text-blue-600" />
+                      <div>
+                        <p className="font-medium text-blue-900">
+                          ${event.totalMoneyCollected.toLocaleString()}
+                        </p>
+                        <p className="text-sm text-blue-700">
+                          Total Money Collected
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
               <div className="flex items-center space-x-3">
                 <TrendingUp className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="font-medium text-gray-900">${event.cost}</p>
-                  <p className="text-sm text-gray-500">Cost per person</p>
+                  <p className="text-sm text-gray-500">Projected Cost of Event</p>
                 </div>
               </div>
 

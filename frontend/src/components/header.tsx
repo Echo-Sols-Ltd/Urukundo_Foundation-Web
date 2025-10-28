@@ -104,52 +104,61 @@ export function Header() {
         </Link>
         {/* Desktop Navigation - Hidden on mobile and small tablets */}
         <nav className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8">
-          <Link
-            href="/"
-            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+          {/* <Link */}
+            {/* href="/" */}
+            {/* className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1  font-medium rounded ${ */}
+              {/* pathname === '/' && !currentHash */}
+                {/* ? 'text-orange-500 border-b-orange-500'  */}
+                {/* : 'text-white hover:text-orange-500 ' */}
+            {/* }`} */}
+          {/* > */}
+            {/* Home */}
+          {/* </Link> */}
+          <button onClick={() => scrollToSection('hero')}
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium  rounded ${
               pathname === '/' && !currentHash
-                ? 'text-orange-500 border-orange-500' 
-                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+                ? 'text-orange-500 '
+                : 'text-white hover:text-orange-500'
             }`}
           >
             Home
-          </Link>
+          </button>
           <button
             onClick={() => scrollToSection('about')}
-            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium  rounded ${
               pathname === '/' && currentHash === '#about'
-                ? 'text-orange-500 border-orange-500' 
-                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+                ? 'text-orange-500' 
+                : 'text-white hover:text-orange-500'
             }`}
           >
             About us
           </button>
           <button
             onClick={() => scrollToSection('events')}
-            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium  rounded ${
               pathname === '/events' || (pathname === '/' && currentHash === '#events')
-                ? 'text-orange-500 border-orange-500' 
-                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+                ? 'text-orange-500' 
+                : 'text-white hover:text-orange-500'
             }`}
           >
             Events
           </button>
           <button
             onClick={() => scrollToSection('videos')}
-            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium whitespace-nowrap border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium whitespace-nowrap rounded ${
               pathname === '/' && currentHash === '#videos'
-                ? 'text-orange-500 border-orange-500' 
-                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+                ? 'text-orange-500' 
+                : 'text-white hover:text-orange-500'
             }`}
           >
             Live videos
           </button>
           <Link
             href="/contacts"
-            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black rounded ${
+            className={`transition-colors duration-300 text-sm xl:text-base 2xl:text-lg py-1 font-medium  rounded ${
               pathname === '/contacts' 
-                ? 'text-orange-500 border-orange-500' 
-                : 'text-white border-transparent hover:text-orange-500 hover:border-orange-500'
+                ? 'text-orange-500' 
+                : 'text-white hover:text-orange-500'
             }`}
           >
             Contacts

@@ -29,7 +29,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-[600px] bg-gradient-to-br from-gray-900/95 to-gray-800/95 text-white overflow-hidden">
+    <section className="relative min-h-[600px] bg-gradient-to-br from-gray-900/95 to-gray-800/95 text-white overflow-hidden" id='hero'>
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"

@@ -42,6 +42,9 @@ interface BackendEvent {
   organizer?: string;
   cost?: number;
   tags?: string;
+  eventStatus?: string;
+  actualAttendees?: number;
+  totalMoneyCollected?: number;
 }
 
 interface CreateEventFormWithFile extends CreateEventForm {
@@ -56,10 +59,14 @@ type CreateEventForm = {
   location?: string;
   category?: string; // changed from type to category
   maxAttendees?: number; // changed from capacity
+  currentAttendees?: number; // manually set attendee count
   organizer?: string; // changed from organizerName
   cost?: number;
   isPublic?: boolean; // changed from isPrivate
+  isCompleted?: boolean; // to mark past/completed events
   tags?: string[]; // changed from string to string[]
+  actualAttendees?: number; // for completed events - actual attendance
+  totalMoneyCollected?: number; // for completed events - total money raised
 };
 
 function EventsPage() {
@@ -100,6 +107,8 @@ function EventsPage() {
     const start = be.startDate ? new Date(be.startDate) : new Date();
     const now = Date.now();
     const isUpcoming = start.getTime() > now;
+    const isCompleted = be.eventStatus === 'COMPLETED';
+    
     return {
       id: String(be.id ?? be.eventId ?? Math.random()),
       title: be.eventName ?? be.title ?? 'Event',
@@ -108,7 +117,7 @@ function EventsPage() {
       time: start.toTimeString().slice(0, 5),
       location: be.location ?? 'TBD',
       category: be.type ?? be.category ?? 'General',
-      status: isUpcoming ? 'upcoming' : 'completed',
+      status: isCompleted ? 'completed' : (isUpcoming ? 'upcoming' : 'completed'),
       maxAttendees: Number(be.capacity ?? 0),
       currentAttendees: Number(be.currentAttendees ?? 0),
       image: '',
@@ -120,6 +129,8 @@ function EventsPage() {
             .split(',')
             .map((t: string) => t.trim())
         : []) as string[],
+      actualAttendees: be.actualAttendees,
+      totalMoneyCollected: be.totalMoneyCollected,
     };
   };
 
@@ -145,26 +156,28 @@ function EventsPage() {
   // Load donations for an event (admin view)
   const loadEventDonations = async (eventId: string) => {
     try {
-      const list = await donationsApi.getByEvent(Number(eventId));
+      const numericId = Number(eventId);
+      // Check if the eventId is a valid number
+      if (isNaN(numericId)) {
+        console.warn('Cannot load donations for non-numeric event ID:', eventId);
+        setSelectedEventDonations([]);
+        return;
+      }
+      
+      const list = await donationsApi.getByEvent(numericId);
       setSelectedEventDonations(
         list as unknown as Array<{
           id: number;
           amount: number;
           donationTime?: string;
           donor?: { firstName?: string; lastName?: string; email?: string };
-          donationCause?: string;
-          methodOfPayment?: string;
-          status?: string;
         }>,
       );
-      setDonationsDialogOpen(true);
     } catch {
+      console.error('Failed to load event donations');
       setSelectedEventDonations([]);
-      setDonationsDialogOpen(true);
     }
-  };
-
-  // Get headers with auth
+  };  // Get headers with auth
   const getHeaders = () => {
     const token =
       typeof window !== 'undefined'
@@ -293,6 +306,10 @@ function EventsPage() {
         (data.time ?? '09:00') +
         ':00',
       tags: (data.tags ?? []).join(','),
+      // Fields for completed events
+      actualAttendees: data.isCompleted ? Number(data.actualAttendees ?? 0) : null,
+      totalMoneyCollected: data.isCompleted ? Number(data.totalMoneyCollected ?? 0) : null,
+      eventStatus: data.isCompleted ? 'COMPLETED' : 'PENDING',
     };
     try {
       const accessToken =
@@ -317,7 +334,13 @@ function EventsPage() {
         if (res.ok) {
           const created = await res.json();
           const ui = mapBackendEventToUi(created);
-          setUpcomingEvents((prev) => [ui, ...prev]);
+          // If marked as completed, add to past events, otherwise to upcoming
+          if (data.isCompleted) {
+            ui.status = 'completed';
+            setPastEvents((prev) => [ui, ...prev]);
+          } else {
+            setUpcomingEvents((prev) => [ui, ...prev]);
+          }
           setIsCreateDialogOpen(false);
           return;
         }
@@ -330,7 +353,13 @@ function EventsPage() {
         if (res.ok) {
           const created = await res.json();
           const ui = mapBackendEventToUi(created);
-          setUpcomingEvents((prev) => [ui, ...prev]);
+          // If marked as completed, add to past events, otherwise to upcoming
+          if (data.isCompleted) {
+            ui.status = 'completed';
+            setPastEvents((prev) => [ui, ...prev]);
+          } else {
+            setUpcomingEvents((prev) => [ui, ...prev]);
+          }
           setIsCreateDialogOpen(false);
           return;
         }
@@ -346,16 +375,21 @@ function EventsPage() {
       time: data.time || '09:00',
       location: data.location || 'TBD',
       category: data.category || 'General',
-      status: 'upcoming',
+      status: data.isCompleted ? 'completed' : 'upcoming',
       maxAttendees: Number(data.maxAttendees) || 0,
-      currentAttendees: 0,
+      currentAttendees: data.isCompleted ? Number(data.actualAttendees) || 0 : Number(data.currentAttendees) || 0,
       image: '',
       organizer: data.organizer || 'Staff',
       cost: data.cost || 0,
       isPublic: data.isPublic !== false,
       tags: data.tags || [],
     };
-    setUpcomingEvents((prev) => [fallback, ...prev]);
+    // Add to the appropriate list based on completion status
+    if (data.isCompleted) {
+      setPastEvents((prev) => [fallback, ...prev]);
+    } else {
+      setUpcomingEvents((prev) => [fallback, ...prev]);
+    }
     setIsCreateDialogOpen(false);
   };
 

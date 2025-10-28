@@ -1,6 +1,4 @@
 'use client';
-
-import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 export function TestimonialSection() {
@@ -13,7 +11,7 @@ export function TestimonialSection() {
         "I always wanted to help, but I didn't know where to start. Urukundo Foundation made it so easy to give and actually see the change. Watching the live stories made it real.",
       name: 'SHEMA Leandre',
       role: 'Donor',
-      alt: 'SHEMA Leandre - Donor testimonial',
+      alt: 'IZERE SHEMA Leandre - Donor testimonial',
     },
     {
       quote:

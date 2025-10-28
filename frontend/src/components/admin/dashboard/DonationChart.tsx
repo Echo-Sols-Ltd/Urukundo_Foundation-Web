@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface DonationChartProps {
   donations?: Array<{
@@ -67,10 +68,7 @@ export default function DonationChart({ donations = [] }: DonationChartProps) {
 
       {!hasData ? (
         <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-          <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM15 17a2 2 0 11-4 0 2 2 0 014 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 13h3.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01-.707 1.707H13M13 13V9a1 1 0 00-1-1H4a1 1 0 00-1 1v4a1 1 0 001 1h8zm-8-5a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
+          <Image src="/svg/undraw_no-data_ig65.svg" alt="No data" width={80} height={80} />
           <p className="text-sm">No donation data available</p>
           <p className="text-xs text-gray-400 mt-1">Donation trends will appear here once donations are made</p>
         </div>

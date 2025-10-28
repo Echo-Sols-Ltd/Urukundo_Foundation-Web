@@ -114,9 +114,9 @@ export default function ContactsPage() {
 
             <div className="space-y-6">
               <div>
-                <p className="font-semibold mb-2 text-sm">Kigali-Rwanda</p>
+                <p className="font-semibold mb-2 text-sm">Nyabihu-Rwanda</p>
                 <p className="text-gray-300 text-sm">
-                  Capital Heights, MD 20743
+                  Rwanda coding Academy 
                 </p>
               </div>
 
@@ -127,7 +127,7 @@ export default function ContactsPage() {
 
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-orange-500" />
-                <span className="break-all">charity@email.net</span>
+                <span className="break-all">iamshemaleandre@gmail.com</span>
               </div>
 
               <div className="flex items-center gap-3">
@@ -138,28 +138,28 @@ export default function ContactsPage() {
 
             <div className="flex gap-3 mt-8">
               <a
-                href="https://facebook.com/urukundofoundation"
+                href="https://web.facebook.com/profile.php?id=61581406167239&sk=reviews&_rdc=1&_rdr#"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+                className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-orange-500 transition-all duration-200 cursor-pointer"
                 title="Follow us on Facebook"
               >
                 <Facebook className="w-4 h-4 text-black" />
               </a>
               <a
-                href="https://twitter.com/urukundofoundation"
+                href="https://twitter.com/shemale_andre"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center hover:bg-orange-600 transition-all duration-200 cursor-pointer"
+                className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-orange-500 transition-all duration-200 cursor-pointer"
                 title="Follow us on Twitter"
               >
-                <Twitter className="w-4 h-4 text-white" />
+                <Twitter className="w-4 h-4 text-black" />
               </a>
               <a
                 href="https://www.instagram.com/echo_sols/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+                className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-orange-500 transition-all duration-200 cursor-pointer"
                 title="Follow us on Instagram"
               >
                 <Instagram className="w-4 h-4 text-black" />
