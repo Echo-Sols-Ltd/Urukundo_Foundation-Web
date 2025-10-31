@@ -1,12 +1,12 @@
-name: Publish Docker image
+name: Publish Frontend Docker Image
 
 on:
   push:
     branches:
-      - prod
+      - prod   # only trigger when pushing to 'prod' branch
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     permissions:
@@ -14,11 +14,11 @@ jobs:
       packages: write
 
     steps:
-      # Checkout repository
+      # Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set up Docker Buildx
+      # Setup Docker Buildx for multi-platform and caching
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -30,13 +30,34 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.URUKUNDO_PAT }}
 
-      # 🧩 Build and push Docker image with proper tags
+      # Extract Docker metadata (tags and labels)
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/ashrafutuyubahe/urukundo-frontend
+          tags: |
+            type=ref,event=branch       # e.g. prod
+            type=sha                    # commit-specific tag
+            latest                      # always push 'latest'
+
+      # Build and push Docker image
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: |
-            ghcr.io/ashrafutuyubahe/urukundo-frontend:latest
-            ghcr.io/ashrafutuyubahe/urukundo-frontend:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Optional: Trigger redeploy on server (if Watchtower not instant)
+      - name: Notify Server to Pull Latest (Optional)
+        if: success()
+        run: |
+          echo "✅ Build complete. Optionally notify your server here."
+          # Example (uncomment if you add a webhook):
+          # curl -X POST https://api.urukundo.echo-solution.com/hooks/redeploy \
+          #   -H "Authorization: Bearer ${{ secrets.REDEPLOY_KEY }}" || true
