@@ -163,7 +163,7 @@ export default function ViewEventDialog({
                       <TrendingUp className="w-5 h-5 text-blue-600" />
                       <div>
                         <p className="font-medium text-blue-900">
-                          ${event.totalMoneyCollected.toLocaleString()}
+                         RWF {Number(event.totalMoneyCollected).toLocaleString()}
                         </p>
                         <p className="text-sm text-blue-700">
                           Total Money Collected
