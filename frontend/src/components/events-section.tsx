@@ -183,7 +183,7 @@ export function EventsSection() {
                     src={event.image || '/placeholder.svg'}
                     alt={event.title}
                     fill
-                    className="object-contain"
+                    className="object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = '/placeholder.svg';
@@ -330,7 +330,7 @@ export function EventsSection() {
           fill
           priority
           sizes="(max-width: 768px) 100vw, 900px"
-          className="object-fit p-4 sm:p-6"  
+          className="object-contain p-4 sm:p-6"  
           onError={(e) => {
             (e.target as HTMLImageElement).src = '/placeholder-event.jpg';
           }}
