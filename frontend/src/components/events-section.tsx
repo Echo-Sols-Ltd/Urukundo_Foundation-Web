@@ -183,7 +183,7 @@ export function EventsSection() {
                     src={event.image || '/placeholder.svg'}
                     alt={event.title}
                     fill
-                    className="object-cover"
+                    className="object-scale-down "
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = '/placeholder.svg';
