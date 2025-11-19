@@ -183,7 +183,7 @@ export function EventsSection() {
                     src={event.image || '/placeholder.svg'}
                     alt={event.title}
                     fill
-                    className="object-scale-down "
+                    className="object-contain transition-transform duration-500 hover:scale-150 hover:mt-10"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = '/placeholder.svg';
