@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import GoogleTag from '@/components/GoogleTag';
 import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from '../contexts/AuthContext';
@@ -127,6 +128,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
         />
+        <GoogleTag />
       </body>
     </html>
   );
