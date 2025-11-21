@@ -1,4 +1,6 @@
+
 name: Publish Docker image(Frontend) to Docker Hub
+
 
 on:
   push:
@@ -26,7 +28,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
 
       # 🏗️ Build and push frontend  image
       - name: Build and push Docker image (frontend)
@@ -38,3 +41,4 @@ jobs:
           tags: |
             ashraftuyubahe001160/urukundo-frontend:latest
             ashraftuyubahe001160/urukundo-frontend:${{ github.sha }}
+          
